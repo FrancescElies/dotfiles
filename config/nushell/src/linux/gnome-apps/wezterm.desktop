@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Encoding=UTF-8
+Name=Wezterm
+Comment=Wezterm
+Icon=/home/cesc/src/dotfiles/config/nushell/src/linux/gnome-apps/wezterm.svg
+Exec=/home/cesc/bin/wezterm
+Terminal=false
+Categories=Terminal;

@@ -1,0 +1,200 @@
+# Colors and display
+e scr.color=true
+eco monokai
+
+#
+# Useful commands
+#
+
+# Clear screen: !clear
+# Quick analysis: aaa; afl
+# Find main and analyze: aaa; s main; pdf
+# List interesting functions: afl~main,system,exec,strcpy,sprintf
+# Quick strings search: iz~+
+# Show imports: ii
+# Show exports: iE
+# Decompile function (requires r2ghidra): pdg
+
+
+#
+# BINARY LOADING & ANALYSIS
+#
+
+# Apply relocations (critical for PIE binaries)
+e bin.relocs.apply=true
+
+# Enable binary caching for faster loads
+e bin.cache=true
+
+# Reduce verbose warnings
+e bin.verbose=false
+
+# Auto-detect architecture and bits
+e asm.arch=x86
+e asm.bits=64
+
+#
+# ASSEMBLY DISPLAY
+#
+
+# Use Intel syntax (change to 'att' if you prefer AT&T)
+e asm.syntax=intel
+
+# Show opcode bytes
+e asm.bytes=true
+
+# Show comments
+e asm.comments=true
+
+# Show pseudo-code comments (helpful!)
+e asm.pseudo=true
+
+# Describe instructions in comments
+e asm.describe=false
+
+# Show argument/register values via emulation
+e asm.emu=false
+
+# Show function names in calls
+e asm.functions=true
+
+# Show flow control lines
+e asm.lines=true
+e asm.lines.fcn=true
+
+# Indentation for flow control
+e asm.indent=true
+
+# Show function/block boundaries
+e asm.section=true
+
+# Number of columns for assembly
+e asm.nbytes=10
+
+#
+# ANALYSIS SETTINGS
+#
+
+# Auto-name functions
+e anal.autoname=true
+
+# Analysis depth
+e anal.depth=3
+
+# Detect function preludes
+e anal.hasnext=true
+
+# Analyze strings in functions
+e anal.strings=true
+
+# Push to ret analysis
+e anal.pushret=true
+
+# Calling convention (auto-detect or set specific: cdecl, stdcall, fastcall)
+# e anal.cc=cdecl
+
+#
+# COLORS & DISPLAY
+#
+
+# Enable colors
+e scr.color=3
+
+# Color theme (options: default, solarized, monokai, zenburn, nord, dracula)
+eco solarized
+
+# UTF-8 support for better visuals
+e scr.utf8=true
+e scr.utf8.curvy=true
+
+# Show scrollbar in visual mode
+e scr.scrollbar=true
+
+# Enable mouse wheel in visual mode
+e scr.wheel=true
+
+# Colorize hex dump
+e scr.color.bytes=true
+e scr.color.ops=true
+
+# Interactive tab completion
+e scr.interactive=true
+
+#
+# VISUAL MODE SETTINGS
+#
+
+# Show flag comments in visual
+e graph.comments=true
+
+# Graph layout (options: normal, horizontal, vertical)
+e graph.layout=normal
+
+#
+# SEARCH & STRINGS
+#
+
+# String search in data sections
+e bin.strings=true
+
+#
+# DEBUGGING
+#
+
+# Break on program entry
+e dbg.bep=entry
+
+# Show backtrace
+e dbg.trace=true
+
+#
+# EDITOR & SHELL
+#
+
+# Default editor (change to nano, emacs, etc.)
+e cfg.editor=vim
+
+# Sandbox mode (disable for shell commands)
+e cfg.sandbox=false
+
+#
+# PERFORMANCE
+#
+
+# Number of threads for analysis
+e anal.threads=4
+
+#
+# LOGGING
+#
+
+# Log level (1=NONE, 2=ERROR, 3=WARN, 4=INFO, 5=DEBUG)
+e log.level=3
+
+# Quiet mode (less spam)
+e scr.prompt.mode=true
+
+#
+# OTHER
+#
+
+# For ARM binaries:
+# e asm.arch=arm
+# e asm.bits=32
+
+# For MIPS binaries:
+# e asm.arch=mips
+# e asm.bits=32
+
+# Show raw bytes only (no disassembly):
+# e asm.bytes.right=true
+
+# Emulate code to show values (slower but informative):
+# e asm.emu=true
+# e emu.str=true
+
+# Show function arguments in calls:
+# e asm.var.summary=true
+
+# For stripped binaries, aggressive function detection:
+# e anal.recont=true

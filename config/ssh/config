@@ -1,0 +1,8 @@
+# allow near instant <tab> autocomplete
+Host *
+  ControlMaster auto
+  ControlPath ~/.ssh/cm-%r@%h:%p
+  ControlPersist 60s
+
+Host mini-pc
+    ForwardAgent yes
