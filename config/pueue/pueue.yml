@@ -1,0 +1,4 @@
+# ---
+# client:
+#   status:
+#     additional_columns: ["Duration"]

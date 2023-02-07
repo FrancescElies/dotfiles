@@ -1,0 +1,29 @@
+;; https://sachachua.com/blog/2026/05/trying-out-kanata-for-one-shot-modifiers-and-home-row-mods-on-linux
+;; https://github.com/argenkiwi/kenkyo/blob/main/kanata/kanata.kbd
+
+(defvar
+  ;; Timing variables for home row mods and chords
+  chord-timeout 50    ;; Window (ms) to press keys together for a chord
+)
+
+(defcfg process-unmapped-keys yes)
+
+(defsrc caps j k u i)
+
+(deflayer base @capsmod
+  (chord jk j) (chord jk k)
+  (chord ui u) (chord ui i))
+
+(defalias capsmod (tap-hold 200 200 esc (multi lmet lalt)))
+
+;; chords
+(defchords jk $chord-timeout
+  (j) j
+  (k) k
+  (j k) esc
+)
+(defchords ui $chord-timeout
+  (u) u
+  (i) i
+  (u i) tab
+)

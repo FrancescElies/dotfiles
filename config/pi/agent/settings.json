@@ -1,0 +1,56 @@
+{
+  "lastChangelogVersion": "0.80.10",
+  "defaultProvider": "github-copilot",
+  "defaultModel": "gpt-5.4-mini",
+  "defaultThinkingLevel": "medium",
+  "enabledModels": [
+    "github-copilot/claude-sonnet-4.6",
+    "github-copilot/gpt-5.4-mini"
+  ],
+  "packages": [
+    "npm:pi-btw",
+    "npm:pi-token-burden",
+    "npm:@ff-labs/pi-fff",
+    "npm:pi-web-access",
+    "npm:pi-hermes-memory",
+    {
+      "source": "npm:pi-mcp-adapter",
+      "extensions": [
+        "-index.ts"
+      ]
+    },
+    {
+      "source": "npm:@dietrichgebert/ponytail",
+      "skills": [
+        "-skills/ponytail/SKILL.md",
+        "-skills/ponytail-audit/SKILL.md",
+        "-skills/ponytail-debt/SKILL.md",
+        "-skills/ponytail-gain/SKILL.md",
+        "-skills/ponytail-help/SKILL.md",
+        "-skills/ponytail-review/SKILL.md"
+      ],
+      "extensions": [
+        "-pi-extension/index.js"
+      ]
+    },
+    "npm:context-mode",
+    {
+      "source": "npm:pi-free",
+      "extensions": [
+        "-index.ts"
+      ]
+    }
+  ],
+  "hideThinkingBlock": false,
+  "theme": "dark",
+  "extensions": [
+    "-extensions/azure-devops-mcp/index.ts",
+    "-extensions/outlook/index.ts"
+  ],
+  "skills": [
+    "-skills/ghidra/SKILL.md",
+    "-skills/web-browser/SKILL.md",
+    "-skills/zellij/SKILL.md"
+  ],
+  "enableInstallTelemetry": false
+}

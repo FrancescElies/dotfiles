@@ -1,0 +1,6 @@
+X-Mailer: aerc {{version}}
+Bcc: {{.AccountFrom.Address}}
+{{- with .Signature }}
+
+{{.}}
+{{- end -}}

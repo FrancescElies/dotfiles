@@ -1,0 +1,9 @@
+config/glazewm/errors.log
+config/zellij/*.bak*
+history.txt
+local/share/aba.toml
+samsung-uld-copy/
+src/linux/gnome-apps/Browser
+src/linux/gnome-apps/start-tor-browser.desktop
+src/os-this-machine.nu
+.DS_Store
