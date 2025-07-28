@@ -7,6 +7,10 @@
 --type-add
 web:*.{html,css,js}*
 
+# Add my 'max' type.
+--type-add
+max:*.{maxpat,maxhelp,json}
+
 # Search hidden files / directories (e.g. dotfiles) by default
 --hidden
 
