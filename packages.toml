@@ -23,6 +23,7 @@ python-benedict = "dict subclass with keylist/keypath support, built-in I/O oper
 aichat = "LLM CLI tool"
 # go install github.com/sst/opencode@v0.0.52
 coreutils = "Cross-platform rewrite of GNU coreutils"
+mdfried = "markdown renderer"
 # caliguda = "nicer dd replacement, burning tool"
 himalaya = "cli mail tool"
 bat = "cat clone"
