@@ -1,0 +1,7 @@
+# daemon:
+#   callback: >
+#       toastify send
+#       "Task-{{ id }} ({{ group }}) '{{ result }}': {{ command }}
+#
+#       {{ output }}
+#       "

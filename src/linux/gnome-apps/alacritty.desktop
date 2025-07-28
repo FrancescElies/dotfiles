@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Encoding=UTF-8
+Name=Alacritty
+Comment=Terminal
+Icon=/home/cesc/src/dotfiles/src/linux/gnome-apps/alacritty.svg
+Exec=/home/cesc/bin/alacritty
+Terminal=false
+Categories=Terminal;
