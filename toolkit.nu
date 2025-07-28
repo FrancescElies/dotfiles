@@ -4,9 +4,9 @@ export def symlink [
     new_link_name: path  # The name of the symlink
     --force(-f)     # if target exists moves it to
 ] {
+    print $"(ansi purple_bold)Creating symlink(ansi reset) ($existing) --> ($new_link_name)"
     let existing = ($existing | path expand --strict | path split | path join)
     let $new_link_name = ($new_link_name | path expand --no-symlink | path split | path join)
-    print $"(ansi purple_bold)Creating symlink(ansi reset) ($existing) --> ($new_link_name)"
 
 
     # create parent folder if it doesn't exist
@@ -40,24 +40,24 @@ export def ask_yes_no [question: string] {
 }
 
 
-def "config glazewm" [] {
+export def "config glazewm" [] {
     let config_dir = '~/.glzr/glazewm'
     symlink --force ~/src/dotfiles/config/glazewm/ $config_dir
 }
 
-def "config foot" [] {
+export def "config foot" [] {
     let config_dir = '~/.config/foot'
     symlink --force ~/src/dotfiles/config/foot/ $config_dir
 }
 
-def "config sway" [] {
+export def "config sway" [] {
     let config_dir = '~/.config/sway'
     symlink --force ~/src/dotfiles/config/sway/ $config_dir
 }
 
 # broken on windows, using workaround
 # YAZI_CONFIG_HOME=~/src/dotfiles/config/yazi/
-def "config yazi" [] {
+export def "config yazi" [] {
     let config_dir = match $nu.os-info.name {
         "windows" => '~\AppData\Roaming\yazi' ,
         _ => "~/.config/yazi" ,
@@ -65,12 +65,12 @@ def "config yazi" [] {
     symlink --force ~/src/dotfiles/config/yazi/ $config_dir
 }
 
-def "config flowlauncher" [] {
+export def "config flowlauncher" [] {
     let config_dir = '~\AppData\Roaming\FlowLauncher'
     symlink --force ~/src/dotfiles/config/flowlauncher/ $config_dir
 }
 
-def "config pueue" [] {
+export def "config pueue" [] {
     let config_dir = match $nu.os-info.name {
         "windows" => '~\AppData\Roaming\pueue' ,
         "macos" => '~/Library/Application Support/pueue' ,
@@ -79,7 +79,7 @@ def "config pueue" [] {
     symlink --force ~/src/dotfiles/config/pueue/ $config_dir
 }
 
-def "config broot" [] {
+export def "config broot" [] {
     let broot_config_dir = match $nu.os-info.name {
         "windows" => '~\AppData\Roaming\dystroy\broot' ,
         _ => "~/.config/broot" ,
@@ -88,7 +88,7 @@ def "config broot" [] {
     symlink --force ~/src/dotfiles/config/broot $broot_config_dir
 }
 
-def "config bacon" [] {
+export def "config bacon" [] {
     let bacon_config_dir = match $nu.os-info.name {
         "windows" => '~\AppData\Roaming\dystroy\bacon\config' ,
         "macos" => '~/Library/Application Support/org.dystroy.bacon' ,
@@ -98,18 +98,21 @@ def "config bacon" [] {
     symlink --force ~/src/dotfiles/config/bacon $bacon_config_dir
 }
 
-def "config nushell" [] {
+export def "config nushell" [] {
     let nushell_dir = match $nu.os-info.name {
         "windows" => '~\AppData\Roaming\nushell' ,
         "macos" => "~/Library/Application Support/nushell" ,
         _ => "~/.config/nushell" ,
     }
     if not ($nushell_dir | path exists) { mkdir $nushell_dir }
-    symlink --force ~/src/dotfiles/env.nu ($nushell_dir | path join "env.nu")
-    symlink --force ~/src/dotfiles/config.nu ($nushell_dir | path join "config.nu")
+    if (not ('~/src/nushell-config' | path exists)) {
+        git clone https://github.com/francescelies/nushell-config ~/src/nushell-config
+        cd ~/src/nushell-config
+        just
+    }
 }
 
-def "config python" [] {
+export def "config python" [] {
     # uv
     if (which ^uv | is-empty ) {
         match $nu.os-info.name {
@@ -128,12 +131,12 @@ def "config python" [] {
     " | save -f ~/.pip/pip.conf
 }
 
-def "config yt-dlp" [] {
+export def "config yt-dlp" [] {
     let yt_dlp = "~/bin/yt-dlp" | path expand
     if (not ($yt_dlp | path exists)) { http get https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp | save -f $yt_dlp }
 }
 
-def "config keyd-remap" [] {
+export def "config keyd-remap" [] {
     if (not ('~/src/oss/keyd' | path exists)) {
         git clone https://github.com/rvaiya/keyd ~/src/oss/keyd
         cd ~/src/oss/keyd

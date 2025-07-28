@@ -3,7 +3,7 @@ set shell := ["nu", "-c"]
 alias b := bootstrap
 
 bootstrap: secret-nu-file
-  nu bootstrap.nu
+  nu toolkit.nu
   print $"Now you can e.g. (ansi lyu)just get-fedora-pkgs(ansi reset) or (ansi lyu)just get-debian-pkgs(ansi reset) or (ansi lyu)just get-windows-pkgs(ansi reset)"
   print $"Later on e.g. (ansi lyu)just get-rust-pkgs(ansi reset) and/or (ansi lyu)just rust-dev-pkgs(ansi reset)"
 
