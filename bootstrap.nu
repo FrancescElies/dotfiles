@@ -79,16 +79,16 @@ def "config pueue" [] {
     symlink --force ~/src/dotfiles/config/pueue/ $config_dir
 }
 
-def "config broot-bacon" [] {
-    # broot
+def "config broot" [] {
     let broot_config_dir = match $nu.os-info.name {
         "windows" => '~\AppData\Roaming\dystroy\broot' ,
         _ => "~/.config/broot" ,
     }
     if not ($broot_config_dir | path exists) { mkdir $broot_config_dir }
     symlink --force ~/src/dotfiles/config/broot $broot_config_dir
+}
 
-    # bacon
+def "config bacon" [] {
     let bacon_config_dir = match $nu.os-info.name {
         "windows" => '~\AppData\Roaming\dystroy\bacon\config' ,
         "macos" => '~/Library/Application Support/org.dystroy.bacon' ,
@@ -110,15 +110,27 @@ def "config nushell" [] {
 }
 
 def "config python" [] {
-  mkdir ~/.pip/
+    # uv
+    if (which ^uv | is-empty ) {
+        match $nu.os-info.name {
+            "windows" => { powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex" }
+            _ => { curl -LsSf https://astral.sh/uv/install.sh | sh },
+        }
+    }
 
-  # prevent pip from installing packages in the global installation
-  "
-  [install]
-  require-virtualenv = true
-  [uninstall]
-  require-virtualenv = true
-  " | save -f ~/.pip/pip.conf
+    # prevent pip from installing packages in the global installation
+    mkdir ~/.pip/
+    "
+    [install]
+    require-virtualenv = true
+    [uninstall]
+    require-virtualenv = true
+    " | save -f ~/.pip/pip.conf
+}
+
+def "config yt-dlp" [] {
+    let yt_dlp = "~/bin/yt-dlp" | path expand
+    if (not ($yt_dlp | path exists)) { http get https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp | save -f $yt_dlp }
 }
 
 def "config keyd-remap" [] {
@@ -153,34 +165,30 @@ export def main [] {
 
     symlink --force ~/src/dotfiles/.inputrc ~/.inputrc
 
-    # yt-dlp
-    let yt_dlp = "~/bin/yt-dlp" | path expand
-    if (not ($yt_dlp | path exists)) { http get https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp | save -f $yt_dlp }
-
-    config broot-bacon
+    config nushell
+    config python
+    config yt-dlp
+    config bacon
+    config broot
     config pueue
     config yazi
 
-    if $nu.os-info.name == "linux" {
-        config sway
-        config foot
-        config keyd-remap
-    }
-
-    if $nu.os-info.name == "windows" {
-        config glazewm
-        config flowlauncher
-    }
-
-    # uv
-    if (which ^uv | is-empty ) {
-        match $nu.os-info.name {
-            "windows" => { powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex" }
-            _ => { curl -LsSf https://astral.sh/uv/install.sh | sh },
+    match $nu.os-info.name {
+        "windows" => {
+            config glazewm
+            config flowlauncher
+        },
+        "linux" => {
+            config sway
+            config foot
+            config keyd-remap
         }
-    }
+        "macos" => {
 
-    config nushell
-    config python
+        },
+        _ => {
+
+        },
+    }
 }
 
