@@ -187,6 +187,7 @@ export def bootstrap [] {
             config foot
             # config keyd-remap
             config fonts
+            config nvim
         }
         "macos" => {
 
