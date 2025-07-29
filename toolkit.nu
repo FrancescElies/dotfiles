@@ -41,16 +41,19 @@ export def ask_yes_no [question: string] {
 
 
 export def "config glazewm" [] {
+    print $"(ansi purple_bold)config glazewm(ansi reset)"
     let config_dir = '~/.glzr/glazewm'
     symlink --force ~/src/dotfiles/config/glazewm/ $config_dir
 }
 
 export def "config foot" [] {
+    print $"(ansi purple_bold)config foot(ansi reset)"
     let config_dir = '~/.config/foot'
     symlink --force ~/src/dotfiles/config/foot/ $config_dir
 }
 
 export def "config sway" [] {
+    print $"(ansi purple_bold)config sway(ansi reset)"
     let config_dir = '~/.config/sway'
     symlink --force ~/src/dotfiles/config/sway/ $config_dir
 }
@@ -58,6 +61,7 @@ export def "config sway" [] {
 # broken on windows, using workaround
 # YAZI_CONFIG_HOME=~/src/dotfiles/config/yazi/
 export def "config yazi" [] {
+    print $"(ansi purple_bold)config yazi(ansi reset)"
     let config_dir = match $nu.os-info.name {
         "windows" => '~\AppData\Roaming\yazi' ,
         _ => "~/.config/yazi" ,
@@ -66,6 +70,7 @@ export def "config yazi" [] {
 }
 
 export def "config flowlauncher" [] {
+    print $"(ansi purple_bold)config flowlauncher(ansi reset)"
     let config_dir = '~\AppData\Roaming\FlowLauncher'
     symlink --force ~/src/dotfiles/config/flowlauncher/ $config_dir
 }
@@ -75,6 +80,7 @@ export def "config flowlauncher" [] {
 
 
 export def "config nushell" [] {
+    print $"(ansi purple_bold)config nushell(ansi reset)"
     if (not ('~/src/nushell-config' | path exists)) {
         git clone https://github.com/francescelies/nushell-config ~/src/nushell-config
         cd ~/src/nushell-config
@@ -83,6 +89,7 @@ export def "config nushell" [] {
 }
 
 export def "config python" [] {
+    print $"(ansi purple_bold)config python(ansi reset)"
     # uv
     if (which ^uv | is-empty ) {
         match $nu.os-info.name {
@@ -102,16 +109,18 @@ export def "config python" [] {
 }
 
 export def "config yt-dlp" [] {
+    print $"(ansi purple_bold)config yt-dlp(ansi reset)"
     let yt_dlp = "~/bin/yt-dlp" | path expand
     if (not ($yt_dlp | path exists)) { http get https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp | save -f $yt_dlp }
 }
 
 export def "config keyd-remap" [] {
+    print $"(ansi purple_bold)config keyd-remap(ansi reset)"
     if (not ('~/src/oss/keyd' | path exists)) {
         git clone https://github.com/rvaiya/keyd ~/src/oss/keyd
         cd ~/src/oss/keyd
         make
-        sudo make install
+        su -c "make install"
         "
 [ids]
 
