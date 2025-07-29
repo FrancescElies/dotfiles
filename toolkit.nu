@@ -1,5 +1,5 @@
 # Create a symlink
-export def symlink [
+def symlink [
     existing: path   # The existing file
     new_link_name: path  # The name of the symlink
     --force(-f)     # if target exists moves it to
@@ -30,7 +30,7 @@ export def symlink [
     }
 }
 
-export def ask_yes_no [question: string] {
+def ask_yes_no [question: string] {
     return (
         match (input $"(ansi purple_bold)($question)(ansi reset) [y/n]") {
           "y" | "yes" | "Y" => true,
@@ -91,7 +91,7 @@ export def "config nvim" [] {
     cd neovim
     make CMAKE_BUILD_TYPE=RelWithDebInfo
     print $"(ansi pi)neovim: make install(ansi reset)"
-    su -c "make install"
+    sudo make install
 }
 
 
@@ -109,7 +109,7 @@ export def "config fonts" [] {
     print $"(ansi purple_bold)config fonts(ansi reset)"
     ls config/fonts/ | where type == dir | each {
         print $"(ansi pi)cp -r ($in.name) /usr/local/share/fonts/(ansi reset)"
-        su -c $"cp -r ($in.name) /usr/local/share/fonts/"
+        sudo cp -r ($in.name) /usr/local/share/fonts/
     }
 }
 
@@ -122,6 +122,11 @@ export def "config python" [] {
             _ => { curl -LsSf https://astral.sh/uv/install.sh | sh },
         }
     }
+
+    # create home python virtual environment
+    cd ~
+    uv venv
+    uv pip install ...(open packages.toml | get python | transpose | get column0)
 
     # prevent pip from installing packages in the global installation
     mkdir ~/.pip/
@@ -145,7 +150,7 @@ export def "config keyd-remap" [] {
         git clone https://github.com/rvaiya/keyd ~/src/oss/keyd
         cd ~/src/oss/keyd
         make
-        su -c "make install"
+        sudo make install
         "
 [ids]
 
@@ -166,6 +171,36 @@ esc = capslock
 
 }
 
+export def "linux fix printer-samsung-M2026" [] {
+    print $"(ansi pi)linux fix printer-samsung-M2026(ansi reset)"
+    git clone https://github.com/francescElies/samsung-uld-copy
+    cd samsung-uld-copy
+    just
+}
+
+export def "linux fix wifi-after-sleep" [] {
+    print $"(ansi pi)linux fix wifi-after-sleep(ansi reset)"
+    su -c "cp fixes/wifi_rand_mac.conf /etc/NetworkManager/conf.d/"
+}
+
+export def "linux fix closed-laptop-lid-should-not-suspend" [] {
+  sudo mkdir /etc/systemd/logind.conf.d/
+  sudo cp fixes/ignore-closed-lid.conf /etc/systemd/logind.conf.d/ignore-closed-lid.conf
+}
+
+export def "rust packages" [] {
+    if (which ^cargo-binstall | is-empty ) { cargo install cargo-binstall }
+    ~/.cargo/bin/cargo binstall -y ...(open packages.toml | get rust-pkgs | transpose | get column0)
+    sudo cp ~/.cargo/bin/tldr  /usr/local/bin/
+    sudo cp ~/.cargo/bin/difft  /usr/local/bin/
+    sudo cp ~/.cargo/bin/btm   /usr/local/bin/
+    sudo cp ~/.cargo/bin/ouch  /usr/local/bin/
+}
+
+export def "rust dev-packages" [] {
+    ~/.cargo/bin/cargo binstall -y ...(open packages.toml | get rust-dev-pkgs | transpose | get column0)
+}
+
 export def bootstrap [] {
     mkdir ~/src/work
     mkdir ~/src/oss
@@ -179,18 +214,43 @@ export def bootstrap [] {
 
     match $nu.os-info.name {
         "windows" => {
+            if (which ^rustup | is-empty ) {
+                input $"(ansi purple_bold)Install https://rustup.rs/(ansi reset) once done press enter."
+            }
+            if (not (try { open src/os-this-machine.nu | str contains "use os-windows.nu *" } catch { false })) {
+                "use os-windows.nu *" | save --append src/os-this-machine.nu
+            }
             config glazewm
             config flowlauncher
+            sudo winget install --silent ...(open packages.toml | get windows | transpose | get column0)
         },
         "linux" => {
+            if (which ^rustup | is-empty ) {
+                curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+                ~/.cargo/bin/rustup component add llvm-tools rust-analyzer
+            }
+            if (not (try { open src/os-this-machine.nu | str contains "use os-linux.nu *" } catch { false })) {
+                "use os-linux.nu *" | save --append src/os-this-machine.nu
+            }
             config sway
             config foot
             # config keyd-remap
             config fonts
-            config nvim
+            sudo apt remove -y nano
+            sudo apt install -y ...(open packages.toml | get debian | transpose | get column0)
+            config nvim  # last might take long
         }
         "macos" => {
+            if (which ^rustup | is-empty ) {
+                curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+                ~/.cargo/bin/rustup component add llvm-tools rust-analyzer
+            }
+            if (not (try { open src/os-this-machine.nu | str contains "use os-mac.nu *" } catch { false })) {
+                "use os-mac.nu *" | save --append src/os-this-machine.nu
+            }
 
+            brew install ...(open packages.toml | get mac-brew | transpose | get column0)
+            brew install --cask ...(open packages.toml | get mac-brew-cask | transpose | get column0)
         },
         _ => {
 
