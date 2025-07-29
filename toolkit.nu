@@ -170,5 +170,3 @@ export def bootstrap [] {
         },
     }
 }
-
-export def main [] { help toolkit }
