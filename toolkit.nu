@@ -184,7 +184,7 @@ export def main [] {
         "linux" => {
             config sway
             config foot
-            config keyd-remap
+            # config keyd-remap
         }
         "macos" => {
 
