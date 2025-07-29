@@ -1,3 +1,6 @@
+const current_dir = path self .
+const packages_toml = ($current_dir | path join packages.toml)
+
 # Create a symlink
 def symlink [
     existing: path   # The existing file
@@ -126,7 +129,7 @@ export def "config python" [] {
     # create home python virtual environment
     cd ~
     uv venv
-    uv pip install ...(open packages.toml | get python | transpose | get column0)
+    uv pip install ...(open $packages_toml | get python | transpose | get column0)
 
     # prevent pip from installing packages in the global installation
     mkdir ~/.pip/
@@ -190,7 +193,7 @@ export def "linux fix closed-laptop-lid-should-not-suspend" [] {
 
 export def "rust packages" [] {
     if (which ^cargo-binstall | is-empty ) { cargo install cargo-binstall }
-    ~/.cargo/bin/cargo binstall -y ...(open packages.toml | get rust-pkgs | transpose | get column0)
+    ~/.cargo/bin/cargo binstall -y ...(open $packages_toml | get rust-pkgs | transpose | get column0)
     sudo cp ~/.cargo/bin/tldr  /usr/local/bin/
     sudo cp ~/.cargo/bin/difft  /usr/local/bin/
     sudo cp ~/.cargo/bin/btm   /usr/local/bin/
@@ -198,7 +201,7 @@ export def "rust packages" [] {
 }
 
 export def "rust dev-packages" [] {
-    ~/.cargo/bin/cargo binstall -y ...(open packages.toml | get rust-dev-pkgs | transpose | get column0)
+    ~/.cargo/bin/cargo binstall -y ...(open $packages_toml | get rust-dev-pkgs | transpose | get column0)
 }
 
 export def bootstrap [] {
@@ -222,7 +225,7 @@ export def bootstrap [] {
             }
             config glazewm
             config flowlauncher
-            sudo winget install --silent ...(open packages.toml | get windows | transpose | get column0)
+            sudo winget install --silent ...(open $packages_toml  | get windows | transpose | get column0)
         },
         "linux" => {
             if (which ^rustup | is-empty ) {
