@@ -70,33 +70,9 @@ export def "config flowlauncher" [] {
     symlink --force ~/src/dotfiles/config/flowlauncher/ $config_dir
 }
 
-export def "config pueue" [] {
-    let config_dir = match $nu.os-info.name {
-        "windows" => '~\AppData\Roaming\pueue' ,
-        "macos" => '~/Library/Application Support/pueue' ,
-        _ => "~/.config/pueue" ,
     }
-    symlink --force ~/src/dotfiles/config/pueue/ $config_dir
 }
 
-export def "config broot" [] {
-    let broot_config_dir = match $nu.os-info.name {
-        "windows" => '~\AppData\Roaming\dystroy\broot' ,
-        _ => "~/.config/broot" ,
-    }
-    if not ($broot_config_dir | path exists) { mkdir $broot_config_dir }
-    symlink --force ~/src/dotfiles/config/broot $broot_config_dir
-}
-
-export def "config bacon" [] {
-    let bacon_config_dir = match $nu.os-info.name {
-        "windows" => '~\AppData\Roaming\dystroy\bacon\config' ,
-        "macos" => '~/Library/Application Support/org.dystroy.bacon' ,
-        _ => "~/.config/bacon" ,
-    }
-    if not ($bacon_config_dir | path exists) { mkdir $bacon_config_dir }
-    symlink --force ~/src/dotfiles/config/bacon $bacon_config_dir
-}
 
 export def "config nushell" [] {
     if (not ('~/src/nushell-config' | path exists)) {
@@ -165,9 +141,6 @@ export def bootstrap [] {
     config nushell
     config python
     config yt-dlp
-    config bacon
-    config broot
-    config pueue
     config yazi
 
     match $nu.os-info.name {
