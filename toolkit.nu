@@ -75,6 +75,12 @@ export def "config flowlauncher" [] {
     symlink --force ~/src/dotfiles/config/flowlauncher/ $config_dir
 }
 
+export def "config nvim" [] {
+    print $"(ansi purple_bold)config nvim(ansi reset)"
+    if (not ('~/src/nushell-config' | path exists)) {
+        git clone https://github.com/francescelies/kickstart.nvim ~/src/kickstart.nvim
+        cd ~/src/kickstart.nvim
+        nu bootstrap.nu
     }
 }
 
@@ -85,6 +91,14 @@ export def "config nushell" [] {
         git clone https://github.com/francescelies/nushell-config ~/src/nushell-config
         cd ~/src/nushell-config
         nu bootstrap.nu
+    }
+}
+
+export def "config fonts" [] {
+    print $"(ansi purple_bold)config fonts(ansi reset)"
+    ls config/fonts/ | where type == dir | each {
+        print $"(ansi pi)cp -r ($in.name) /usr/local/share/fonts/(ansi reset)"
+        su -c $"cp -r ($in.name) /usr/local/share/fonts/"
     }
 }
 
@@ -161,6 +175,7 @@ export def bootstrap [] {
             config sway
             config foot
             # config keyd-remap
+            config fonts
         }
         "macos" => {
 
