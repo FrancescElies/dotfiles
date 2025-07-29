@@ -99,16 +99,10 @@ export def "config bacon" [] {
 }
 
 export def "config nushell" [] {
-    let nushell_dir = match $nu.os-info.name {
-        "windows" => '~\AppData\Roaming\nushell' ,
-        "macos" => "~/Library/Application Support/nushell" ,
-        _ => "~/.config/nushell" ,
-    }
-    if not ($nushell_dir | path exists) { mkdir $nushell_dir }
     if (not ('~/src/nushell-config' | path exists)) {
         git clone https://github.com/francescelies/nushell-config ~/src/nushell-config
         cd ~/src/nushell-config
-        just
+        nu bootstrap.nu
     }
 }
 
@@ -162,7 +156,7 @@ esc = capslock
 
 }
 
-export def main [] {
+export def bootstrap [] {
     mkdir ~/src/work
     mkdir ~/src/oss
 
@@ -195,3 +189,4 @@ export def main [] {
     }
 }
 
+export def main [] { help toolkit }

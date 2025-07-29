@@ -12,7 +12,8 @@ Install [just](https://github.com/casey/just?tab=readme-ov-file#packages)
 mkdir ~/src
 git clone https://github.com/FrancescElies/dotfiles ~/src/dotfiles
 cd ~/src/dotfiles
-just bootstrap
+overlay use toolkit
+toolkit bootstrap
 ```
 
 ## Links
