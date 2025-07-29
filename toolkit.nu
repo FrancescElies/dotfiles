@@ -77,21 +77,32 @@ export def "config flowlauncher" [] {
 
 export def "config nvim" [] {
     print $"(ansi purple_bold)config nvim(ansi reset)"
-    if (not ('~/src/nushell-config' | path exists)) {
-        git clone https://github.com/francescelies/kickstart.nvim ~/src/kickstart.nvim
-        cd ~/src/kickstart.nvim
-        nu bootstrap.nu
+    cd ~/src
+    if (not ('nushell-config' | path exists)) {
+        git clone https://github.com/francescelies/kickstart.nvim
     }
+    cd kickstart.nvim
+    nu bootstrap.nu
+
+    cd ~/src
+    if (not ('neovim' | path exists)) {
+        git clone https://github.com/neovim/neovim --depth 1
+    }
+    cd neovim
+    make CMAKE_BUILD_TYPE=RelWithDebInfo
+    print $"(ansi pi)neovim: make install(ansi reset)"
+    su -c "make install"
 }
 
 
 export def "config nushell" [] {
     print $"(ansi purple_bold)config nushell(ansi reset)"
-    if (not ('~/src/nushell-config' | path exists)) {
-        git clone https://github.com/francescelies/nushell-config ~/src/nushell-config
-        cd ~/src/nushell-config
-        nu bootstrap.nu
+    cd ~/src
+    if (not ('nushell-config' | path exists)) {
+        git clone https://github.com/francescelies/nushell-config
     }
+    cd ~/src/nushell-config
+    nu bootstrap.nu
 }
 
 export def "config fonts" [] {
