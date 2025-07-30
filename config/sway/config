@@ -4,6 +4,18 @@
 #
 # Read `man 5 sway` for a complete reference.
 
+# sway waybar wofi foot wl-clipboard mako swaybg swayidle swaylock-effects brightnessctl wlsunset
+# blueman or bluetuith for bluetooth
+# nm-applet or network-manager-applet
+# wlsunset something like redshift
+# fuzzel launcher
+# waybar status bar
+# swaylock-effects wallparer and screen locker
+# mako-notifier for notifications
+# swayidle for screen blanking, locking, suspending
+# brightnessctl control screen brightness
+
+
 ### Variables
 #
 # Logo key. Use Mod1 for Alt.
@@ -22,6 +34,8 @@ set $term_alt foot
 # Note: pass the final command to swaymsg so that the resulting window can be opened
 # on the original workspace that the command was run on.
 set $menu dmenu_path | dmenu | xargs swaymsg exec --
+# set $menu wofi --show drun
+# set $menu fuzzel
 
 include /etc/sway/config-vars.d/*
 
