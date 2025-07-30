@@ -128,7 +128,9 @@ export def "config python" [] {
 
     # create home python virtual environment
     cd ~
-    uv venv
+    if not ('.venv' | path exists) {
+        uv venv
+    }
     uv pip install ...(open $packages_toml | get python | transpose | get column0)
 
     # prevent pip from installing packages in the global installation
@@ -151,27 +153,12 @@ export def "config keyd-remap" [] {
     print $"(ansi purple_bold)config keyd-remap(ansi reset)"
     if (not ('~/src/oss/keyd' | path exists)) {
         git clone https://github.com/rvaiya/keyd ~/src/oss/keyd
-        cd ~/src/oss/keyd
-        make
-        sudo make install
-        "
-[ids]
-
-*
-
-[main]
-
-# Maps capslock to escape when pressed and control when held.
-capslock = overload(control, esc)
-
-# Remaps the escape key to capslock
-esc = capslock
-" | sudo tee /etc/keyd/default.conf
-
-        sudo systemctl enable --now keyd
     }
-
-
+    cd ~/src/oss/keyd
+    make
+    sudo make install
+    sudo cp ~/src/dotfiles/config/keyd/default.conf /etc/keyd/default.conf
+    sudo systemctl enable --now keyd
 }
 
 export def "linux fix printer-samsung-M2026" [] {
@@ -237,7 +224,7 @@ export def bootstrap [] {
             }
             config sway
             config foot
-            # config keyd-remap
+            config keyd-remap
             config fonts
             sudo apt remove -y nano
             sudo apt install -y ...(open packages.toml | get debian | transpose | get column0)
