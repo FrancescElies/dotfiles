@@ -161,6 +161,31 @@ export def "config keyd-remap" [] {
     sudo systemctl enable --now keyd
 }
 
+export def "linux config terminal" [] {
+    # rm -rf ~/.config/wezterm
+    # rm -rf ~/.config/zellij
+    ln -snf ("./config/alacritty" | path expand) ~/.config/alacritty
+    ln -snf ("./config/wezterm" | path expand) ~/.config/wezterm
+    ln -snf ("./config/zellij" | path expand) ~/.config/zellij
+}
+
+export def "macos config terminal" [] {
+    # rm -rf ~/.config/wezterm
+    # rm -rf ~/.config/zellij
+    ln -shf ("./config/alacritty" | path expand) ~/.config/alacritty
+    ln -shf ("./config/wezterm" | path expand) ~/.config/wezterm
+    ln -shf ("./config/zellij" | path expand) ~/.config/zellij
+}
+
+export def "windows config terminal" [] {
+    rm -rf ~/.config/wezterm
+    mklink /j ("~/.config/wezterm" | path expand)  ('~/src/dotfiles/config/wezterm' | path expand --strict)
+    mklink /j ($env.APPDATA | path join "alacritty" | path expand)  ('~/src/dotfiles/alacritty' | path expand --strict)
+
+    nu ./windows-terminal/install.nu
+}
+
+
 export def "linux fix printer-samsung-M2026" [] {
     print $"(ansi pi)linux fix printer-samsung-M2026(ansi reset)"
     git clone https://github.com/francescElies/samsung-uld-copy
@@ -213,6 +238,7 @@ export def bootstrap [] {
             config glazewm
             config flowlauncher
             sudo winget install --silent ...(open $packages_toml  | get windows | transpose | get column0)
+            windows config terminal
         },
         "linux" => {
             if (which ^rustup | is-empty ) {
@@ -229,6 +255,7 @@ export def bootstrap [] {
             sudo apt remove -y nano
             sudo apt install -y ...(open packages.toml | get debian | transpose | get column0)
             config nvim  # last might take long
+            linux config terminal
         }
         "macos" => {
             if (which ^rustup | is-empty ) {
@@ -241,6 +268,7 @@ export def bootstrap [] {
 
             brew install ...(open packages.toml | get mac-brew | transpose | get column0)
             brew install --cask ...(open packages.toml | get mac-brew-cask | transpose | get column0)
+            macos config terminal
         },
         _ => {
 
