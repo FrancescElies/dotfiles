@@ -246,4 +246,5 @@ export def bootstrap [] {
 
         },
     }
+    rust packages
 }
