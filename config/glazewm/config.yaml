@@ -136,9 +136,6 @@ window_rules:
       - window_process: { equals: "Flow.Launcher" }
         window_title: { equals: "Settings" }
       - window_process: { equals: "Max" }
-        window_title: { equals: "Max Console" }
-      - window_process: { equals: "Max" }
-        window_title: { equals: "__test_manager__" }
   - commands: ['ignore']
     match:
       # Ignores any Zebar windows.
