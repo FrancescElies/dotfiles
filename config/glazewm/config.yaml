@@ -44,14 +44,14 @@ gaps:
   scale_with_dpi: true
 
   # Gap between adjacent windows.
-  inner_gap: '0px'
+  inner_gap: '1px'
 
   # Gap between windows and the screen edge.
   outer_gap:
     top: '32px'
-    right: '0px'
-    bottom: '0px'
-    left: '0px'
+    right: '1px'
+    bottom: '1px'
+    left: '1px'
 
 window_effects:
   # Visual effects to apply to the focused window.
@@ -84,7 +84,7 @@ window_effects:
   # Visual effects to apply to non-focused windows.
   other_windows:
     border:
-      enabled: true
+      enabled: false
       color: '#a1a1a1'
     hide_title_bar:
       enabled: false
