@@ -74,8 +74,15 @@ export def "config yazi" [] {
 
 export def "config flowlauncher" [] {
     print $"(ansi purple_bold)config flowlauncher(ansi reset)"
-    let config_dir = '~\AppData\Roaming\FlowLauncher'
-    symlink --force ~/src/dotfiles/config/flowlauncher/ $config_dir
+    let config_dir = '~\AppData\Roaming\FlowLauncher' | path expand
+    let settings_file = $config_dir | path join Settings/Settings.json
+    if ($settings_file | path exists) {
+        let settings = open  --raw $settings_file
+        ( $settings
+        | str replace '"Hotkey": "Alt \u002B Space"' '"Hotkey": "Alt \u002B D"'
+        | save -f $settings_file
+        )
+    }
 }
 
 export def "config nvim" [] {

@@ -167,7 +167,7 @@ avahi-utils = "publish and discover services, e.g. printers"
 #    https://github.com/microsoft/winget-pkgs/
 "ArtifexSoftware.mutool" = "lightweight pdf viewer and toolkit"
 "7zip.7zip" = ""
-"Flow Launcher" = "quick file search and app launcher"
+"Flow-Launcher.Flow-Launcher" = "quick file search and app launcher"
 "voidtools.everything" = "file indexer and search"
 "FiloSottile.age" = "modern secure encryption tool"
 "Audacity.Audacity" = ""

@@ -1,7 +1,0 @@
-*.bak
-history.json
-cache/
-logs/
-settings/multipletopmostrecord.json
-settings/plugins/
-settings/userselectedrecord.json
