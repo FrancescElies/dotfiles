@@ -1,10 +1,16 @@
-# Default config for sway
-#
-# Copy this to ~/.config/sway/config and edit it to your liking.
-#
 # Read `man 5 sway` for a complete reference.
 
-# sudo apt install sway waybar wofi foot wl-clipboard mako swaybg swayidle swaylock-effects brightnessctl wlsunset zathura
+# Examples:
+#
+#
+# SwayFx Compositor: https://github.com/WillPower3309/swayfx
+# https://github.com/Ruixi-rebirth/sway-dotfiles/blob/main/sway/config
+# https://github.com/aruyu/sway-dotfiles/
+
+# sudo apt install foot sway waybar
+# sudo apt install wofi mako swaybg swayidle swaylock-effects
+# sudo apt install wl-clipboard brightnessctl wlsunset zathura wf-recorder
+
 # blueman or bluetuith for bluetooth
 # nm-applet or network-manager-applet
 # wlsunset something like redshift
@@ -16,28 +22,30 @@
 # brightnessctl control screen brightness
 
 
-### Variables
 #
-# Logo key. Use Mod1 for Alt.
+# Variables
+#
+# Mod4 for Logo key
 # set $mod Mod4
+# Mod1 for Alt.
 set $mod Mod1
 # Home row direction keys, like vim
 set $left h
 set $down j
 set $up k
 set $right l
-# Your preferred terminal emulator
-set $term_main alacritty
-set $term_alt foot
+# terminal emulator
+set $term alacritty
+# set $term foot
 
-# Your preferred application launcher
-# Note: pass the final command to swaymsg so that the resulting window can be opened
+# NOTE: pass the final command to swaymsg so that the resulting window can be opened
 # on the original workspace that the command was run on.
 set $menu dmenu_path | dmenu | xargs swaymsg exec --
 # set $menu wofi --show drun
 # set $menu fuzzel
 
 include /etc/sway/config-vars.d/*
+include /etc/sway/config.d/*
 include ~/.config/sway/*.swayconf
 
 ### Output configuration
@@ -98,4 +106,3 @@ bar {
     }
 }
 
-include /etc/sway/config.d/*
