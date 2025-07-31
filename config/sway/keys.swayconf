@@ -8,16 +8,6 @@
 
     # Kill focused window
     bindsym $mod+Shift+q kill
-    bindsym $mod+q exec swaylock \
-                          --color 11111b \
-                          --ignore-empty-password \
-                          --indicator-radius 100 \
-                          --indicator-thickness 7 \
-                          --ring-color bb00cc \
-                          --key-hl-color 880033 \
-                          --line-color 00000000 \
-                          --inside-color 00000088 \
-                          --separator-color 00000000 \
 
     # Start your launcher
     bindsym $mod+d exec $menu

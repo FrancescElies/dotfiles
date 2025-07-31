@@ -6,10 +6,12 @@
 # SwayFx Compositor: https://github.com/WillPower3309/swayfx
 # https://github.com/Ruixi-rebirth/sway-dotfiles/blob/main/sway/config
 # https://github.com/aruyu/sway-dotfiles/
+# https://github.com/Alexays/Waybar/wiki/Examples
 
-# sudo apt install foot sway waybar
-# sudo apt install wofi mako swaybg swayidle swaylock-effects
-# sudo apt install wl-clipboard brightnessctl wlsunset zathura wf-recorder
+# sudo apt install -y foot sway waybar
+# sudo apt install -y wofi swaybg swayidle swaylock-effects
+# sudo apt install -y wl-clipboard brightnessctl wlsunset zathura wf-recorder
+# sudo apt install -y mako-notifier blueman redshift-gtk
 
 # blueman or bluetuith for bluetooth
 # nm-applet or network-manager-applet
@@ -47,6 +49,18 @@ set $menu dmenu_path | dmenu | xargs swaymsg exec --
 include /etc/sway/config-vars.d/*
 include /etc/sway/config.d/*
 include ~/.config/sway/*.swayconf
+
+#startup programs
+#exec udiskie &
+exec redshift-gtk
+#exec nm-applet --indicator
+exec blueman-applet
+exec mako
+# exec waybar
+
+#input 1:1:AT_Translated_Set_2_keyboard xkb_numlock enable
+#this remains unused until I can copy files/images while it runs
+#exec wl-clipboard-history -t
 
 ### Output configuration
 #
