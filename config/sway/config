@@ -4,7 +4,7 @@
 #
 # Read `man 5 sway` for a complete reference.
 
-# sway waybar wofi foot wl-clipboard mako swaybg swayidle swaylock-effects brightnessctl wlsunset
+# sudo apt install sway waybar wofi foot wl-clipboard mako swaybg swayidle swaylock-effects brightnessctl wlsunset zathura
 # blueman or bluetuith for bluetooth
 # nm-applet or network-manager-applet
 # wlsunset something like redshift
