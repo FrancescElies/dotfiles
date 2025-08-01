@@ -19,6 +19,8 @@ yt-dlp = "audo video downloader"
 # memray
 python-benedict = "dict subclass with keylist/keypath support, built-in I/O operations (base64, csv, html, ini, json, pickle, plist, query-string, toml, xls, xml, yaml), s3 support and many utilities."
 
+# charmbracelet/crush
+
 [rust-pkgs]
 aichat = "LLM CLI tool"
 # go install github.com/sst/opencode@v0.0.52
