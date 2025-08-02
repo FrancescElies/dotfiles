@@ -57,8 +57,8 @@ export def "config foot" [] {
 
 export def "config sway" [] {
     print $"(ansi purple_bold)config sway(ansi reset)"
-    let config_dir = '~/.config/sway'
-    symlink --force ~/src/dotfiles/config/sway/ $config_dir
+    symlink --force ~/src/dotfiles/config/sway/ ~/.config/sway
+    symlink --force ~/src/dotfiles/config/fuzzel/ ~/.config/fuzzel
 }
 
 # broken on windows, using workaround

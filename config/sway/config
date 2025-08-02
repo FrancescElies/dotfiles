@@ -52,9 +52,9 @@ set $term alacritty
 
 # NOTE: pass the final command to swaymsg so that the resulting window can be opened
 # on the original workspace that the command was run on.
-set $menu dmenu_path | dmenu | xargs swaymsg exec --
+# set $menu dmenu_path | dmenu | xargs swaymsg exec --
 # set $menu wofi --show drun
-# set $menu fuzzel
+set $menu fuzzel
 
 include /etc/sway/config-vars.d/*
 include ~/.config/sway/*.swayconf
@@ -64,8 +64,18 @@ include ~/.config/sway/*.swayconf
 exec redshift-gtk
 #exec nm-applet --indicator
 exec blueman-applet
+# Notification daemon
 exec mako
 # exec waybar
+# exec dbus-run-session -- sway
+exec nm-applet
+exec waybar
+exec wl-paste --watch clipman store
+# Auto display management
+exec kanshi
+
+
+font pango:JetBrainsMonoNerdFontt 10
 
 #input 1:1:AT_Translated_Set_2_keyboard xkb_numlock enable
 #this remains unused until I can copy files/images while it runs
@@ -145,9 +155,8 @@ bar {
     # mouse button for dragging.
     floating_modifier $mod normal
 
-    # Reload the configuration file
+    # Reload configuration
     bindsym $mod+Shift+c reload
-
     # Exit sway (logs you out of your Wayland session)
     bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'swaymsg exit'
 #
@@ -245,7 +254,8 @@ mode "resize" {
 # Bindings
 #
     bindsym Print  exec --no-startup-id   grimshot --notify  save area ~/Pictures/$(date "+%Y-%m-%d"T"%H:%M:%S_no_watermark").png
-    bindsym Control+Print exec --no-startup-id   grimshot --notify  copy area
+    bindsym $mod+Print exec --no-startup-id   grimshot --notify  copy area
+	# bindsym Print exec grim -g "$(slurp)" - | wl-copy
 
 #
 # switch between workspaces
@@ -254,6 +264,34 @@ mode "resize" {
     bindsym $mod+slash workspace back_and_forth
     bindsym $mod+comma workspace prev
     bindsym $mod+period workspace next
+
+# Volume keys (requires `pamixer`)
+bindsym XF86AudioRaiseVolume exec pamixer -i 5
+bindsym XF86AudioLowerVolume exec pamixer -d 5
+bindsym XF86AudioMute exec pamixer -t
+
+# Brightness (requires `brightnessctl`)
+bindsym XF86MonBrightnessUp exec brightnessctl set +10%
+bindsym XF86MonBrightnessDown exec brightnessctl set 10%-
+
+# Lock screen (requires swaylock)
+bindsym $mod+Shift+x exec swaylock --color 000000
+
+# Clipboard history (requires clipman)
+bindsym $mod+Shift+slash exec clipman pick --tool fuzzel
+
+# #!/bin/sh
+# choice=$(echo -e "lock\nlogout\nsuspend\nreboot\nshutdown" | fuzzel)
+#
+# case "$choice" in
+#   lock) swaylock --color 000000 ;;
+#   logout) swaymsg exit ;;
+#   suspend) systemctl suspend ;;
+#   reboot) systemctl reboot ;;
+#   shutdown) systemctl poweroff ;;
+# esac
+#
+# bindsym $mod+Shift+o exec ~/.config/sway/power.sh
 
 include /etc/sway/config.d/*
 
