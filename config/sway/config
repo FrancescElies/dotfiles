@@ -69,13 +69,13 @@ exec mako
 # exec waybar
 # exec dbus-run-session -- sway
 exec nm-applet
-exec waybar
+# exec waybar
 exec wl-paste --watch clipman store
 # Auto display management
 exec kanshi
 
 
-font pango:JetBrainsMonoNerdFontt 10
+# font pango:JetBrainsMonoNerdFont 10
 
 #input 1:1:AT_Translated_Set_2_keyboard xkb_numlock enable
 #this remains unused until I can copy files/images while it runs
@@ -280,18 +280,8 @@ bindsym $mod+Shift+x exec swaylock --color 000000
 # Clipboard history (requires clipman)
 bindsym $mod+Shift+slash exec clipman pick --tool fuzzel
 
-# #!/bin/sh
-# choice=$(echo -e "lock\nlogout\nsuspend\nreboot\nshutdown" | fuzzel)
-#
-# case "$choice" in
-#   lock) swaylock --color 000000 ;;
-#   logout) swaymsg exit ;;
-#   suspend) systemctl suspend ;;
-#   reboot) systemctl reboot ;;
-#   shutdown) systemctl poweroff ;;
-# esac
-#
-# bindsym $mod+Shift+o exec ~/.config/sway/power.sh
+
+bindsym $mod+Shift+o exec ~/.config/fuzzel/fuzzel-logout-menu.nu
 
 include /etc/sway/config.d/*
 
