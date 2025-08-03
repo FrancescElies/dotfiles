@@ -13,20 +13,21 @@
 # sudo apt install -y wl-clipboard brightnessctl wlsunset zathura wf-recorder
 # sudo apt install -y mako-notifier blueman redshift-gtk
 
+# https://github.com/swaywm/sway/wiki
+#
 # Terminal           : alacritty, foot
-# Launcher           : rofi-wayland
+# Launcher           : fuzzel
 # Screenshot tools   : grim, slurp, wl-copy
 # Clipboard          : wl-clipboard, clipman
 # Volume             : pamixer
 # Brightness         : brightnessctl
-# Bar                : waybar
+# Bar                : https://github.com/shdown/luastatus, https://git.sr.ht/~rkintzi/statusbar
 # Notifications      : mako
 # Display auto-config: kanshi
 
 # Bluetooth: blueman or bluetuith
 # nm-applet or network-manager-applet
 # wlsunset something like redshift
-# fuzzel launcher
 # waybar status bar
 # swaylock-effects wallparer and screen locker
 # mako-notifier for notifications
@@ -67,7 +68,9 @@ exec nm-applet
 # exec waybar
 exec wl-paste --watch clipman store
 # Auto display management
-exec kanshi
+# https://gitlab.com/w0lff/shikane - cargo install shikane
+# exec shikane
+# exec kanshi
 
 
 # font pango:JetBrainsMonoNerdFont 10
@@ -273,6 +276,7 @@ bindsym XF86MonBrightnessDown exec brightnessctl set 10%-
 bindsym $mod+Shift+x exec swaylock --color 000000
 
 # Clipboard history (requires clipman)
+#    test it on the cli: fuzzel --no-config --prompt "Test ❯" --lines 5
 bindsym $mod+Shift+slash exec clipman pick --tool fuzzel
 
 
