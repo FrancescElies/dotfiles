@@ -13,20 +13,18 @@
 
 # https://github.com/swaywm/sway/wiki
 #
-# Terminal           : alacritty, foot
-# Launcher           : fuzzel
-# Screenshot tools   : grim, slurp, wl-copy
-# Clipboard          : wl-clipboard, clipman
-# Volume             : pamixer
-# Brightness         : brightnessctl, wlsunset (redshift)
-# Bar                : https://github.com/shdown/luastatus, https://git.sr.ht/~rkintzi/statusbar
-# Notifications      : mako
-# Display auto-config: kanshi
-
-# Bluetooth: blueman or bluetuith
-# nm-applet or network-manager-applet
-#
-# swayidle for screen blanking, locking, suspending
+# Terminal             : alacritty, foot
+# Launcher             : fuzzel
+# Screenshot tools     : grim, slurp, wl-copy
+# Clipboard            : wl-clipboard, clipman
+# Volume               : pamixer
+# Brightness           : brightnessctl, wlsunset (redshift)
+# Bar                  : https://github.com/shdown/luastatus, https://git.sr.ht/~rkintzi/statusbar
+# Notifications        : mako
+# Display auto-config  : kanshi
+# Wifi                 : nmtui, nmcli radio wifi off/on, nmcli wifi list, nmcli wifi connect SSID
+# Bluetooth            : blueman or bluetuith
+# Screen lock, suspend : swayidle
 
 
 #
