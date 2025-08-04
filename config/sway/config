@@ -6,10 +6,8 @@
 # SwayFx Compositor: https://github.com/WillPower3309/swayfx
 # https://github.com/Ruixi-rebirth/sway-dotfiles/blob/main/sway/config
 # https://github.com/aruyu/sway-dotfiles/
-# https://github.com/Alexays/Waybar/wiki/Examples
 
-# sudo apt install -y foot sway waybar
-# sudo apt install -y wofi swaybg swayidle swaylock-effects
+# sudo apt install -y foot sway swayidle
 # sudo apt install -y wl-clipboard brightnessctl wlsunset zathura wf-recorder
 # sudo apt install -y mako-notifier blueman redshift-gtk
 
@@ -20,19 +18,15 @@
 # Screenshot tools   : grim, slurp, wl-copy
 # Clipboard          : wl-clipboard, clipman
 # Volume             : pamixer
-# Brightness         : brightnessctl
+# Brightness         : brightnessctl, wlsunset (redshift)
 # Bar                : https://github.com/shdown/luastatus, https://git.sr.ht/~rkintzi/statusbar
 # Notifications      : mako
 # Display auto-config: kanshi
 
 # Bluetooth: blueman or bluetuith
 # nm-applet or network-manager-applet
-# wlsunset something like redshift
-# waybar status bar
-# swaylock-effects wallparer and screen locker
-# mako-notifier for notifications
+#
 # swayidle for screen blanking, locking, suspending
-# brightnessctl control screen brightness
 
 
 #
@@ -49,7 +43,6 @@ set $term alacritty
 # NOTE: pass the final command to swaymsg so that the resulting window can be opened
 # on the original workspace that the command was run on.
 # set $menu dmenu_path | dmenu | xargs swaymsg exec --
-# set $menu wofi --show drun
 set $menu fuzzel
 
 include /etc/sway/config-vars.d/*
