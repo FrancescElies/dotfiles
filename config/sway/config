@@ -48,14 +48,14 @@ include ~/.config/sway/*.swayconf
 
 #startup programs
 #exec udiskie &
-exec redshift-gtk
+# exec redshift-gtk
 #exec nm-applet --indicator
 exec blueman-applet
 # Notification daemon
 exec mako
 # exec waybar
 # exec dbus-run-session -- sway
-exec nm-applet
+# exec nm-applet
 # exec waybar
 exec wl-paste --watch clipman store
 # Auto display management
