@@ -130,6 +130,7 @@ bar {
     bindsym $mod+Shift+q kill
     # Start your launcher
     bindsym $mod+d exec $menu
+    bindsym $mod+Shift+d exec ~/.config/sway/scripts/custom-actions.nu
 
     # Drag floating windows by holding down $mod and left mouse button.
     # Resize them with right mouse button + $mod.
@@ -142,7 +143,7 @@ bar {
     bindsym $mod+Shift+c reload
     # Exit sway (logs you out of your Wayland session)
     # bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'swaymsg exit'
-	bindsym $mod+Shift+e exec ~/.config/sway/scripts/logout-menu.nu
+    bindsym $mod+Shift+e exec ~/.config/sway/scripts/logout-menu.nu
 #
 # Moving around:
 #
@@ -239,7 +240,7 @@ mode "resize" {
 #
     bindsym Print  exec --no-startup-id   grimshot --notify  save area ~/Pictures/$(date "+%Y-%m-%d"T"%H:%M:%S_no_watermark").png
     bindsym $mod+Print exec --no-startup-id   grimshot --notify  copy area
-	# bindsym Print exec grim -g "$(slurp)" - | wl-copy
+    # bindsym Print exec grim -g "$(slurp)" - | wl-copy
 
 #
 # switch between workspaces
@@ -265,4 +266,4 @@ bindsym $mod+Shift+slash exec clipman pick --tool bemenu
 
 include /etc/sway/config.d/*
 
-# vi: ft=swayconfig shiftwidth=4
+# vi: ft=swayconfig shiftwidth=4 tabstop=4 expandtab

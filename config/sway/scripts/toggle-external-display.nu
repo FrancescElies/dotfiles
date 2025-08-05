@@ -1,3 +1,5 @@
+#!/usr/bin/env nu
+
 let displays = swaymsg -t get_outputs -r | from json
 let active_displays =  $displays | where $it.active
 let inactive_displays = $displays | where not $it.active
