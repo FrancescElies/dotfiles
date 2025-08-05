@@ -141,7 +141,8 @@ bar {
     # Reload configuration
     bindsym $mod+Shift+c reload
     # Exit sway (logs you out of your Wayland session)
-    bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'swaymsg exit'
+    # bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'swaymsg exit'
+	bindsym $mod+Shift+e exec ~/.config/sway/scripts/logout-menu.nu
 #
 # Moving around:
 #
@@ -261,8 +262,6 @@ bindsym XF86MonBrightnessDown exec brightnessctl set 10%-
 bindsym $mod+Shift+x exec swaylock --color 000000
 
 bindsym $mod+Shift+slash exec clipman pick --tool bemenu
-
-bindsym $mod+Shift+o exec ~/.config/sway/scripts/logout-menu.nu
 
 include /etc/sway/config.d/*
 
