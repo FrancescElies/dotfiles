@@ -18,8 +18,9 @@
 # Bar                  : https://github.com/shdown/luastatus, https://git.sr.ht/~rkintzi/statusbar
 # Notifications        : mako
 # Display auto-config  : kanshi, https://gitlab.com/w0lff/shikane - cargo install shikane
-# Wifi                 : nmtui, nmcli radio wifi off/on, nmcli wifi list, nmcli wifi connect SSID
-# Bluetooth            : blueman or bluetuith
+# Wifi                 : impala, nmtui,
+#                        nmcli radio wifi off/on, nmcli wifi list, nmcli wifi connect SSID
+# Bluetooth            : blueman, bluetui or bluetuith
 # Screen lock, suspend : swayidle
 
 
@@ -47,7 +48,6 @@ include ~/.config/sway/*.swayconf
 #exec udiskie &
 # exec redshift-gtk
 #exec nm-applet --indicator
-exec blueman-applet
 # Notification daemon
 exec mako
 # exec dbus-run-session -- sway
