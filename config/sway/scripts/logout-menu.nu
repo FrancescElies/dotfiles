@@ -1,10 +1,10 @@
 #!/usr/bin/env nu
 
-let action = [ logout reboot shutdown suspend ] | to text | bemenu
+let action = [ lock logout shutdown reboot ] | to text | bemenu
 
 match $action {
-    suspend => { swaylock --color 000000 },
-    reboot => { systemctl reboot },
-    shutdown => { systemctl poweroff },
+    lock => { swaylock --color 000000 },
     logout => { swaymsg exit },
+    shutdown => { systemctl poweroff },
+    reboot => { systemctl reboot },
 }
