@@ -42,6 +42,13 @@ def ask_yes_no [question: string] {
     )
 }
 
+export def "config fd" [] {
+    if $nu.os-info.family == 'windows' {
+        symlink --force ~/src/dotfiles/config/fd ~/AppData/Roaming/fd
+    } else {
+        symlink --force ~/src/dotfiles/config/fd ~/.config/fd
+    }
+}
 
 export def "config glazewm" [] {
     print $"(ansi purple_bold)config glazewm(ansi reset)"
@@ -231,6 +238,7 @@ export def bootstrap [] {
 
     symlink --force ~/src/dotfiles/.inputrc ~/.inputrc
 
+    config fd
     config nushell
     config python
     config yt-dlp
