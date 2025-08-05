@@ -10,7 +10,7 @@
 # https://github.com/swaywm/sway/wiki
 #
 # Terminal             : alacritty, foot
-# Launcher             : fuzzel
+# Launcher             : bemenu, wofi
 # Screenshot tools     : grim, slurp, wl-copy
 # Clipboard            : wl-clipboard, clipman
 # Volume               : pamixer
@@ -37,7 +37,8 @@ set $term alacritty
 # NOTE: pass the final command to swaymsg so that the resulting window can be opened
 # on the original workspace that the command was run on.
 # set $menu dmenu_path | dmenu | xargs swaymsg exec --
-set $menu fuzzel
+set $menu bemenu-run
+
 
 include /etc/sway/config-vars.d/*
 include ~/.config/sway/*.swayconf
@@ -51,8 +52,8 @@ exec blueman-applet
 exec mako
 # exec dbus-run-session -- sway
 # exec nm-applet
-# exec waybar
-exec wl-paste --watch clipman store
+exec wl-paste -t text --watch clipman store
+exec wl-paste -t image --watch clipman store
 exec kanshi
 
 
@@ -127,8 +128,8 @@ bar {
     bindsym $mod+Return exec $term
     # Kill focused window
     bindsym $mod+Shift+q kill
-    # Start your launcher
-    bindsym $mod+d exec $menu
+    # Start your launcher (alt-d usd in nvim, thus $mod+Shift+d)
+    bindsym $mod+Shift+d exec $menu
 
     # Drag floating windows by holding down $mod and left mouse button.
     # Resize them with right mouse button + $mod.
@@ -259,12 +260,9 @@ bindsym XF86MonBrightnessDown exec brightnessctl set 10%-
 # Lock screen (requires swaylock)
 bindsym $mod+Shift+x exec swaylock --color 000000
 
-# Clipboard history (requires clipman)
-#    test it on the cli: fuzzel --no-config --prompt "Test ❯" --lines 5
-bindsym $mod+Shift+slash exec clipman pick --tool fuzzel
+bindsym $mod+Shift+slash exec clipman pick --tool bemenu
 
-
-bindsym $mod+Shift+o exec ~/.config/fuzzel/fuzzel-logout-menu.nu
+bindsym $mod+Shift+o exec ~/.config/sway/scripts/logout-menu.nu
 
 include /etc/sway/config.d/*
 
