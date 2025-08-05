@@ -65,6 +65,16 @@ export def "config foot" [] {
 export def "config sway" [] {
     print $"(ansi purple_bold)config sway(ansi reset)"
     sudo apt install -y foot sway swayidle kanshi wl-clipboard brightnessctl wlsunset zathura wf-recorder mako-notifier blueman alacritty wofi clipman bemenu
+    go install github.com/darkhz/bluetuith@latest
+    # install wifi manager
+    sudo apt install libdbus-1-dev pkg-config
+    if (which impala | is-empty) {
+        cargo install impala
+    }
+    # install bluetooth manager
+    if (which bluetui | is-empty) {
+        cargo install bluetui
+    }
     symlink --force ~/src/dotfiles/config/sway/ ~/.config/sway
     symlink --force ~/src/dotfiles/config/fuzzel/ ~/.config/fuzzel
     symlink --force ~/src/dotfiles/config/kanshi/ ~/.config/kanshi
