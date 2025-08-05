@@ -7,10 +7,6 @@
 # https://github.com/Ruixi-rebirth/sway-dotfiles/blob/main/sway/config
 # https://github.com/aruyu/sway-dotfiles/
 
-# sudo apt install -y foot sway swayidle
-# sudo apt install -y wl-clipboard brightnessctl wlsunset zathura wf-recorder
-# sudo apt install -y mako-notifier blueman redshift-gtk
-
 # https://github.com/swaywm/sway/wiki
 #
 # Terminal             : alacritty, foot
@@ -21,7 +17,7 @@
 # Brightness           : brightnessctl, wlsunset (redshift)
 # Bar                  : https://github.com/shdown/luastatus, https://git.sr.ht/~rkintzi/statusbar
 # Notifications        : mako
-# Display auto-config  : kanshi
+# Display auto-config  : kanshi, https://gitlab.com/w0lff/shikane - cargo install shikane
 # Wifi                 : nmtui, nmcli radio wifi off/on, nmcli wifi list, nmcli wifi connect SSID
 # Bluetooth            : blueman or bluetuith
 # Screen lock, suspend : swayidle
@@ -53,15 +49,12 @@ include ~/.config/sway/*.swayconf
 exec blueman-applet
 # Notification daemon
 exec mako
-# exec waybar
 # exec dbus-run-session -- sway
 # exec nm-applet
 # exec waybar
 exec wl-paste --watch clipman store
-# Auto display management
-# https://gitlab.com/w0lff/shikane - cargo install shikane
-# exec shikane
-# exec kanshi
+exec kanshi
+
 
 
 # font pango:JetBrainsMonoNerdFont 10

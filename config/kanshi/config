@@ -1,0 +1,9 @@
+profile home {
+    output LVDS-1 disable
+    output HDMI-A-1 enable mode 1920x1080 position 0,0
+}
+
+profile solo {
+    output LVDS-1 enable scale 2
+}
+

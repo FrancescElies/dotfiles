@@ -57,8 +57,10 @@ export def "config foot" [] {
 
 export def "config sway" [] {
     print $"(ansi purple_bold)config sway(ansi reset)"
+    sudo apt install -y foot sway swayidle kanshi wl-clipboard brightnessctl wlsunset zathura wf-recorder mako-notifier blueman alacritty
     symlink --force ~/src/dotfiles/config/sway/ ~/.config/sway
     symlink --force ~/src/dotfiles/config/fuzzel/ ~/.config/fuzzel
+    symlink --force ~/src/dotfiles/config/kanshi/ ~/.config/kanshi
 }
 
 # broken on windows, using workaround
