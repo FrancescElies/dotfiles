@@ -195,7 +195,13 @@ export def "linux config terminal" [] {
     ln -snf ("./config/zellij" | path expand) ~/.config/zellij
 }
 
+export def "macos config wm" [] {
+    print $"(ansi pi)macos config wm(ansi reset)"
+    ln -shf ("./config/aerospace" | path expand) ~/.config/aerospace
+}
+
 export def "macos config terminal" [] {
+    print $"(ansi pi)macos config terminal(ansi reset)"
     # rm -rf ~/.config/wezterm
     # rm -rf ~/.config/zellij
     ln -shf ("./config/alacritty" | path expand) ~/.config/alacritty
@@ -293,9 +299,10 @@ export def bootstrap [] {
                 "use os-mac.nu *" | save --append src/os-this-machine.nu
             }
 
-            brew install ...(open packages.toml | get mac-brew | transpose | get column0)
-            brew install --cask ...(open packages.toml | get mac-brew-cask | transpose | get column0)
+            brew install --force ...(open packages.toml | get mac-brew | transpose | get column0)
+            brew install --force --cask ...(open packages.toml | get mac-brew-cask | transpose | get column0)
             macos config terminal
+            macos config wm
         },
         _ => {
 

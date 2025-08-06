@@ -233,9 +233,8 @@ vlc = ""
 [mac-brew-cask]
 flameshot = ""
 gimp = ""
-neovim = ""
-nushell = ""
+goneovim = ""
 obs = ""
 vlc = ""
 wezterm = ""
-
+"nikitabobko/tap/aerospace" = "i3 like window manager"
