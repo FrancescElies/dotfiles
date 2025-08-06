@@ -14,7 +14,14 @@ img2pdf = "lossless conversion of rater images to pdf"
 honcho = "Foreman clone, manage Procfile apps"
 ipdb = "better pdb"
 chardet = "character encoding detector"
+# https://github.com/MaartenGr/KeyBERT  heavy installation
+# pip install keybert[flair]
+# pip install keybert[gensim]
+# pip install keybert[spacy]
+# pip install keybert[use]
 yake = "yet another keyword extractor (extract most important keywords from a document)"
+gensim = "represent documents as semantic vectors"
+spacy = "natural language processing"
 yt-dlp = "audo video downloader"
 # memray
 python-benedict = "dict subclass with keylist/keypath support, built-in I/O operations (base64, csv, html, ini, json, pickle, plist, query-string, toml, xls, xml, yaml), s3 support and many utilities."
