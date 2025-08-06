@@ -19,6 +19,7 @@ chardet = "character encoding detector"
 # pip install keybert[gensim]
 # pip install keybert[spacy]
 # pip install keybert[use]
+pytextrank = "TextRank algorithms (textgraphs) for phrase extraction"
 yake = "yet another keyword extractor (extract most important keywords from a document)"
 gensim = "represent documents as semantic vectors"
 spacy = "natural language processing"
