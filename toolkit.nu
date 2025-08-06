@@ -53,6 +53,7 @@ export def "config fd" [] {
 export def "config glazewm" [] {
     print $"(ansi purple_bold)config glazewm(ansi reset)"
     let config_dir = '~/.glzr/glazewm'
+    cargo install --git https://github.com/Dutch-Raptor/GAT-GWM.git --features=no_console
     symlink --force ~/src/dotfiles/config/glazewm/ $config_dir
 }
 
