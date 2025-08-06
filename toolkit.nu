@@ -81,6 +81,19 @@ export def "config sway" [] {
     symlink --force ~/src/dotfiles/config/kanshi/ ~/.config/kanshi
 }
 
+export def "install zig" [] {
+    print $"(ansi purple_bold)install zig(ansi reset)"
+    let id = version | get build_os | parse "{os}-{arch}" | $"($in.0.arch)-($in.0.os)"
+    let pkg = http get https://ziglang.org/download/index.json | get master | get $id
+    let file_name = $pkg.tarball | path basename
+    let dir = mktemp -d
+    cd $dir
+    http get $pkg.tarball | save $file_name
+    let _ = ouch decompress $file_name | complete
+    let uncompressed = ls | where $it.type == dir | first | get name
+    mv $uncompressed ~/bin/
+}
+
 # broken on windows, using workaround
 # YAZI_CONFIG_HOME=~/src/dotfiles/config/yazi/
 export def "config yazi" [] {
@@ -310,4 +323,7 @@ export def bootstrap [] {
         },
     }
     rust packages
+    if (which zig | is-empty) {
+        install zig
+    }
 }
