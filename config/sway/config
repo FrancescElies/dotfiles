@@ -18,6 +18,7 @@
 # Bar                  : https://github.com/shdown/luastatus, https://git.sr.ht/~rkintzi/statusbar
 # Notifications        : mako
 # Display auto-config  : kanshi, https://gitlab.com/w0lff/shikane - cargo install shikane
+#                        get current displays: swaymsg -t get_outputs -r | from json | explore
 # Wifi                 : impala, nmtui,
 #                        nmcli radio wifi off/on, nmcli wifi list, nmcli wifi connect SSID
 # Bluetooth            : blueman, bluetui or bluetuith
