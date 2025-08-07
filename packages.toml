@@ -21,7 +21,8 @@ chardet = "character encoding detector"
 # pip install keybert[use]
 pytextrank = "TextRank algorithms (textgraphs) for phrase extraction"
 yake = "yet another keyword extractor (extract most important keywords from a document)"
-gensim = "represent documents as semantic vectors"
+# NOTE: gensim not easy to install on windows
+# gensim = "represent documents as semantic vectors"
 spacy = "natural language processing"
 yt-dlp = "audo video downloader"
 # memray
