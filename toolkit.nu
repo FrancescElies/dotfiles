@@ -272,6 +272,25 @@ export def "rust dev-packages" [] {
     ~/.cargo/bin/cargo binstall -y ...(open $packages_toml | get rust-dev-pkgs | transpose | get column0)
 }
 
+export def "config broot" [] {
+    let broot_config_dir = match $nu.os-info.name {
+        "windows" => '~\AppData\Roaming\dystroy\broot' ,
+        _ => "~/.config/broot" ,
+    }
+    if not ($broot_config_dir | path exists) { mkdir $broot_config_dir }
+    symlink --force ~/src/dotfiles/config/broot $broot_config_dir
+}
+
+export def "config bacon" [] {
+    let bacon_config_dir = match $nu.os-info.name {
+        "windows" => '~\AppData\Roaming\dystroy\bacon\config' ,
+        "macos" => '~/Library/Application Support/org.dystroy.bacon' ,
+        _ => "~/.config/bacon" ,
+    }
+    if not ($bacon_config_dir | path exists) { mkdir $bacon_config_dir }
+    symlink --force ~/src/dotfiles/config/bacon $bacon_config_dir
+}
+
 export def bootstrap [] {
     mkdir ~/src/work
     mkdir ~/src/oss
@@ -282,6 +301,8 @@ export def bootstrap [] {
     config nushell
     config python
     config yt-dlp
+    config bacon
+    config broot
     config pueue
     config yazi
 
