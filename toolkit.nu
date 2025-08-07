@@ -67,6 +67,8 @@ export def "config sway" [] {
     print $"(ansi purple_bold)config sway(ansi reset)"
     sudo apt install -y foot sway swayidle kanshi wl-clipboard brightnessctl wlsunset zathura wf-recorder mako-notifier blueman alacritty wofi clipman bemenu
     go install github.com/darkhz/bluetuith@latest
+    # install volume manager
+    sudo apt install pamixer
     # install wifi manager
     sudo apt install libdbus-1-dev pkg-config
     if (which impala | is-empty) {
