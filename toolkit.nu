@@ -236,11 +236,11 @@ export def "macos config terminal" [] {
 export def "windows config terminal" [] {
     rm -rf ~/.config/wezterm
     mklink /j ("~/.config/wezterm" | path expand)  ('~/src/dotfiles/config/wezterm' | path expand --strict)
-    mklink /j ($env.APPDATA | path join "alacritty" | path expand)  ('~/src/dotfiles/alacritty' | path expand --strict)
 
-    nu ./windows-terminal/install.nu
+    let alacritty_conf = ($env.APPDATA | path join "alacritty")
+    rm -rf $alacritty_conf
+    mklink /j ($alacritty_conf | path expand)  ('~/src/dotfiles/config/alacritty' | path expand --strict)
 }
-
 
 export def "linux fix printer-samsung-M2026" [] {
     print $"(ansi pi)linux fix printer-samsung-M2026(ansi reset)"
@@ -262,10 +262,13 @@ export def "linux fix closed-laptop-lid-should-not-suspend" [] {
 export def "rust packages" [] {
     if (which ^cargo-binstall | is-empty ) { cargo install cargo-binstall }
     ~/.cargo/bin/cargo binstall -y ...(open $packages_toml | get rust-pkgs | transpose | get column0)
-    sudo cp ~/.cargo/bin/tldr  /usr/local/bin/
-    sudo cp ~/.cargo/bin/difft  /usr/local/bin/
-    sudo cp ~/.cargo/bin/btm   /usr/local/bin/
-    sudo cp ~/.cargo/bin/ouch  /usr/local/bin/
+
+    if $nu.os-info.family != 'windows' {
+        sudo cp ~/.cargo/bin/tldr  /usr/local/bin/
+        sudo cp ~/.cargo/bin/difft  /usr/local/bin/
+        sudo cp ~/.cargo/bin/btm   /usr/local/bin/
+        sudo cp ~/.cargo/bin/ouch  /usr/local/bin/
+    }
 }
 
 export def "rust dev-packages" [] {
@@ -316,7 +319,8 @@ export def bootstrap [] {
             }
             config glazewm
             config flowlauncher
-            sudo winget install --silent ...(open $packages_toml  | get windows | transpose | get column0)
+            let winget_install = $"winget install --silent (open $packages_toml  | get windows | transpose | get column0 | str join ' ')"
+            input $"(ansi bb)run as admin(ansi reset): (ansi pi)($winget_install)(ansi reset) - press enter when done"
             windows config terminal
         },
         "linux" => {
