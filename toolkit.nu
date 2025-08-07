@@ -139,6 +139,14 @@ export def "config nvim" [] {
     sudo make install
 }
 
+export def "config pueue" [] {
+    let config_dir = match $nu.os-info.name {
+        "windows" => '~\AppData\Roaming\pueue' ,
+        "macos" => '~/Library/Application Support/pueue' ,
+        _ => "~/.config/pueue" ,
+    }
+    symlink --force ~/src/dotfiles/config/pueue/ $config_dir
+}
 
 export def "config nushell" [] {
     print $"(ansi purple_bold)config nushell(ansi reset)"
@@ -274,6 +282,7 @@ export def bootstrap [] {
     config nushell
     config python
     config yt-dlp
+    config pueue
     config yazi
 
     match $nu.os-info.name {
