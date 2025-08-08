@@ -256,6 +256,8 @@ keybindings:
   - commands: ['shell-exec alacritty']
     bindings: ['alt+enter']
 
+  - commands: ['shell-exec C:\Program Files\Microsoft Office\root\Office16\outlook.EXE /c ipm.note']
+    bindings: ['alt+shift+m']  # m - for Mail
 
   # Focus the next/previous active workspace defined in `workspaces` config.
   - commands: ['focus --next-active-workspace']
