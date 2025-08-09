@@ -8,6 +8,8 @@ let action = [
     # blueman
     wifi
     toggle-external-display
+    mount-usb
+    umount-usb
 ] | to text | bemenu
 
 cd $current_dir
@@ -48,6 +50,18 @@ match $action {
             # disable all external
             $active_displays | where $it.name =~ "HDMI" | each { swaymsg  $"output ($in.name) disable"}
         }
+    },
+    "mount-usb" => {
+        let device = lsblk -r -o PATH,MOUNTPOINT,TRAN | from csv --separator ' ' | where TRAN == usb | get PATH | to text | bemenu
+        udisksctl mount -b $"($device)1"
+        let path = lsblk -r -o PATH,MOUNTPOINT | from csv --separator ' ' | where PATH == $"($device)1" | get MOUNTPOINT.0
+        notify-send "Mount USB" $"($device)1 is now at ($path), see `lsblk -f`"
+    },
+    "umount-usb" => {
+        let device = lsblk -r -o PATH,MOUNTPOINT,TRAN | from csv --separator ' ' | where TRAN == usb | get PATH | to text | bemenu
+        let path = lsblk -r -o PATH,MOUNTPOINT | from csv --separator ' ' | where PATH == $"($device)1" | get MOUNTPOINT.0
+        udisksctl unmount -b $"($device)1"
+        notify-send "UnMount USB" $"($device)1 removed form ($path), see `lsblk -f`"
     },
     _ => { notify-send Err $"($action) not found" }
 }

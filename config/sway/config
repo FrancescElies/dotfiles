@@ -23,6 +23,11 @@
 #                        nmcli radio wifi off/on, nmcli wifi list, nmcli wifi connect SSID
 # Bluetooth            : blueman, bluetui or bluetuith
 # Screen lock, suspend : swayidle
+# usb                  : udiskie
+#                        Manually:
+#                             lsblk -f
+#                             udisksctl mount -b /dev/sdb1
+#                             udisksctl unmount -b /dev/sdb1
 
 
 #

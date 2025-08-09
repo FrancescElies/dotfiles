@@ -65,7 +65,7 @@ export def "config foot" [] {
 
 export def "config sway" [] {
     print $"(ansi purple_bold)config sway(ansi reset)"
-    sudo apt install -y foot sway swayidle kanshi wl-clipboard brightnessctl wlsunset zathura wf-recorder mako-notifier blueman alacritty wofi clipman bemenu
+    sudo apt install -y foot sway swayidle kanshi wl-clipboard brightnessctl wlsunset zathura wf-recorder mako-notifier blueman alacritty wofi clipman bemenu udiskie
     go install github.com/darkhz/bluetuith@latest
     # install volume manager
     sudo apt install pamixer
