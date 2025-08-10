@@ -15,6 +15,7 @@
 # Clipboard            : wl-clipboard, clipman
 # Volume               : pamixer
 # Brightness           : brightnessctl, wlsunset (redshift)
+# Player               : vlc, clapper
 # Bar                  : https://github.com/shdown/luastatus, https://git.sr.ht/~rkintzi/statusbar
 # Notifications        : mako
 # Display auto-config  : kanshi, https://gitlab.com/w0lff/shikane - cargo install shikane
@@ -26,6 +27,7 @@
 # usb                  : udiskie
 #                        Manually:
 #                             lsblk -f
+#                             sudo mount -o remount,rw /dev/sdb1 /mnt/myusb
 #                             udisksctl mount -b /dev/sdb1
 #                             udisksctl unmount -b /dev/sdb1
 
