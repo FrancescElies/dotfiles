@@ -4,6 +4,7 @@
 
 [window]
 decorations = "None"  # "Full" | "None" | "Transparent" | "Buttonless"
+padding = { x = 9, y = 9 }
 
 [font]
 size = 12.0
