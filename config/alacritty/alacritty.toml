@@ -2,6 +2,9 @@
 
 # https://donsnotes.com/tech/charsets/ascii.html
 
+[window]
+decorations = "None"  # "Full" | "None" | "Transparent" | "Buttonless"
+
 [font]
 size = 12.0
 
