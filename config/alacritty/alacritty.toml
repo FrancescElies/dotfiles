@@ -46,6 +46,7 @@ bindings = [
     # Vi Mode (default: Ctrl+Shift+Space to toggle)
     # This allows vim-like navigation in the scrollback buffer.
     # { key = "Space", mods = "Control|Shift", action = "ToggleViMode" },
+	# { key = "Space", mods = "Control", chars = "\uf8fe" },
 
     # Hints (Ctrl+Shift+O by default for URLs)
     # This feature allows you to click on URLs, file paths, etc.
@@ -54,7 +55,8 @@ bindings = [
     # Search (Ctrl+Shift+F by default for forward search)
 
     # https://en.wikipedia.org/wiki/Private_Use_Areas
-	# U+E000..U+F8FF
-    { key = ",", mods = "Control", chars = "\uE000" },
+    # U+E000..U+F8FF
+    # { key = ",", mods = "Control", chars = "\uE000" },
+    { key = ",", mods = "Control", chars = "\uf8ff" },  ## keep in sync with terminal.lua
 ]
 
