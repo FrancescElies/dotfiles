@@ -3,7 +3,7 @@
 # https://donsnotes.com/tech/charsets/ascii.html
 
 [window]
-decorations = "None"  # "Full" | "None" | "Transparent" | "Buttonless"
+decorations = "Full"  # "Full" | "None" | "Transparent" | "Buttonless"
 padding = { x = 6, y = 6 }
 dynamic_padding = true
 
