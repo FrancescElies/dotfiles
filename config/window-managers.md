@@ -13,6 +13,7 @@ make all && sudo make install
 https://wiki.hypr.land/Getting-Started/Preconfigured-setups/
 
 # windows
+https://github.com/TimUntersberger/nog/blob/master/config.md
 https://github.com/agent-kilo/jwno
 glazewm
 komorebi
