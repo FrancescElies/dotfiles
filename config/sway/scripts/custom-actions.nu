@@ -14,7 +14,10 @@ let action = [
 
 cd $current_dir
 match $action {
-    clipboard => { clipman pick --tool bemenu },
+    clipboard => {
+        clipman pick --tool bemenu | wl-copy
+        wl-paste --paste-once
+    },
     bluetuith => { alacritty -e nu -e bluetuith },
     # blueman => { blueman-manager },
     wifi => {
