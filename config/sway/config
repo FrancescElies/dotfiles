@@ -40,14 +40,13 @@
 # Mod1 for Alt.
 set $mod Mod1
 # terminal emulator
-# set $term alacritty
-set $term foot
+set $term alacritty
+# set $term foot
 
 # NOTE: pass the final command to swaymsg so that the resulting window can be opened
 # on the original workspace that the command was run on.
 # set $menu dmenu_path | dmenu | xargs swaymsg exec --
 set $menu bemenu-run
-
 
 include /etc/sway/config-vars.d/*
 include ~/.config/sway/*.swayconf
