@@ -1,5 +1,23 @@
 # https://alacritty.org/config-alacritty.html
 
+# https://github.com/alacritty/alacritty/wiki/Keyboard-mappings
+# alacritty --print-events
+# glutin event: WindowEvent { window_id: WindowId(Id(140237741461568)), event: KeyboardInput { device_id: DeviceId(DeviceId), input: KeyboardInput { scancode: 33, state: Pressed, virtual_keycode: Some(LBracket), modifiers: ModifiersState { shift: false, ctrl: false, alt: true, logo: false } } } }
+#
+#     The value between the brackets of Some, which is the one to use in the key property of the mapping
+#     The boolean properties in ModifiersState, which indicate which modifiers to add in the mods property of the mapping (these can be concatenated using the | character)
+#
+# The value for the chars property of each entry in key_bindings: can be any text string and supports unicode (\uNNNN) escapes:
+#
+#   # Insert the `[` character
+#   - { key = "LBracket", mods = "Alt", chars = "[" }
+#   # Send the Ctrl+C control using its unicode value
+#   - { key = "T", mods = "Control|Shift", chars = "\u0003" }
+#
+# The scancode is also printed in the output of --print-events and can be used directly in the key field of a mapping:
+#
+#   - { key = 33, mods = "Alt", chars = "[" }
+
 # https://donsnotes.com/tech/charsets/ascii.html
 
 [window]
@@ -38,10 +56,11 @@ bindings = [
     # Linux/Windows Specific
     { key = "C", mods = "Control|Shift", action = "Copy" },
     { key = "V", mods = "Control|Shift", action = "Paste" },
-    { key = "Return", mods = "Control|Shift", action = "SpawnNewInstance" }, # Open new Alacritty window in current working directory
-    { key = "=", mods = "Alt", action = "IncreaseFontSize" },
-    { key = "-", mods = "Control", action = "DecreaseFontSize" },
-    { key = "0", mods = "Control", action = "ResetFontSize" },
+    { key = "N", mods = "Control|Shift", action = "SpawnNewInstance" }, # Open new Alacritty window in current working directory
+    { key = "N", mods = "Control|Shift", action = "SpawnNewInstance" }, # Open new Alacritty window in current working directory
+    # { key = "=", mods = "Alt", action = "IncreaseFontSize" },
+    # { key = "-", mods = "Control", action = "DecreaseFontSize" },
+    # { key = "0", mods = "Control", action = "ResetFontSize" },
 
     # Vi Mode (default: Ctrl+Shift+Space to toggle)
     # This allows vim-like navigation in the scrollback buffer.
