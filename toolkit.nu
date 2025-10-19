@@ -284,6 +284,10 @@ export def "config broot" [] {
     symlink --force ~/src/dotfiles/config/broot $broot_config_dir
 }
 
+export def "config radare2" [] {
+    symlink --force ~/src/dotfiles/config/.radare2rc ~/.radare2rc
+}
+
 export def "config bacon" [] {
     let bacon_config_dir = match $nu.os-info.name {
         "windows" => '~\AppData\Roaming\dystroy\bacon\config' ,
@@ -305,6 +309,7 @@ export def bootstrap [] {
     config python
     config yt-dlp
     config bacon
+    config radare2
     config broot
     config pueue
     config yazi
