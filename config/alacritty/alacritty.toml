@@ -48,19 +48,20 @@ args = ["-l"] # Use login shell to ensure your shell's dotfiles are sourced.
 # For a full list of key names, see `alacritty-bindings(5)` or the Alacritty man page.
 [keyboard]
 bindings = [
+	#
     # macOS Specific
+	#
     { key = "C", mods = "Command", action = "Copy" },
     { key = "V", mods = "Command", action = "Paste" },
     { key = "N", mods = "Command", action = "CreateNewWindow" },
 
+	#
     # Linux/Windows Specific
+	#
+    { key = "N", mods = "Control|Shift", action = "CreateNewWindow" },
+
     { key = "C", mods = "Control|Shift", action = "Copy" },
     { key = "V", mods = "Control|Shift", action = "Paste" },
-    { key = "N", mods = "Control|Shift", action = "SpawnNewInstance" }, # Open new Alacritty window in current working directory
-    { key = "N", mods = "Control|Shift", action = "SpawnNewInstance" }, # Open new Alacritty window in current working directory
-    # { key = "=", mods = "Alt", action = "IncreaseFontSize" },
-    # { key = "-", mods = "Control", action = "DecreaseFontSize" },
-    # { key = "0", mods = "Control", action = "ResetFontSize" },
 
     # Vi Mode (default: Ctrl+Shift+Space to toggle)
     # This allows vim-like navigation in the scrollback buffer.
