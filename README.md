@@ -48,3 +48,6 @@ toolkit bootstrap
 - https://github.com/dandavison/dotfiles
 - https://github.com/nushell/nu_scripts
 
+# share your keystrokes
+Mac: KeyCastr
+Linux/Win/Mac: https://github.com/mulaRahul/keyviz
