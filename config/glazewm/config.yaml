@@ -137,6 +137,7 @@ window_rules:
       - window_process: { equals: "Flow.Launcher" }
         window_title: { equals: "Settings" }
       - window_process: { equals: "Max" }
+      - window_process: { equals: 'keyviz' , shown_on_top: true }
   - commands: ['ignore']
     match:
       # Ignores any Zebar windows.
