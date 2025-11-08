@@ -3,7 +3,8 @@ general:
   # script or launching another application.
   # Example: The below command launches Zebar.
   # cargo install --git https://github.com/Dutch-Raptor/GAT-GWM.git --features=no_console
-  startup_commands: ['shell-exec zebar', 'shell-exec gat-gwm']
+  # startup_commands: ['shell-exec zebar', 'shell-exec gat-gwm']
+  startup_commands: ['shell-exec zebar']
 
   # Commands to run just before the WM is shutdown.
   # Example: The below command kills Zebar.
