@@ -137,8 +137,6 @@ window_rules:
     match:
       - window_process: { equals: "Flow.Launcher" }
         window_title: { equals: "Settings" }
-      - window_process: { equals: "Max" }
-      - window_process: { equals: 'keyviz' , shown_on_top: true }
   - commands: ['ignore']
     match:
       # Ignores any Zebar windows.
@@ -161,6 +159,9 @@ window_rules:
         window_class: { not_regex: 'OpusApp' }
       - window_process: { equals: 'POWERPNT' }
         window_class: { not_regex: 'PPTFrameClass' }
+      - window_process: { equals: "Teams" }
+      - window_process: { equals: "Max" }
+      - window_process: { equals: 'keyviz' , shown_on_top: true }
 
 binding_modes:
   # When enabled, the focused window can be resized via arrow keys or HJKL.
