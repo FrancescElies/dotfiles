@@ -137,6 +137,20 @@ window_rules:
     match:
       - window_process: { equals: "Flow.Launcher" }
         window_title: { equals: "Settings" }
+      - window_process: { equals: "Max" }
+
+  - commands: ["move --workspace 2"]
+    match:
+      - window_process: { regex: "Max" }
+
+  - commands: ["move --workspace 8"]
+    match:
+      - window_process: { regex: "ms-teams" }
+
+  - commands: ["move --workspace 9"]
+    match:
+      - window_process: { regex: "olk" } # outlook
+
   - commands: ['ignore']
     match:
       # Ignores any Zebar windows.
@@ -159,8 +173,6 @@ window_rules:
         window_class: { not_regex: 'OpusApp' }
       - window_process: { equals: 'POWERPNT' }
         window_class: { not_regex: 'PPTFrameClass' }
-      - window_process: { equals: "Teams" }
-      - window_process: { equals: "Max" }
       - window_process: { equals: 'keyviz' , shown_on_top: true }
 
 binding_modes:
