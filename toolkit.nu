@@ -284,6 +284,10 @@ export def "config broot" [] {
     symlink --force ~/src/dotfiles/config/broot $broot_config_dir
 }
 
+export def "config psql" [] {
+    symlink --force ~/src/dotfiles/config/.psqlrc ~/.psqlrc
+}
+
 export def "config radare2" [] {
     symlink --force ~/src/dotfiles/config/.radare2rc ~/.radare2rc
 }
@@ -310,6 +314,7 @@ export def bootstrap [] {
     config yt-dlp
     config bacon
     config radare2
+    config psql
     config broot
     config pueue
     config yazi
