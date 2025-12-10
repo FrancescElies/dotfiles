@@ -1,0 +1,141 @@
+$$ WinDbg alias profile — User-mode, x64 (uses @rip / RCX,RDX,R8,R9)
+$$ Save as: c:\tools\aliases_x64.wds   Load with: $$><c:\tools\aliases_x64.wds
+
+$$ Robust redefinition helper to avoid stale-expansion quirks inside blocks
+aS setalias ".block { ad /q ${/v:name} ; aS ${/v:name} ${/v:value} }"
+
+$$ EXECUTION
+$$----------
+aS run            g
+aS break          Ctrl+Break
+aS step           t
+aS next           p
+aS out            pt
+aS restart        ".restart"
+
+$$ STACK & THREADS
+$$----------------
+aS bt             k
+aS threads        "~"
+aS switch         "~${/n:tid}s"          $$ set: aS tid 3 ; switch
+aS thinfo         "!thread ${/v:tid} 1"  $$ set tid
+
+$$ MODULES & SYMBOLS
+$$------------------
+aS mods           lm
+aS mods_v         lmv
+aS syms_reload    ".reload /f"
+aS syms_path      ".sympath"
+aS findsym        "x ${/v:pat}"          $$ set: aS pat kernel32!*CreateFile* ; findsym
+
+$$ REGISTERS & MEMORY (x64)
+$$-------------------------
+aS regs           r
+aS disasm         "u ${/v:addr} L${/v:len}"
+aS bytes          "db ${/v:addr} L${/v:len}"
+aS dwords         "dd ${/v:addr} L${/v:len}"
+aS qwords         "dq ${/v:addr} L${/v:len}"
+aS write_d        "ed ${/v:addr} ${/v:value}"
+aS write_a        "ea ${/v:addr} \"${/v:text}\""
+
+$$ quick helpers (x64)
+$$--------------------
+aS ip             "@rip"
+aS arg1           "@rcx"
+aS arg2           "@rdx"
+aS arg3           "@r8"
+aS arg4           "@r9"
+
+$$ LOCALS & TYPES
+$$---------------
+aS locals         dv
+aS type           "dt ${/v:typename} ${/v:addr}"
+aS type_r         "dt -r ${/v:typename} ${/v:addr}"
+
+$$ BREAKPOINTS — basic
+$$--------------------
+aS bp_here        "bp @rip"
+aS bp_func        "bp ${/v:sym}"
+aS bp_unresolved  "bu ${/v:sym}"         $$ fires when module loads
+aS bplist         bl
+aS bpdisable      "bd ${/v:id}"
+aS bpenable       "be ${/v:id}"
+aS bpclear        bc *
+aS bpdel          "bc ${/v:id}"
+
+$$ BREAKPOINTS — advanced (x64 arguments, return value, hit-count)
+$$----------------------------------------------------------------
+
+$$ Break only when RCX/RDX/R8/R9 meet a condition (use C++ evaluator for clarity)
+aS bp_rcx_eq      "bp ${/v:sym} /w \"@@c++(@rcx == ${/v:val})\""
+aS bp_rdx_eq      "bp ${/v:sym} /w \"@@c++(@rdx == ${/v:val})\""
+aS bp_r8_eq       "bp ${/v:sym} /w \"@@c++(@r8  == ${/v:val})\""
+aS bp_r9_eq       "bp ${/v:sym} /w \"@@c++(@r9  == ${/v:val})\""
+
+$$ Break only on Nth hit (uses pseudo-reg @$t0 as counter)
+aS bp_nth_hit     "bp ${/v:sym} \".if (@@c++(@$t0) == ${/v:n}) { .echo \\\"${/v:sym} #${/v:n}\\\"; } .else { gc; }\""
+
+$$ Break when the function returns and RAX == value (two-stage: entry + return bp)
+$$ Uses fixed alias $u0 to hold return address; then sets conditional bp on it
+aS bp_retval_eq   "bp ${/v:sym} \".block { r $.u0 = @@(poi(@rsp)); bp $u0 /w \\\"@@c++(@rax == ${/v:val})\\\" } ; gc\""
+
+$$ Example for UNICODE_STRING in RCX: break when Length == LEN
+aS bp_us_len_eq   "bp ${/v:sym} /w \"@@c++(((UNICODE_STRING*)@rcx)->Length) == ${/v:len}\""
+
+$$ dx-powered generic condition (NatVis/Debugger Object Model)
+aS bp_when_dx     "bp ${/v:sym} /w \"${/v:dxexpr}\""
+
+$$ EXCEPTIONS & EVENTS
+$$--------------------
+
+$$ Quick inspection of last event/exception
+aS last           ".lastevent"
+aS exr            ".exr -1"
+
+$$ Sensible defaults: break on AV/GP/IBP with a mini-dump on second-chance
+aS sxe_defaults   "sxe av; sxe gp; sxe ibp"
+
+$$ Noisy filters to ignore in user-mode (toggle as needed)
+aS sxd_noisy      "sxd ld; sxd ud; sxd clr; sxd clrn; sxd eh"
+
+$$ Dump state when AV occurs (first- and second-chance)
+aS ex_av_dump     "sxe -c \".exr -1; kb\" -c2 \".exr -1; kb\" av"
+
+$$ Reset filters to defaults
+aS ex_reset       "sxr"
+
+$$ Pass all exceptions to the app (advanced): disable every filter dynamically
+aS ex_pass_all    ".foreach(exc {sx}) {.catch{sxd ${exc}}}"
+
+$$ DX helpers (Object Model)
+$$--------------------------
+aS peb            "dx @$curprocess.Peb"
+aS teb            "dx @$curthread.Teb"
+aS heaps          "dx -g @$curprocess.HeapList"
+aS env            "dx @$curprocess.Environment"
+
+$$ QUALITY OF LIFE
+$$----------------
+aS echo           ".printf \"${/v:text}\\n\""
+aS clear          ".cls"
+
+$$ USAGE HINTS (inline)
+$$---------------------
+$$ Break only when the first argument equals value (val):
+$$ aS sym MyApp!ProcessItem ; aS val 0xDEADBEEF ; bp_rcx_eq ; run
+
+$$Stop on the 5th call to a hot function:
+$$ aS sym MyApp!DoWork ; aS n 5 ; bp_nth_hit ; run
+
+$$ Break if the first argument to OpenFile (a PUNICODE_STRING) has a Length 0x50 bytes
+$$ > aS sym MyApp!OpenFile ; aS len 0x50 ; bp_us_len_eq ; run
+
+$$ Break when function returns zero:
+$$ > aS sym MyApp!Compute ; aS val 0 ; bp_retval_eq ; run
+
+$$ Focus on real faults, ignore noise:
+$$ (Break on AV/GP/IBP; ignore common chatter like module load/unload & some CLR/EH noise.) [learn.microsoft.com], [github.com]
+$$ > sxe_defaults; sxd_noisy; run
+
+$$ When you do want everything to pass through:
+$$ > ex_pass_all; run
