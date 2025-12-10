@@ -1,6 +1,15 @@
 $$ WinDbg alias profile — User-mode, x64 (uses @rip / RCX,RDX,R8,R9)
 $$ Save as: c:\tools\aliases_x64.wds   Load with: $$><c:\tools\aliases_x64.wds
 
+$$ Set env var DBG_CMD_FILE to this file to auto-load aliases
+
+$$ STARTUP CONFIGURATION
+$$----------------------
+$$ .sympath srv*C:\Symbols*https://msdl.microsoft.com/download/symbols
+$$ .sympath C:\s\max-installers\912\symbols
+$$ .reload
+$$ !analyze -v
+
 $$ Robust redefinition helper to avoid stale-expansion quirks inside blocks
 aS setalias ".block { ad /q ${/v:name} ; aS ${/v:name} ${/v:value} }"
 
