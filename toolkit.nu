@@ -294,9 +294,9 @@ export def "config psql" [] {
     symlink --force ~/src/dotfiles/config/.psqlrc ~/.psqlrc
 }
 
-export def "config radare2" [] {
-    symlink --force ~/src/dotfiles/config/.radare2rc ~/.radare2rc
-}
+export def "config bashrc" [] { symlink --force ~/src/dotfiles/config/.bashrc ~/.bashrc }
+export def "config inputrc" [] { symlink --force ~/src/dotfiles/config/.inputrc ~/.inputrc }
+export def "config radare2" [] { symlink --force ~/src/dotfiles/config/.radare2rc ~/.radare2rc }
 
 export def "config bacon" [] {
     let bacon_config_dir = match $nu.os-info.name {
@@ -315,6 +315,8 @@ export def bootstrap [] {
 
     symlink --force ~/src/dotfiles/.inputrc ~/.inputrc
 
+    config bashrc
+    config inputrc
     config nushell
     config fd
     config python
