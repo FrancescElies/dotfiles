@@ -33,7 +33,7 @@ use ~/src/dotfiles/config/nushell/src/fd-completions.nu *
 # use ~/src/dotfiles/config/nushell/src/hosts-completions.nu *
 use ~/src/dotfiles/config/nushell/src/just-completions.nu *
 # use ~/src/dotfiles/config/nushell/src/man.nu *
-# use ~/src/dotfiles/config/nushell/src/maxmsp-completions.nu *
+use ~/src/dotfiles/config/nushell/src/maxmsp-completions.nu *
 # use ~/src/dotfiles/config/nushell/src/media-completions.nu *
 # use ~/src/dotfiles/config/nushell/src/miniserve-completions.nu *
 use ~/src/dotfiles/config/nushell/src/my-functions.nu *
