@@ -138,9 +138,9 @@ export module ado {
     ] {
         git push
         let main_or_master = git rev-parse --abbrev-ref origin/HEAD
-        let description = (git log --format=%B $"(git merge-base HEAD $main_or_master)..HEAD")
+        let description = mktemp
+        (git log --format=%B $"(git merge-base HEAD $main_or_master)..HEAD") | save -f $description
         let title = if ($title | is-empty) { ( git log --format=%B -n 1 HEAD ) | lines | first } else { $title }
-        # [ "**Problem:** " "" "**Solution:** " "" "**Notes:** " ] | to text | save -f $description
 
         nvim $description
 
