@@ -136,7 +136,7 @@ export def "install neovim" [] {
         git clone https://github.com/neovim/neovim --depth 1
     }
     cd neovim
-    if (not ('build/bin/nvim' | path exists)) {
+    if (not ('/usr/local/bin/nvim' | path exists)) {
         make CMAKE_BUILD_TYPE=Release
         print $"(ansi pi)neovim: make install(ansi reset)"
         sudo make install
@@ -198,11 +198,13 @@ export def "install keyd-remap" [] {
     if (not ('~/src/oss/keyd' | path exists)) {
         git clone https://github.com/rvaiya/keyd ~/src/oss/keyd
     }
-    cd ~/src/oss/keyd
-    make
-    sudo make install
-    sudo cp ~/src/dotfiles/config/keyd/default.conf /etc/keyd/default.conf
-    sudo systemctl enable --now keyd
+    if (not ('/usr/local/bin/keyd' | path exists)) {
+        cd ~/src/oss/keyd
+        make
+        sudo make install
+        sudo cp ~/src/dotfiles/config/keyd/default.conf /etc/keyd/default.conf
+        sudo systemctl enable --now keyd
+    }
 }
 
 export def "linux config terminal" [] {
