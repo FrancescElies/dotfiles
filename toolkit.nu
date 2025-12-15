@@ -50,8 +50,8 @@ export def "config fd" [] {
     }
 }
 
-export def "config glazewm" [] {
-    print $"(ansi purple_bold)config glazewm(ansi reset)"
+export def "install glazewm" [] {
+    print $"(ansi purple_bold)install glazewm(ansi reset)"
     let config_dir = '~/.glzr/glazewm'
     cargo install --git https://github.com/Dutch-Raptor/GAT-GWM.git --features=no_console
     symlink --force ~/src/dotfiles/config/glazewm/ $config_dir
@@ -63,14 +63,14 @@ export def "config foot" [] {
     symlink --force ~/src/dotfiles/config/foot/ $config_dir
 }
 
-export def "config sway" [] {
-    print $"(ansi purple_bold)config sway(ansi reset)"
-    sudo apt install -y foot sway swayidle kanshi wl-clipboard brightnessctl wlsunset zathura wf-recorder mako-notifier blueman alacritty wofi clipman bemenu udiskie
+export def "install sway" [] {
+    print $"(ansi purple_bold)install sway(ansi reset)"
+    sudo apt install -y foot sway swayidle kanshi wl-clipboard brightnessctl wlsunset zathura wf-recorder mako-notifier blueman alacritty wofi clipman bemenu udiskie golang
     go install github.com/darkhz/bluetuith@latest
     # install volume manager
-    sudo apt install pamixer
+    sudo apt install -y pamixer
     # install wifi manager
-    sudo apt install libdbus-1-dev pkg-config
+    sudo apt install -y libdbus-1-dev pkg-config
     if (which impala | is-empty) {
         cargo install impala
     }
@@ -96,17 +96,6 @@ export def "install zig" [] {
     mv $uncompressed ~/bin/
 }
 
-# broken on windows, using workaround
-# YAZI_CONFIG_HOME=~/src/dotfiles/config/yazi/
-export def "config yazi" [] {
-    print $"(ansi purple_bold)config yazi(ansi reset)"
-    let config_dir = match $nu.os-info.name {
-        "windows" => '~\AppData\Roaming\yazi' ,
-        _ => "~/.config/yazi" ,
-    }
-    symlink --force ~/src/dotfiles/config/yazi/ $config_dir
-}
-
 export def "config flowlauncher" [] {
     print $"(ansi purple_bold)config flowlauncher(ansi reset)"
     let config_dir = '~\AppData\Roaming\FlowLauncher' | path expand
@@ -120,7 +109,7 @@ export def "config flowlauncher" [] {
     }
 }
 
-export def "config nvim" [] {
+export def "install nvim" [] {
     print $"(ansi purple_bold)config nvim(ansi reset)"
     cd ~/src
     if (not ('nushell-config' | path exists)) {
@@ -158,8 +147,8 @@ export def "config nushell" [] {
     nu bootstrap.nu
 }
 
-export def "config fonts" [] {
-    print $"(ansi purple_bold)config fonts(ansi reset)"
+export def "install fonts" [] {
+    print $"(ansi purple_bold)install fonts(ansi reset)"
     ls config/fonts/ | where type == dir | each {
         print $"(ansi pi)cp -r ($in.name) /usr/local/share/fonts/(ansi reset)"
         sudo cp -r ($in.name) /usr/local/share/fonts/
@@ -199,8 +188,8 @@ export def "config yt-dlp" [] {
     if (not ($yt_dlp | path exists)) { http get https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp | save -f $yt_dlp }
 }
 
-export def "config keyd-remap" [] {
-    print $"(ansi purple_bold)config keyd-remap(ansi reset)"
+export def "install keyd-remap" [] {
+    print $"(ansi purple_bold)install keyd-remap(ansi reset)"
     if (not ('~/src/oss/keyd' | path exists)) {
         git clone https://github.com/rvaiya/keyd ~/src/oss/keyd
     }
@@ -261,7 +250,7 @@ export def "linux fix closed-laptop-lid-should-not-suspend" [] {
 
 export def "rust packages" [] {
     if (which ^cargo-binstall | is-empty ) { cargo install cargo-binstall }
-    ~/.cargo/bin/cargo binstall -y ...(open $packages_toml | get rust-pkgs | transpose | get column0)
+    cargo binstall -y ...(open $packages_toml | get rust-pkgs | transpose | get column0)
 
     if $nu.os-info.family != 'windows' {
         sudo cp ~/.cargo/bin/tldr  /usr/local/bin/
@@ -272,7 +261,7 @@ export def "rust packages" [] {
 }
 
 export def "rust dev-packages" [] {
-    ~/.cargo/bin/cargo binstall -y ...(open $packages_toml | get rust-dev-pkgs | transpose | get column0)
+    cargo binstall -y ...(open $packages_toml | get rust-dev-pkgs | transpose | get column0)
 }
 
 export def "config broot" [] {
@@ -303,6 +292,7 @@ export def "config bacon" [] {
 }
 
 export def bootstrap [] {
+    mkdir ~/bin
     mkdir ~/src/work
     mkdir ~/src/oss
 
@@ -317,17 +307,13 @@ export def bootstrap [] {
     config psql
     config broot
     config pueue
-    config yazi
 
     match $nu.os-info.name {
         "windows" => {
             if (which ^rustup | is-empty ) {
                 input $"(ansi purple_bold)Install https://rustup.rs/(ansi reset) once done press enter."
             }
-            if (not (try { open src/os-this-machine.nu | str contains "use os-windows.nu *" } catch { false })) {
-                "use os-windows.nu *" | save --append src/os-this-machine.nu
-            }
-            config glazewm
+            install glazewm
             config flowlauncher
             let winget_install = $"winget install --silent (open $packages_toml  | get windows | transpose | get column0 | str join ' ')"
             input $"(ansi bb)run as admin(ansi reset): (ansi pi)($winget_install)(ansi reset) - press enter when done"
@@ -336,27 +322,21 @@ export def bootstrap [] {
         "linux" => {
             if (which ^rustup | is-empty ) {
                 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-                ~/.cargo/bin/rustup component add llvm-tools rust-analyzer
+                rustup component add llvm-tools rust-analyzer
             }
-            if (not (try { open src/os-this-machine.nu | str contains "use os-linux.nu *" } catch { false })) {
-                "use os-linux.nu *" | save --append src/os-this-machine.nu
-            }
-            config sway
+            install sway
             config foot
-            config keyd-remap
-            config fonts
+            install keyd-remap
+            install fonts
             sudo apt remove -y nano
             sudo apt install -y ...(open packages.toml | get debian | transpose | get column0)
-            config nvim  # last might take long
+            install nvim  # last might take long
             linux config terminal
         }
         "macos" => {
             if (which ^rustup | is-empty ) {
                 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-                ~/.cargo/bin/rustup component add llvm-tools rust-analyzer
-            }
-            if (not (try { open src/os-this-machine.nu | str contains "use os-mac.nu *" } catch { false })) {
-                "use os-mac.nu *" | save --append src/os-this-machine.nu
+                rustup component add llvm-tools rust-analyzer
             }
 
             brew install --force ...(open packages.toml | get mac-brew | transpose | get column0)
