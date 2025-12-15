@@ -137,16 +137,6 @@ export def "config pueue" [] {
     symlink --force ~/src/dotfiles/config/pueue/ $config_dir
 }
 
-export def "config nushell" [] {
-    print $"(ansi purple_bold)config nushell(ansi reset)"
-    cd ~/src
-    if (not ('nushell-config' | path exists)) {
-        git clone https://github.com/francescelies/nushell-config
-    }
-    cd ~/src/nushell-config
-    nu bootstrap.nu
-}
-
 export def "install fonts" [] {
     print $"(ansi purple_bold)install fonts(ansi reset)"
     ls config/fonts/ | where type == dir | each {
@@ -299,7 +289,6 @@ export def bootstrap [] {
     symlink --force ~/src/dotfiles/.inputrc ~/.inputrc
 
     config fd
-    config nushell
     config python
     config yt-dlp
     config bacon

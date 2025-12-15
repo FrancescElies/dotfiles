@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Encoding=UTF-8
+Name=LocalSend
+Comment=LocalSend
+Icon=/home/cesc/src/dotfiles/config/nushell/src/linux/gnome-apps/localsend.png
+Exec=/home/cesc/bin/localsend.AppImage
+Terminal=false
+Categories=SendFiles;
