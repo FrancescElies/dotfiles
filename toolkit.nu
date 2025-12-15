@@ -110,9 +110,9 @@ export def "config flowlauncher" [] {
 }
 
 export def "install nvim" [] {
-    print $"(ansi purple_bold)config nvim(ansi reset)"
+    print $"(ansi purple_bold)install nvim(ansi reset)"
     cd ~/src
-    if (not ('nushell-config' | path exists)) {
+    if (not ('kickstart.nvim' | path exists)) {
         git clone https://github.com/francescelies/kickstart.nvim
     }
     cd kickstart.nvim
