@@ -91,9 +91,9 @@ export def "install zig" [] {
     let dir = mktemp -d
     cd $dir
     http get $pkg.tarball | save $file_name
-    let _ = ouch decompress $file_name | complete
+    ouch decompress $file_name | complete | ignore
     let uncompressed = ls | where $it.type == dir | first | get name
-    mv $uncompressed ~/bin/
+    try { mv $uncompressed ~/bin }
 }
 
 export def "config flowlauncher" [] {
