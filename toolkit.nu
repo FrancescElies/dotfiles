@@ -78,22 +78,24 @@ export def "config foot" [] {
 
 export def "install sway" [] {
     print $"(ansi purple_bold)install sway(ansi reset)"
-    sudo apt install -y foot sway swayidle kanshi wl-clipboard brightnessctl wlsunset zathura wf-recorder mako-notifier blueman alacritty wofi clipman bemenu udiskie golang
-    go install github.com/darkhz/bluetuith@latest
-    # install volume manager
-    sudo apt install -y pamixer
-    # install wifi manager
-    sudo apt install -y libdbus-1-dev pkg-config
-    if (which impala | is-empty) {
-        cargo install impala
+    if not ('/usr/bin/sway' | path exists) {
+        sudo apt install -y foot sway swayidle kanshi wl-clipboard brightnessctl wlsunset zathura wf-recorder mako-notifier blueman alacritty wofi clipman bemenu udiskie golang
+        go install github.com/darkhz/bluetuith@latest
+        # install volume manager
+        sudo apt install -y pamixer
+        # install wifi manager
+        sudo apt install -y libdbus-1-dev pkg-config
+        if (which impala | is-empty) {
+            cargo install impala
+        }
+        # install bluetooth manager
+        if (which bluetui | is-empty) {
+            cargo install bluetui
+        }
+        symlink --force ~/src/dotfiles/config/sway/ ~/.config/sway
+        symlink --force ~/src/dotfiles/config/fuzzel/ ~/.config/fuzzel
+        symlink --force ~/src/dotfiles/config/kanshi/ ~/.config/kanshi
     }
-    # install bluetooth manager
-    if (which bluetui | is-empty) {
-        cargo install bluetui
-    }
-    symlink --force ~/src/dotfiles/config/sway/ ~/.config/sway
-    symlink --force ~/src/dotfiles/config/fuzzel/ ~/.config/fuzzel
-    symlink --force ~/src/dotfiles/config/kanshi/ ~/.config/kanshi
 }
 
 export def "install zig" [] {
@@ -155,8 +157,11 @@ export def "config pueue" [] {
 export def "install fonts" [] {
     print $"(ansi purple_bold)install fonts(ansi reset)"
     ls config/fonts/ | where type == dir | each {
-        print $"(ansi pi)cp -r ($in.name) /usr/local/share/fonts/(ansi reset)"
-        sudo cp -r ($in.name) /usr/local/share/fonts/
+        let dir = $in.name
+        if not (('/usr/local/share/fonts' | path join ($dir | path basename)) | path exists) {
+            print $"(ansi pi)cp -r ($in.name) /usr/local/share/fonts/(ansi reset)"
+            sudo cp -r $dir /usr/local/share/fonts/
+        }
     }
 }
 
@@ -191,6 +196,11 @@ export def "config yt-dlp" [] {
     print $"(ansi purple_bold)config yt-dlp(ansi reset)"
     let yt_dlp = "~/bin/yt-dlp" | path expand
     if (not ($yt_dlp | path exists)) { http get https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp | save -f $yt_dlp }
+}
+
+export def "install debian packages" [] {
+    print $"(ansi pi)install debian packages(ansi reset)"
+    sudo apt install -y ...(open packages.toml | get debian | transpose | get column0) 
 }
 
 export def "install keyd-remap" [] {
@@ -260,10 +270,10 @@ export def "rust packages" [] {
     cargo binstall -y ...(open $packages_toml | get rust-pkgs | transpose | get column0)
 
     if $nu.os-info.family != 'windows' {
-        sudo cp ~/.cargo/bin/tldr  /usr/local/bin/
-        sudo cp ~/.cargo/bin/difft  /usr/local/bin/
-        sudo cp ~/.cargo/bin/btm   /usr/local/bin/
-        sudo cp ~/.cargo/bin/ouch  /usr/local/bin/
+        if not ('/usr/local/bin/tldr' | path exists) { sudo cp ~/.cargo/bin/tldr /usr/local/bin/ }
+        if not ('/usr/local/bin/difft' | path exists) { sudo cp ~/.cargo/bin/difft /usr/local/bin/ }
+        if not ('/usr/local/bin/btm' | path exists) { sudo cp ~/.cargo/bin/btm /usr/local/bin/ }
+        if not ('/usr/local/bin/ouch' | path exists) { sudo cp ~/.cargo/bin/ouch /usr/local/bin/ }
     }
 }
 
@@ -335,10 +345,10 @@ export def bootstrap [] {
             config foot
             install keyd-remap
             install fonts
-            sudo apt remove -y nano
-            sudo apt install -y ...(open packages.toml | get debian | transpose | get column0)
-            install neovim  # last might take long
+            if not (which nano | is-empty) { sudo apt remove -y nano }
+            if (which age | is-empty) { install debian packages }
             linux config terminal
+            install neovim  # last might take long
         }
         "macos" => {
             if (which ^rustup | is-empty ) {
