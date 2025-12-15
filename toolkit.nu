@@ -51,11 +51,13 @@ def "config nushell" [] {
     }
     if not ($nushell_dir | path exists) { mkdir $nushell_dir }
 
-    match $nu.os-info.name {
-        "windows" => 'use os-windows.nu *' ,
-        "macos" => "use os-mac.nu *" ,
-        _ => "use os-linux.nu *" ,
-    } | save --append ~/src/dotfiles/config/nushell/src/os-this-machine.nu
+    if not ('~/src/dotfiles/config/nushell/src/os-this-machine.nu' | path exists) {
+        match $nu.os-info.name {
+            "windows" => 'use os-windows.nu *' ,
+            "macos" => "use os-mac.nu *" ,
+            _ => "use os-linux.nu *" ,
+        } | save ~/src/dotfiles/config/nushell/src/os-this-machine.nu
+    }
 
     symlink --force ~/src/dotfiles/config/nushell/env.nu ($nushell_dir | path join "env.nu")
     symlink --force ~/src/dotfiles/config/nushell/config.nu ($nushell_dir | path join "config.nu")
