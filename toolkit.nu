@@ -42,7 +42,20 @@ def ask_yes_no [question: string] {
     )
 }
 
+export def "config nushell" [] {
+    print $"(ansi purple_bold)config nushell(ansi reset)"
+    let nushell_dir = match $nu.os-info.name {
+        "windows" => '~\AppData\Roaming\nushell' ,
+        "macos" => "~/Library/Application Support/nushell" ,
+        _ => "~/.config/nushell" ,
+    }
+    if not ($nushell_dir | path exists) { mkdir $nushell_dir }
+    symlink --force ~/src/dotfiles/config/nushell/env.nu ($nushell_dir | path join "env.nu")
+    symlink --force ~/src/dotfiles/config/nushell/config.nu ($nushell_dir | path join "config.nu")
+}
+
 export def "config fd" [] {
+    print $"(ansi purple_bold)config fd(ansi reset)"
     if $nu.os-info.family == 'windows' {
         symlink --force ~/src/dotfiles/config/fd ~/AppData/Roaming/fd
     } else {
@@ -288,6 +301,7 @@ export def bootstrap [] {
 
     symlink --force ~/src/dotfiles/.inputrc ~/.inputrc
 
+    config nushell
     config fd
     config python
     config yt-dlp
