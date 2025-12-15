@@ -276,3 +276,53 @@ export def "python multi-fix" [] {
     pyright .
 }
 
+
+export module "my" {
+
+    export def "machine" [] { nvim ~/src/dotfiles/config/nushell/src/os-this-machine.nu }
+
+    export def "nvim config" [] { nvim ~/src/kickstart.nvim/init.lua }
+
+    export def "espanso config" [] {
+        if $nu.os-info.name == "windows" {
+            nvim $"($env.APPDATA)/espanso/default.yml"
+        } else {
+            error make {msg: "espanso config missing?"}
+        }
+    }
+
+    export def "broot config" [] {
+        if $nu.os-info.name == "windows" {
+            nvim $"($env.APPDATA)/dystroy/broot/config/conf.hjson" $"($env.APPDATA)/dystroy/broot/config/verbs.hjson"
+        } else {
+            nvim "~/.config/broot/config/conf.hjson" "~/.config/broot/config/verbs.hjson"
+        }
+    }
+
+    const repos = [~/src/dotfiles ~/src/kickstart.nvim]
+
+    export def "repos status" [] {
+        $repos | each {
+            cd $in
+            print $"(ansi pb)($in)(ansi reset)"
+            ^git status
+        }
+    }
+
+    export def "repos push" [] {
+        $repos | each {
+            cd $in
+            print $"(ansi pb)($in)(ansi reset)"
+            ^git push --force-with-lease
+        }
+    }
+
+    export def "repos pull" [] {
+        $repos | each {
+            cd $in
+            print $"(ansi pb)($in)(ansi reset)"
+            ^git pull
+        }
+    }
+
+}

@@ -36,7 +36,6 @@ use ~/src/dotfiles/config/nushell/src/just-completions.nu *
 # use ~/src/dotfiles/config/nushell/src/maxmsp-completions.nu *
 # use ~/src/dotfiles/config/nushell/src/media-completions.nu *
 # use ~/src/dotfiles/config/nushell/src/miniserve-completions.nu *
-# use ~/src/dotfiles/config/nushell/src/my-configs.nu *
 use ~/src/dotfiles/config/nushell/src/my-functions.nu *
 use ~/src/dotfiles/config/nushell/src/git-aliases.nu *
 use ~/src/dotfiles/config/nushell/src/git-completions.nu *

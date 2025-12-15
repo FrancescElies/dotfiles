@@ -42,7 +42,7 @@ def ask_yes_no [question: string] {
     )
 }
 
-export def "config nushell" [] {
+def "config nushell" [] {
     print $"(ansi purple_bold)config nushell(ansi reset)"
     let nushell_dir = match $nu.os-info.name {
         "windows" => '~\AppData\Roaming\nushell' ,
@@ -50,11 +50,18 @@ export def "config nushell" [] {
         _ => "~/.config/nushell" ,
     }
     if not ($nushell_dir | path exists) { mkdir $nushell_dir }
+
+    match $nu.os-info.name {
+        "windows" => 'use os-windows.nu *' ,
+        "macos" => "use os-mac.nu *" ,
+        _ => "use os-linux.nu *" ,
+    } | save --append ~/src/dotfiles/config/nushell/src/os-this-machine.nu
+
     symlink --force ~/src/dotfiles/config/nushell/env.nu ($nushell_dir | path join "env.nu")
     symlink --force ~/src/dotfiles/config/nushell/config.nu ($nushell_dir | path join "config.nu")
 }
 
-export def "config fd" [] {
+def "config fd" [] {
     print $"(ansi purple_bold)config fd(ansi reset)"
     if $nu.os-info.family == 'windows' {
         symlink --force ~/src/dotfiles/config/fd ~/AppData/Roaming/fd
@@ -63,20 +70,20 @@ export def "config fd" [] {
     }
 }
 
-export def "install glazewm" [] {
+def "install glazewm" [] {
     print $"(ansi purple_bold)install glazewm(ansi reset)"
     let config_dir = '~/.glzr/glazewm'
-    cargo install --git https://github.com/Dutch-Raptor/GAT-GWM.git --features=no_console
+    # cargo install --git https://github.com/Dutch-Raptor/GAT-GWM.git --features=no_console
     symlink --force ~/src/dotfiles/config/glazewm/ $config_dir
 }
 
-export def "config foot" [] {
+def "config foot" [] {
     print $"(ansi purple_bold)config foot(ansi reset)"
     let config_dir = '~/.config/foot'
     symlink --force ~/src/dotfiles/config/foot/ $config_dir
 }
 
-export def "install sway" [] {
+def "install sway" [] {
     print $"(ansi purple_bold)install sway(ansi reset)"
     if not ('/usr/bin/sway' | path exists) {
         sudo apt install -y foot sway swayidle kanshi wl-clipboard brightnessctl wlsunset zathura wf-recorder mako-notifier blueman alacritty wofi clipman bemenu udiskie golang
@@ -98,7 +105,7 @@ export def "install sway" [] {
     }
 }
 
-export def "install zig" [] {
+def "install zig" [] {
     print $"(ansi purple_bold)install zig(ansi reset)"
     let id = version | get build_os | parse "{os}-{arch}" | $"($in.0.arch)-($in.0.os)"
     let pkg = http get https://ziglang.org/download/index.json | get master | get $id
@@ -111,7 +118,7 @@ export def "install zig" [] {
     try { mv $uncompressed ~/bin }
 }
 
-export def "config flowlauncher" [] {
+def "config flowlauncher" [] {
     print $"(ansi purple_bold)config flowlauncher(ansi reset)"
     let config_dir = '~\AppData\Roaming\FlowLauncher' | path expand
     let settings_file = $config_dir | path join Settings/Settings.json
@@ -124,7 +131,7 @@ export def "config flowlauncher" [] {
     }
 }
 
-export def "install neovim" [] {
+def "install neovim" [] {
     print $"(ansi purple_bold)install neovim(ansi reset)"
     cd ~/src
     if (not ('kickstart.nvim' | path exists)) {
@@ -145,7 +152,7 @@ export def "install neovim" [] {
     }
 }
 
-export def "config pueue" [] {
+def "config pueue" [] {
     let config_dir = match $nu.os-info.name {
         "windows" => '~\AppData\Roaming\pueue' ,
         "macos" => '~/Library/Application Support/pueue' ,
@@ -154,7 +161,7 @@ export def "config pueue" [] {
     symlink --force ~/src/dotfiles/config/pueue/ $config_dir
 }
 
-export def "install fonts" [] {
+def "install fonts" [] {
     print $"(ansi purple_bold)install fonts(ansi reset)"
     ls config/fonts/ | where type == dir | each {
         let dir = $in.name
@@ -165,7 +172,7 @@ export def "install fonts" [] {
     }
 }
 
-export def "config python" [] {
+def "config python" [] {
     print $"(ansi purple_bold)config python(ansi reset)"
     # uv
     if (which ^uv | is-empty ) {
@@ -177,9 +184,7 @@ export def "config python" [] {
 
     # create home python virtual environment
     cd ~
-    if not ('.venv' | path exists) {
-        uv venv
-    }
+    if not ('.venv' | path exists) { uv venv }
     uv pip install ...(open $packages_toml | get python | transpose | get column0)
 
     # prevent pip from installing packages in the global installation
@@ -192,18 +197,19 @@ export def "config python" [] {
     " | save -f ~/.pip/pip.conf
 }
 
-export def "config yt-dlp" [] {
+def "config yt-dlp" [] {
     print $"(ansi purple_bold)config yt-dlp(ansi reset)"
     let yt_dlp = "~/bin/yt-dlp" | path expand
     if (not ($yt_dlp | path exists)) { http get https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp | save -f $yt_dlp }
 }
 
-export def "install debian packages" [] {
+def "install debian packages" [] {
     print $"(ansi pi)install debian packages(ansi reset)"
     sudo apt install -y ...(open packages.toml | get debian | transpose | get column0) 
+    sudo systemctl enable syncthing@cesc.service
 }
 
-export def "install keyd-remap" [] {
+def "install keyd-remap" [] {
     print $"(ansi purple_bold)install keyd-remap(ansi reset)"
     if (not ('~/src/oss/keyd' | path exists)) {
         git clone https://github.com/rvaiya/keyd ~/src/oss/keyd
@@ -217,7 +223,7 @@ export def "install keyd-remap" [] {
     }
 }
 
-export def "linux config terminal" [] {
+def "linux config terminal" [] {
     # rm -rf ~/.config/wezterm
     # rm -rf ~/.config/zellij
     ln -snf ("./config/alacritty" | path expand) ~/.config/alacritty
@@ -225,12 +231,12 @@ export def "linux config terminal" [] {
     ln -snf ("./config/zellij" | path expand) ~/.config/zellij
 }
 
-export def "macos config wm" [] {
+def "macos config wm" [] {
     print $"(ansi pi)macos config wm(ansi reset)"
     ln -shf ("./config/aerospace" | path expand) ~/.config/aerospace
 }
 
-export def "macos config terminal" [] {
+def "macos config terminal" [] {
     print $"(ansi pi)macos config terminal(ansi reset)"
     # rm -rf ~/.config/wezterm
     # rm -rf ~/.config/zellij
@@ -239,7 +245,7 @@ export def "macos config terminal" [] {
     ln -shf ("./config/zellij" | path expand) ~/.config/zellij
 }
 
-export def "windows config terminal" [] {
+def "windows config terminal" [] {
     rm -rf ~/.config/wezterm
     mklink /j ("~/.config/wezterm" | path expand)  ('~/src/dotfiles/config/wezterm' | path expand --strict)
 
@@ -265,7 +271,7 @@ export def "linux fix closed-laptop-lid-should-not-suspend" [] {
   sudo cp fixes/ignore-closed-lid.conf /etc/systemd/logind.conf.d/ignore-closed-lid.conf
 }
 
-export def "rust packages" [] {
+def "rust packages" [] {
     if (which ^cargo-binstall | is-empty ) { cargo install cargo-binstall }
     cargo binstall -y ...(open $packages_toml | get rust-pkgs | transpose | get column0)
 
@@ -277,11 +283,11 @@ export def "rust packages" [] {
     }
 }
 
-export def "rust dev-packages" [] {
+def "rust dev-packages" [] {
     cargo binstall -y ...(open $packages_toml | get rust-dev-pkgs | transpose | get column0)
 }
 
-export def "config broot" [] {
+def "config broot" [] {
     let broot_config_dir = match $nu.os-info.name {
         "windows" => '~\AppData\Roaming\dystroy\broot' ,
         _ => "~/.config/broot" ,
@@ -290,15 +296,15 @@ export def "config broot" [] {
     symlink --force ~/src/dotfiles/config/broot $broot_config_dir
 }
 
-export def "config psql" [] {
+def "config psql" [] {
     symlink --force ~/src/dotfiles/config/.psqlrc ~/.psqlrc
 }
 
-export def "config bashrc" [] { symlink --force ~/src/dotfiles/config/.bashrc ~/.bashrc }
-export def "config inputrc" [] { symlink --force ~/src/dotfiles/config/.inputrc ~/.inputrc }
-export def "config radare2" [] { symlink --force ~/src/dotfiles/config/.radare2rc ~/.radare2rc }
+def "config bashrc" [] { symlink --force ~/src/dotfiles/config/.bashrc ~/.bashrc }
+def "config inputrc" [] { symlink --force ~/src/dotfiles/config/.inputrc ~/.inputrc }
+def "config radare2" [] { symlink --force ~/src/dotfiles/config/.radare2rc ~/.radare2rc }
 
-export def "config bacon" [] {
+def "config bacon" [] {
     let bacon_config_dir = match $nu.os-info.name {
         "windows" => '~\AppData\Roaming\dystroy\bacon\config' ,
         "macos" => '~/Library/Application Support/org.dystroy.bacon' ,
@@ -331,6 +337,7 @@ export def bootstrap [] {
         "windows" => {
             if (which ^rustup | is-empty ) {
                 input $"(ansi purple_bold)Install https://rustup.rs/(ansi reset) once done press enter."
+                rustup component add llvm-tools rust-analyzer
             }
             install glazewm
             config flowlauncher
@@ -371,4 +378,5 @@ export def bootstrap [] {
     if (which zig | is-empty) {
         install zig
     }
+    print $"(ansi purple_bold)to manage secrets https://github.com/getsops/sops/releases(ansi reset)"
 }
