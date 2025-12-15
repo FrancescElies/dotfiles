@@ -122,8 +122,8 @@ export def "config flowlauncher" [] {
     }
 }
 
-export def "install nvim" [] {
-    print $"(ansi purple_bold)install nvim(ansi reset)"
+export def "install neovim" [] {
+    print $"(ansi purple_bold)install neovim(ansi reset)"
     cd ~/src
     if (not ('kickstart.nvim' | path exists)) {
         git clone https://github.com/francescelies/kickstart.nvim
@@ -136,9 +136,11 @@ export def "install nvim" [] {
         git clone https://github.com/neovim/neovim --depth 1
     }
     cd neovim
-    make CMAKE_BUILD_TYPE=RelWithDebInfo
-    print $"(ansi pi)neovim: make install(ansi reset)"
-    sudo make install
+    if (not ('build/bin/nvim' | path exists)) {
+        make CMAKE_BUILD_TYPE=Release
+        print $"(ansi pi)neovim: make install(ansi reset)"
+        sudo make install
+    }
 }
 
 export def "config pueue" [] {
@@ -333,7 +335,7 @@ export def bootstrap [] {
             install fonts
             sudo apt remove -y nano
             sudo apt install -y ...(open packages.toml | get debian | transpose | get column0)
-            install nvim  # last might take long
+            install neovim  # last might take long
             linux config terminal
         }
         "macos" => {
