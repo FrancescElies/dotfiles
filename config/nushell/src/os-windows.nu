@@ -289,5 +289,8 @@ export module win {
             ...(if $attach != null {  ['/a' ($attach | path expand)] } ) )
     }
 
+    export def "update" [] {
+        run-external src/dotfiles/bin/windows-os/win-update.ps1
+    }
 }
 
