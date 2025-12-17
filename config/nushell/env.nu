@@ -73,4 +73,4 @@ $env.BROOT_CONFIG_DIR = ("~/src/dotfiles/config/nushell/broot-config" | path exp
 $env.FZF_DEFAULT_COMMAND = "fd --type file --hidden"
 
 $env.RUST_BACKTRACE = 1
-# $env.RUSTC_WRAPPER = 'sccache'
+$env.RUSTC_WRAPPER = 'sccache'
