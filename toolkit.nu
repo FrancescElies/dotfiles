@@ -346,6 +346,7 @@ export def bootstrap [] {
             let winget_install = $"winget install --silent (open $packages_toml  | get windows | transpose | get column0 | str join ' ')"
             input $"(ansi bb)run as admin(ansi reset): (ansi pi)($winget_install)(ansi reset) - press enter when done"
             windows config terminal
+            symlink --force ~/src/dotfiles/bin/windows-os/win-update.ps1 ~/Desktop/win-update.ps1
         },
         "linux" => {
             if (which ^rustup | is-empty ) {
