@@ -81,6 +81,7 @@ $env.config.shell_integration.osc133 = false
 # https://www.nushell.sh/book/custom_completions.html
 # $env.config.completions.algorithm = "prefix"
 $env.config.completions.algorithm = "fuzzy"
+$env.config.table.header_on_separator = true
 
 $env.config.history = {
   file_format: sqlite
