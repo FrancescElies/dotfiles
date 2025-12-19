@@ -259,7 +259,9 @@ def "windows config terminal" [] {
 
 export def "linux fix printer-samsung-M2026" [] {
     print $"(ansi pi)linux fix printer-samsung-M2026(ansi reset)"
-    git clone https://github.com/francescElies/samsung-uld-copy
+    if not (samsung-uld-copy | path exists) {
+        git clone https://github.com/francescElies/samsung-uld-copy
+    }
     cd samsung-uld-copy
     just
 }
