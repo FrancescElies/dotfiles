@@ -180,6 +180,10 @@ export def "my backup by-year" [serverip: string = "intel-pc"] {
     restic --repo sftp:($serverip):by-year.restic backup ~/by-year
 }
 
+export def "my backup restore by-year" [serverip: string = "intel-pc"] {
+    restic --repo sftp:($serverip):by-year.restic restore ~/by-year
+}
+
 #
 # neovim
 #
