@@ -209,6 +209,7 @@ def "install debian packages" [] {
     print $"(ansi pi)install debian packages(ansi reset)"
     sudo apt install -y ...(open packages.toml | get debian | transpose | get column0) 
     sudo systemctl enable syncthing@cesc.service
+    sudo apt show ntpsec-ntpdate
 }
 
 def "install keyd-remap" [] {
