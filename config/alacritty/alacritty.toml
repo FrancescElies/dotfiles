@@ -40,6 +40,13 @@ bold_italic.family = "JetBrainsMono Nerd Font"
 # bold_italic.family = "Cascadia Code"
 
 
+[scrolling]
+history = 30000
+multiplier = 3
+
+[selection]
+save_to_clipboard = true
+
 [terminal.shell]
 program = "nu"
 args = ["-l"] # Use login shell to ensure your shell's dotfiles are sourced.
