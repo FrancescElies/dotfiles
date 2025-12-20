@@ -10,31 +10,31 @@ const max_bin = if $nu.os-info.name == "windows" {
 } else if $nu.os-info.name == "macos" {
     "/Applications/Max.app/Contents/MacOS/Max"
 } else {
-    error make {msg: not-implemented }
+    "missing"
 }
 
 const max_resources_pkgs = if $nu.os-info.name == "windows" {
     "C:/Program Files/Cycling '74/Max 9/resources/packages"
 } else if $nu.os-info.name == "macos" {
-    error make {msg: not-implemented, }
+    "/Apllications/Max.app/Contents/Resources/C74/resources/packages"
 } else {
-    error make {msg: not-implemented, }
+    "missing"
 }
 
 const max_examples = if $nu.os-info.name == "windows" {
     "C:/Program Files/Cycling '74/Max 9/examples"
 } else if $nu.os-info.name == "macos" {
-    error make {msg: not-implemented, }
+    "/Apllications/Max.app/Contents/Resources/C74/examples"
 } else {
-    error make {msg: not-implemented, }
+    "missing"
 }
 
 const max_searchpaths = if $nu.os-info.name == "windows" {
     "~/AppData/Roaming/Cycling '74/Max 9/Settings/maxsearchpaths.txt"
 } else if $nu.os-info.name == "macos" {
-    error make {msg: not-implemented, }
+    "~/Library/Application Support/Cycling '74/maxsearchpaths.txt"
 } else {
-    error make {msg: not-implemented, }
+    "missing"
 }
 
 def "nu-complete maxpats" [] { {
