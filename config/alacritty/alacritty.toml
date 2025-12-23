@@ -65,7 +65,9 @@ bindings = [
 	#
     # Linux/Windows Specific
 	#
-    { key = "N", mods = "Control|Shift", action = "CreateNewWindow" },
+    # { key = "N", mods = "Control|Shift", action = "CreateNewWindow" },
+    { key = "N", mods = "Control|Shift", action = "SpawnNewInstance" },
+
 
     { key = "C", mods = "Control|Shift", action = "Copy" },
     { key = "V", mods = "Control|Shift", action = "Paste" },
