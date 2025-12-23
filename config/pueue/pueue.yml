@@ -1,7 +1,4 @@
-# daemon:
-#   callback: >
-#       toastify send
-#       "Task-{{ id }} ({{ group }}) '{{ result }}': {{ command }}
-#
-#       {{ output }}
-#       "
+---
+client:
+  status:
+    additional_columns: ["Duration"]
