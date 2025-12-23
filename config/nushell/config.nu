@@ -77,7 +77,8 @@ use ~/src/dotfiles/config/nushell/src/symlinks.nu *
 $env.config.show_banner = false
 # $env.config.buffer_editor = ["nvim" "-u" "~/src/kickstart.nvim/minimal-vimrc.vim"]
 $env.config.buffer_editor = ["nvim"]
-$env.config.shell_integration.osc133 = false
+$env.config.shell_integration.osc7 = true
+$env.config.shell_integration.osc133 = true
 # https://www.nushell.sh/book/custom_completions.html
 # $env.config.completions.algorithm = "prefix"
 $env.config.completions.algorithm = "fuzzy"
