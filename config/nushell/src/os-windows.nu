@@ -289,8 +289,14 @@ export module win {
             ...(if $attach != null {  ['/a' ($attach | path expand)] } ) )
     }
 
-    export def "update" [] {
-        run-external src/dotfiles/bin/windows-os/win-update.ps1
+    export def update [--force(-f)] {
+        if $force {
+            print "(ansi pb)Forcing update of Windows OS...(ansi reset)"
+            run-external src/dotfiles/bin/windows-os/win-update.ps1 '-Force'
+        } else {
+            print "(ansi pb)Checking for Windows OS updates...(ansi reset)"
+            run-external src/dotfiles/bin/windows-os/win-update.ps1
+        }
     }
 }
 
