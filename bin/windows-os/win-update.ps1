@@ -17,9 +17,9 @@ if (-not $IsAdmin) {
 Write-Host "Running winget updates..."
 &winget update
 if ($Force) {
-    &winget upgrade --all --exclude Microsoft.Office --force
+    &winget upgrade --all --force
 } else {
-    &winget upgrade --all --exclude Microsoft.Office
+    &winget upgrade --all
 }
 
 # Enable Microsoft Update
