@@ -41,6 +41,9 @@ export def rg-fzf-nvim [] {
 # ripgrep->fzf->vim [QUERY]
 export alias rfv = rg-fzf-nvim
 
+export def "my start dir" [] { pwd | save -f ~/.nu-start-dir }
+export def "my start dir reset" [] { rm ~/.nu-start-dir }
+
 export alias lg = lazygit
 
 # # something like gron

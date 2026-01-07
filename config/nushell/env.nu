@@ -74,3 +74,6 @@ $env.FZF_DEFAULT_COMMAND = "fd --type file --hidden"
 
 $env.RUST_BACKTRACE = 1
 $env.RUSTC_WRAPPER = 'sccache'
+
+touch ~/.nu-start-dir
+cd ( try { open ~/.nu-start-dir } catch { cd ~ } )
