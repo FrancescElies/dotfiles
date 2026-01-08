@@ -276,6 +276,10 @@ export def "linux fix closed-laptop-lid-should-not-suspend" [] {
   sudo cp fixes/ignore-closed-lid.conf /etc/systemd/logind.conf.d/ignore-closed-lid.conf
 }
 
+def "go packages" [] {
+    go install ...(open packages.toml | get go-install | transpose | get column0)
+}
+
 def "rust packages" [] {
     if (which ^cargo-binstall | is-empty ) { cargo install cargo-binstall }
     cargo binstall -y ...(open $packages_toml | get rust-pkgs | transpose | get column0)
@@ -381,6 +385,7 @@ export def bootstrap [] {
         },
     }
     rust packages
+    go packages
     if (which zig | is-empty) {
         install zig
     }
