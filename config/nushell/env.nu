@@ -76,4 +76,8 @@ $env.RUST_BACKTRACE = 1
 $env.RUSTC_WRAPPER = 'sccache'
 
 touch ~/.nu-start-dir
-try { cd ( open ~/.nu-start-dir ) } catch { cd ~ }
+# HACK: for alacritty, make we don't auto switch folders when using nvim's terminal
+if ($env.NVIM? | is-empty) {
+    print $"(ansi def)changed dir using .nu-start-dir(ansi reset)"
+    try { cd ( open ~/.nu-start-dir ) } catch { cd ~ }
+}
