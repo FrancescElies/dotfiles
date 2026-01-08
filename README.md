@@ -47,6 +47,8 @@ toolkit bootstrap
 ```
 
 ## Firefox
+[BetterFox](https://github.com/yokoffing/BetterFox?tab=readme-ov-file)
+
 Some extensions: ublock, decentraleyes, still don't care about cookies, privacy badger, vimium
 
 `about:config`
