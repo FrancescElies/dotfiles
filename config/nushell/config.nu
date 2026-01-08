@@ -209,9 +209,10 @@ $env.config.keybindings = [
     }
 
     {
+        # ctrl-enter or ctrl-j to fuzzy cd into directories
         name: fzf_dirs
         modifier: control
-        keycode: char_y
+        keycode: enter
         mode: [emacs, vi_normal, vi_insert]
         event: [
           {
