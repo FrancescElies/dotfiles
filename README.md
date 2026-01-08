@@ -46,7 +46,17 @@ overlay use toolkit
 toolkit bootstrap
 ```
 
-## Vimium
+## Firefox
+Some extensions: ublock, decentraleyes, still don't care about cookies, privacy badger, vimium
+
+`about:config`
+| setting | value |
+| ------- | ----- |
+| `sidebar.verticalTabs` | true |
+| `browser.sessionstore.restore_on_demand` | false |
+
+
+### Vimium
 Mapping for when using vertical tabs
 ```
 map J nextTab
