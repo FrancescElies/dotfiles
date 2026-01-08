@@ -47,6 +47,8 @@ toolkit bootstrap
 ```
 
 ## Firefox
+`about:profiles` click Open Folder in the Root Directory section add a
+`user.js` and paste contents from
 [BetterFox](https://github.com/yokoffing/BetterFox?tab=readme-ov-file)
 
 Some extensions: ublock, decentraleyes, still don't care about cookies, privacy badger, vimium
