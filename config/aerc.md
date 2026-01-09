@@ -22,3 +22,10 @@ archive = Archives
 source-cred-cmd = secret-tool lookup service aerc-imap ryvrf ryvrf@posteo.net
 outgoing-cred-cmd = secret-tool lookup service aerc-smtp ryvrf ryvrf@posteo.net
 ```
+
+`binds.conf`
+```
+  ff = :filter -f<space> "{{index (.From | emails) 0}}" <Enter> # filter mails from current sender
+  fs = :filter -H<space> subject:"{{.SubjectBase}}" <Enter> # Show Mails with the same subject
+  fS = :filter -H<space> subject:<Space> # filter mails with subject e.g. "fs foo" filters mails with subject containing "foo"
+```
