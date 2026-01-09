@@ -25,7 +25,11 @@ outgoing-cred-cmd = secret-tool lookup service aerc-smtp ryvrf ryvrf@posteo.net
 
 `binds.conf`
 ```
-  ff = :filter -f<space> "{{index (.From | emails) 0}}" <Enter> # filter mails from current sender
-  fs = :filter -H<space> subject:"{{.SubjectBase}}" <Enter> # Show Mails with the same subject
-  fS = :filter -H<space> subject:<Space> # filter mails with subject e.g. "fs foo" filters mails with subject containing "foo"
+[messages]
+ff = :filter -f<space> "{{index (.From | emails) 0}}" <Enter> # filter mails from current sender
+fw = :filter -d this_week <Enter>
+ft = :filter -d today <Enter>
+fs = :filter -H<space> subject:"{{.SubjectBase}}" <Enter> # filter mails with the same subject
+fS = :filter -H<space> subject:<Space> # filter mails with desired subject
+
 ```
