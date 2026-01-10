@@ -323,6 +323,16 @@ def "config bacon" [] {
     symlink --force ~/src/dotfiles/config/bacon $bacon_config_dir
 }
 
+def "config aerc" [] {
+    let config_dir = match $nu.os-info.name {
+        "windows" => 'TODO' ,
+        "macos" => '~/Library/Preferences/aerc/' ,
+        _ => "~/.config/aerc" ,
+    }
+    if not ($config_dir | path exists) { mkdir $config_dir }
+    symlink --force ~/src/dotfiles/config/aerc $config_dir
+}
+
 export def bootstrap [] {
     mkdir ~/bin
     mkdir ~/src/work
@@ -337,6 +347,7 @@ export def bootstrap [] {
     config python
     config yt-dlp
     config bacon
+    config aerc
     config radare2
     config psql
     config broot

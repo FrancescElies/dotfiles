@@ -1,4 +1,5 @@
 [python]
+keyring = "cli and lib to easyly access the system keyring"
 aw-client = "client library for activitywatch "
 ocrmypdf = "adds OCR layer to scanned PDF files, allowing them to be searched"
 cogapp = "generate content with inlined Python code. https://nedbatchelder.com/code/cog"
