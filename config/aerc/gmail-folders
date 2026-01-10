@@ -1,1 +1,4 @@
-G = [Gmail]*
+* = [Gmail]/*
+Archive/existing = Archive*
+Archive = OldArchive*
+
