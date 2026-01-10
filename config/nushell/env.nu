@@ -18,9 +18,6 @@ match $nu.os-info.name {
             ('/Program Files/nodejs' | path expand)
             ("/Program Files/Cycling '74/Max 9" | path expand)
         ]
-
-        # HACK: appdata not read, `rg YAZI_CONFIG_HOME`
-        $env.YAZI_CONFIG_HOME = ("~/src/dotfiles/config/nushell/config/yazi/" | path expand)
     },
     "macos" => {
         $env.path ++= [
