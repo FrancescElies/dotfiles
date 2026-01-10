@@ -1,5 +1,3 @@
-use ~/.config/broot/launcher/nushell/br *
-
 # https://github.com/geerlingguy/dotfiles/blob/master/.osx
 
 # Mac OS X configuration
