@@ -1,3 +1,5 @@
+# https://github.com/catppuccin/aerc
+
 *.default=true
 *.normal=true
 
