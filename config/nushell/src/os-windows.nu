@@ -298,6 +298,8 @@ export module win {
             run-external src/dotfiles/bin/windows-os/win-update.ps1
         }
     }
+
+    # sudo apt install pinentry-tty; sudo update-alternatives --config pinentry
     export def debian [] { run-external C:/WINDOWS/system32/wsl.exe '-d' Debian }
     export def ubuntu [] { run-external C:/WINDOWS/system32/wsl.exe '-d' Ubuntu }
 }
