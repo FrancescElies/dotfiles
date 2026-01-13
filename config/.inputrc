@@ -30,3 +30,7 @@ set colored-stats on
 set editing-mode vi
 
 set bell-style visible
+
+"\C-p":history-search-backward
+"\C-n":history-search-forward
+
