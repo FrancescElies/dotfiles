@@ -260,34 +260,11 @@ export module win {
         handle ...$rest
     }
 
-    export def "clean downloads" [] {
-        cd ~/Downloads
-        let files = ls
-        print $files
-        if ((input --numchar 1 $"(ansi pb)Shall I delete those files [y/n]?(ansi reset)" | str downcase) == 'y') {
-            rm -rf ~/Downloads/*
-        }
-    }
-
     export def "which all-dumpbin" [] { vswhere -latest -find **/dumpbin.exe | str replace -a '\\' '/' }
 
     # copy to clipboard install basic software, useful when asked to do support on other machines
     export def "copy debug-session-software" [] { echo "winget install --silent BurntSushi.ripgrep.MSVC sharkdp.fd dystroy.broot TomHudson.gron" | clip }
 
-    export def "outlook new-mail" [
-        to: string,
-        subject: string,
-        --attach(-a): path,
-        --body(-b): string = "",
-    ] {
-        let outlook_path = 'C:/Program Files/Microsoft Office/root/Office16/OUTLOOK.EXE'
-        # let outlook_path = '~\AppData\Local\Microsoft\WindowsApps\olk.exe' | path expand
-
-        ( run-external $outlook_path
-            /c ipm.note
-            /m $"($to)?subject=($subject)&body=($body)"
-            ...(if $attach != null {  ['/a' ($attach | path expand)] } ) )
-    }
 
     export def update [--force(-f)] {
         if $force {
