@@ -260,6 +260,8 @@ export module win {
         handle ...$rest
     }
 
+    export def "add-capability wireless-display-projection" [] { DISM /Online /Add-Capability /CapabilityName:App.WirelessDisplay.Connect~~~~0.0.1.0 }
+
     export def "which all-dumpbin" [] { vswhere -latest -find **/dumpbin.exe | str replace -a '\\' '/' }
 
     # copy to clipboard install basic software, useful when asked to do support on other machines
