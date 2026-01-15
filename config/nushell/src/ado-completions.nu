@@ -223,7 +223,7 @@ export module ado {
     # NOTE: https://learn.microsoft.com/en-us/azure/devops/boards/queries/wiql-syntax?view=azure-devops#where-clause
     # active items ['Closed' 'Obsolete' Review 'Info Needed' Implemented] }
 
-    def "board query" [wiql: string] {
+    export def "board query" [wiql: string] {
         let table = az boards query --output table --wiql $wiql -o json
         if ($table | is-empty) {
             print $"(ansi pb)Table empty(ansi reset)"
@@ -387,10 +387,32 @@ export module ado {
             $in | get id | each { start $"https://($env.ADO_ORGANIZATION).visualstudio.com/($env.ADO_PROJECT)/_workitems/edit/($in)" }
         }
     }
-}
 
-export def "my stories" [] {
-    ado list my stories | ado open workitems
-    ado list my tasks | ado open workitems
+    export def "open my-workitems" [] {
+        list my stories | open workitems
+        list my tasks | open workitems
+    }
+
+    export def "list my recent-mentions" [] {
+        let wiql = [
+            $select_from_workitems
+            "WHERE ID IN (@RecentMentions) "
+            "  AND [system.state] NOT IN ('Closed', 'Obsolete')"
+            "ORDER BY  [System.ChangedDate] ASC"
+        ] | str join ' '
+        board query $wiql
+    }
+
+    export def "list my mentions" [] {
+        let wiql = [
+            $select_from_workitems
+            "WHERE [System.History] CONTAINS 'Francesc Elies' "
+            "  AND [System.ChangedDate] >= @StartOfMonth('-1') "
+            "  AND [system.state] NOT IN ('Closed', 'Obsolete')"
+            "ORDER BY  [System.ChangedDate] ASC"
+        ] | str join ' '
+        board query $wiql
+    }
+
 }
 
