@@ -222,6 +222,10 @@ export module ado {
 
     # NOTE: https://learn.microsoft.com/en-us/azure/devops/boards/queries/wiql-syntax?view=azure-devops#where-clause
     # active items ['Closed' 'Obsolete' Review 'Info Needed' Implemented] }
+    #
+    # NOTE: https://learn.microsoft.com/en-us/azure/devops/boards/queries/query-operators-variables?view=azure-devops#query-macros-and-variables
+    # @CurrentIteration, @CurrentIteration +/- n, @Follows, @MyRecentActivity,
+    # @RecentMentions, @RecentProjectActivity, and @TeamAreas. 
 
     export def "board query" [wiql: string] {
         let table = az boards query --output table --wiql $wiql -o json
@@ -397,6 +401,16 @@ export module ado {
         let wiql = [
             $select_from_workitems
             "WHERE ID IN (@RecentMentions) "
+            "  AND [system.state] NOT IN ('Closed', 'Obsolete')"
+            "ORDER BY  [System.ChangedDate] ASC"
+        ] | str join ' '
+        board query $wiql
+    }
+
+    export def "list my recent-activity" [] {
+        let wiql = [
+            $select_from_workitems
+            "WHERE ID IN (@MyRecentActivity) "
             "  AND [system.state] NOT IN ('Closed', 'Obsolete')"
             "ORDER BY  [System.ChangedDate] ASC"
         ] | str join ' '
