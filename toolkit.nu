@@ -277,7 +277,8 @@ export def "linux fix closed-laptop-lid-should-not-suspend" [] {
 }
 
 def "go packages" [] {
-    go install ...(open packages.toml | get go-install | transpose | get column0)
+    print 'go packages skiped'
+    # go install ...(open packages.toml | get go-install | transpose | get column0)
 }
 
 def "rust packages" [] {
