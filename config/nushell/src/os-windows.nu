@@ -269,13 +269,8 @@ export module win {
 
 
     export def update [--force(-f)] {
-        if $force {
-            print "(ansi pb)Forcing update of Windows OS...(ansi reset)"
-            run-external src/dotfiles/bin/windows-os/win-update.ps1 '-Force'
-        } else {
-            print "(ansi pb)Checking for Windows OS updates...(ansi reset)"
-            run-external src/dotfiles/bin/windows-os/win-update.ps1
-        }
+        print $"(ansi pb)Checking for Windows OS updates...(ansi reset)"
+        run-external ~/src/dotfiles/bin/windows-os/win-update.ps1 ( if $force { '-Force' } else { '' } )
     }
 
     # sudo apt install pinentry-tty; sudo update-alternatives --config pinentry
