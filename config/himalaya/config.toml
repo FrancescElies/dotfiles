@@ -1,0 +1,19 @@
+[accounts.posteo]
+default = true
+email = "elies@posteo.net"
+display-name = "elies"
+downloads-dir = "/Users/cesc/Downloads"
+backend.type = "imap"
+backend.host = "posteo.de"
+backend.port = 993
+backend.login = "elies@posteo.net"
+backend.encryption.type = "tls"
+backend.auth.type = "password"
+backend.auth.keyring = "posteo-imap-passwd"
+message.send.backend.type = "smtp"
+message.send.backend.host = "posteo.de"
+message.send.backend.port = 465
+message.send.backend.login = "elies@posteo.net"
+message.send.backend.encryption.type = "tls"
+message.send.backend.auth.type = "password"
+message.send.backend.auth.keyring = "posteo-smtp-passwd"

@@ -296,6 +296,16 @@ def "rust dev-packages" [] {
     cargo binstall -y ...(open $packages_toml | get rust-dev-pkgs | transpose | get column0)
 }
 
+def "config himalaya" [] {
+    let config_dir = match $nu.os-info.name {
+        "windows" => '~\AppData\Roaming\himalaya' ,
+        "macos" => "~/Library/Application Support/himalaya" ,
+        _ => "~/.config/himalaya" ,
+    }
+    if not ($config_dir | path exists) { mkdir $config_dir }
+    symlink --force ~/src/dotfiles/config/himalaya $config_dir
+}
+
 def "config broot" [] {
     let broot_config_dir = match $nu.os-info.name {
         "windows" => '~\AppData\Roaming\dystroy\broot' ,
@@ -351,6 +361,7 @@ export def bootstrap [] {
     config radare2
     config psql
     config broot
+    config himalaya
     config pueue
 
     match $nu.os-info.name {
