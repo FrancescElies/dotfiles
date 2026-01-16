@@ -1,3 +1,4 @@
+# `himalaya accounts configure posteo` to configure account
 [accounts.posteo]
 default = true
 email = "elies@posteo.net"
@@ -5,15 +6,59 @@ display-name = "elies"
 downloads-dir = "/Users/cesc/Downloads"
 backend.type = "imap"
 backend.host = "posteo.de"
-backend.port = 993
+backend.port = 143
 backend.login = "elies@posteo.net"
-backend.encryption.type = "tls"
+backend.encryption.type = "start-tls"
 backend.auth.type = "password"
 backend.auth.keyring = "posteo-imap-passwd"
 message.send.backend.type = "smtp"
 message.send.backend.host = "posteo.de"
-message.send.backend.port = 465
+message.send.backend.port = 587
 message.send.backend.login = "elies@posteo.net"
-message.send.backend.encryption.type = "tls"
+message.send.backend.encryption.type = "start-tls"
 message.send.backend.auth.type = "password"
 message.send.backend.auth.keyring = "posteo-smtp-passwd"
+
+# https://developers.google.com/identity/protocols/oauth2#1.-obtain-oauth-2.0-credentials-from-the-dynamic_data.setvar.console_name-.
+# https://console.cloud.google.com/auth/clients
+# `himalaya accounts configure gmail` will complete your OAuth 2.0 setup and ask for your client secret.
+[accounts.gmail]
+email = "francesc.elies@gmail.com"
+display-name = "francesc.elies"
+downloads-dir = "/home/cesc/Downloads"
+backend.type = "imap"
+backend.host = "imap.gmail.com"
+backend.port = 143
+backend.login = "francesc.elies@gmail.com"
+backend.encryption.type = "start-tls"
+backend.auth.type = "oauth2"
+backend.auth.method = "xoauth2"
+backend.auth.client-id = "1086743415192-vib1vra9djjpfrd3lhl5og0mtdmcv6lt.apps.googleusercontent.com"
+backend.auth.auth-url = "https://accounts.google.com/o/oauth2/auth"
+backend.auth.token-url = "https://www.googleapis.com/oauth2/v3/token"
+backend.auth.pkce = true
+backend.auth.redirect-scheme = "http"
+backend.auth.redirect-host = "localhost"
+backend.auth.redirect-port = 49152
+backend.auth.scope = "https://mail.google.com/"
+backend.auth.client-secret.keyring = "gmail-imap-oauth2-client-secret"
+backend.auth.access-token.keyring = "gmail-imap-oauth2-access-token"
+backend.auth.refresh-token.keyring = "gmail-imap-oauth2-refresh-token"
+message.send.backend.type = "smtp"
+message.send.backend.host = "smtp.gmail.com"
+message.send.backend.port = 587
+message.send.backend.login = "francesc.elies@gmail.com"
+message.send.backend.encryption.type = "start-tls"
+message.send.backend.auth.type = "oauth2"
+message.send.backend.auth.method = "xoauth2"
+message.send.backend.auth.client-id = "1086743415192-vib1vra9djjpfrd3lhl5og0mtdmcv6lt.apps.googleusercontent.com"
+message.send.backend.auth.auth-url = "https://accounts.google.com/o/oauth2/auth"
+message.send.backend.auth.token-url = "https://www.googleapis.com/oauth2/v3/token"
+message.send.backend.auth.pkce = true
+message.send.backend.auth.redirect-scheme = "http"
+message.send.backend.auth.redirect-host = "localhost"
+message.send.backend.auth.redirect-port = 49152
+message.send.backend.auth.scope = "https://mail.google.com/"
+message.send.backend.auth.client-secret.keyring = "gmail-smtp-oauth2-client-secret"
+message.send.backend.auth.access-token.keyring = "gmail-smtp-oauth2-access-token"
+message.send.backend.auth.refresh-token.keyring = "gmail-smtp-oauth2-refresh-token"
