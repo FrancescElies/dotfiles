@@ -156,6 +156,10 @@ $env.config.hooks.env_change = {
                 ]
             }
         }
+        {
+            condition: {|_, after| ($after | path join '.git' | path exists) }
+            code: { pwd | save -f ~/.nu-start-dir }
+        }
     ]
 }
 
