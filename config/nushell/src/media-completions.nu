@@ -23,8 +23,11 @@ export module youtube {
 export module video {
     # Reduces video size and converts to mp4
     # See https://stackoverflow.com/questions/12026381/ffmpeg-converting-mov-files-to-mp4
+    # for smaller file set crf to 25–26, use 20-21 for higher quality
     export def shrink [input_video: path] {
         ffmpeg -i $input_video -vcodec libx265 -crf 28  $"($input_video).mp4"
+        # ffmpeg -i input.mp4 -c:v libx265 -crf 26 -preset medium -tag:v hvc1 -c:a aac -b:a 128k output.mp4
+        # ffmpeg -i input.mp4 -vcodec libx264 -crf 28 -preset fast -acodec aac -b:a 128k -movflags +faststart output.mp4
     }
     # One could download move parts like follows from some website
     # 400 is just an arbitrary number of how may parts there are
