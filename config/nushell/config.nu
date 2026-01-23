@@ -34,7 +34,7 @@ use ~/src/dotfiles/config/nushell/src/fd-completions.nu *
 use ~/src/dotfiles/config/nushell/src/just-completions.nu *
 # use ~/src/dotfiles/config/nushell/src/man.nu *
 use ~/src/dotfiles/config/nushell/src/maxmsp-completions.nu *
-# use ~/src/dotfiles/config/nushell/src/media-completions.nu *
+use ~/src/dotfiles/config/nushell/src/media-completions.nu *
 # use ~/src/dotfiles/config/nushell/src/miniserve-completions.nu *
 use ~/src/dotfiles/config/nushell/src/my-functions.nu *
 use ~/src/dotfiles/config/nushell/src/git-aliases.nu *
@@ -48,8 +48,8 @@ use ~/src/dotfiles/config/nushell/src/pueue-completions.nu *
 use ~/src/dotfiles/config/nushell/src/reverse-eng.nu *
 # use ~/src/dotfiles/config/nushell/src/rg-completions.nu *
 # use ~/src/dotfiles/config/nushell/src/rust.nu *
-# use ~/src/dotfiles/config/nushell/src/rustup-completions.nu *
-# use ~/src/dotfiles/config/nushell/src/ssh-completions.nu *
+use ~/src/dotfiles/config/nushell/src/rustup-completions.nu *
+use ~/src/dotfiles/config/nushell/src/ssh-completions.nu *
 use ~/src/dotfiles/config/nushell/src/symlinks.nu *
 # use ~/src/dotfiles/config/nushell/src/ttyper-completions.nu *
 # use ~/src/dotfiles/config/nushell/src/utils.nu *
