@@ -320,6 +320,70 @@ def "config psql" [] {
     symlink --force ~/src/dotfiles/config/.psqlrc ~/.psqlrc
 }
 
+def "config git" [] {
+  # https://www.youtube.com/watch?v=aolI_Rz0ZqY
+  # Apply some useful defaults
+  # ^gmy-defaults
+  #
+  # Give me all my pull requests as local refs
+  # ^git config remote.origin.fetch '+refs/pull/*:refs/remotes/origin/pull/*'
+  #
+  # Conditional ~/.gitconfig
+  #
+  # [includelf "gitdir:~/projects/work/"]
+  #   path = /s/.gitconfig
+  # [includelf "gitdir:~/src/oss/"]
+  #   path = ~/projects/oss/.gitconfig
+  #
+  # Accidentally cloned http repo version?
+  # [url "git@github.com:"]
+  #   insteadOf = "https://github.com/"
+  # ^git maintenance start
+
+  # https://jvns.ca/blog/2024/02/16/popular-git-config-options/#help-autocorrect-10
+  ^git config --global push.autosetupremote true
+  ^git config --global init.defaultBranch main
+  ^git config --global pull.rebase true
+  ^git config --global merge.conflictstyle zdiff3
+  ^git config --global rebase.autosquash true
+  ^git config --global push.default current
+  ^git config --global help.autocorrect 10
+  ^git config --global interactive.diffFilter delta --color-only
+  ^git config --global diff.algorithm histogram
+  ^git config --global branch.sort -committerdate
+  ^git config --global fetch.prune true
+  ^git config --global log.date iso
+  ^git config --global rebase.missingCommitsCheck error
+  ^git config --global rebase.updateRefs true
+
+  # Avoid data corruption
+  ^git config --global transfer.fsckobjects true
+  ^git config --global fetch.fsckobjects true
+  ^git config --global receive.fsckObjects true
+
+  # REuse REordered REsolution, tells ^git to remember conflicts so if it sees them again he won't ask about it.
+  ^git config --global rerere.enabled true
+  ^git config --global branch.sort -committerdate
+  # ^git config gpg.format ssh
+  # ^git config user.signingkey ~/.ssh/id_ed25519
+
+  # Big repository stuff
+  #
+  # ^git clone filters:
+  # ^git clone --fitter=blob:none
+  # ^git clone --fitter=tree:zero
+  #
+  # See multipack indexes, reachability bitmaps and geometric repacking
+  # https://github.blog/2021-04-29-scaling-monorepo-maintenance
+  # ^git maintenance start will also write the commit-graph
+  ^git config --global fetch.writeCommitGraph true
+  # file system monitory
+  ^git config --global core.untrackedcache true
+  ^git config --global core.fsmonitor true
+
+  ^git config --global commit.template ~/src/dotfiles/config/git/commit-template
+}
+
 def "config bashrc" [] { symlink --force ~/src/dotfiles/config/.bashrc ~/.bashrc }
 def "config inputrc" [] { symlink --force ~/src/dotfiles/config/.inputrc ~/.inputrc }
 def "config radare2" [] { symlink --force ~/src/dotfiles/config/.radare2rc ~/.radare2rc }
@@ -351,6 +415,7 @@ export def bootstrap [] {
 
     symlink --force ~/src/dotfiles/.inputrc ~/.inputrc
 
+    config git
     config bashrc
     config inputrc
     config nushell

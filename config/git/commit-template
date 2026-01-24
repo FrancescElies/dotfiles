@@ -1,0 +1,24 @@
+# git config --global commit.template ~/src/dotfiles/config/git/commit-template
+# Conventional Commit format (examples):
+#   feat:       new feature
+#   fix:        bug fix
+#   docs:       documentation only
+#   style:      formatting, missing semicolons, etc. (no code change)
+#   refactor:   code change that neither fixes a bug nor adds a feature
+#   perf:       performance improvement
+#   test:       adding missing tests or correcting existing ones
+#   build:      changes affecting build system or external dependencies
+#   ci:         CI/CD related changes
+#   chore:      maintenance tasks, tooling, etc.
+#   revert:     revert a previous commit
+
+# <type>[optional scope]: <short description>
+
+# Body: explain **why** & **what** (72 chars max per line recommended)
+
+# --- Trailers below (add when relevant) ---
+
+# Signed-off-by: 
+# Co-authored-by: 
+# Reviewed-by: 
+# Acked-by: 
