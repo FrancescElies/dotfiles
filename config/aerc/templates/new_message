@@ -1,5 +1,5 @@
 X-Mailer: aerc {{version}}
-Bcc: elies@posteo.net
+Bcc: {{.AccountFrom.Address}}
 {{- with .Signature }}
 
 {{.}}
