@@ -1,3 +1,4 @@
+
 # git config --global commit.template ~/src/dotfiles/config/git/commit-template
 # Conventional Commit format (examples):
 #   feat:       new feature
