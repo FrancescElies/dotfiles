@@ -1,4 +1,5 @@
 X-Mailer: aerc {{version}}
+Bcc: {{.AccountFrom.Address}}
 
 Forwarded message from {{.OriginalFrom | names | join ", "}} on {{dateFormat .OriginalDate "Mon Jan 2, 2006 at 3:04 PM"}}:
 {{.OriginalText}}

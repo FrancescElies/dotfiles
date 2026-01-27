@@ -1,4 +1,5 @@
 X-Mailer: aerc {{version}}
+Bcc: {{.AccountFrom.Address}}
 
 On {{dateFormat (.OriginalDate | toLocal) "Mon Jan 2, 2006 at 3:04 PM MST"}}, {{.OriginalFrom | names | join ", "}} wrote:
 {{ if eq .OriginalMIMEType "text/html" -}}
