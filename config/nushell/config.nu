@@ -304,7 +304,7 @@ $env.config.keybindings = [
                | append (try {ls --full-paths /s/customerprj/*})
                | append ~/Downloads
                | append ~/Desktop
-               | where type == dir | get name
+               | where type in [dir, symlink] | get name
                | input list --fuzzy $"Goto (ansi mu)project(ansi reset):"
            );
            '
