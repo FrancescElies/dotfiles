@@ -61,6 +61,7 @@ $env.path = ( $env.path | uniq )
 $env.SHELL = "nu"  # makes broot open nu
 $env.EDITOR = "nvim"
 $env.MANPAGER = "nvim +Man!"
+# $env.MANPAGER = "nvim -u NORC --clean +Man!"  # faster man pager
 
 $env.PYTHONUNBUFFERED = 1
 $env.PYTHONBREAKPOINT = "ipdb.set_trace"
