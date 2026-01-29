@@ -375,6 +375,8 @@ const ctrl_bindings = [
 const alt_bindings = [
     $"(ansi yb)p(ansi reset)roject"
 ]
+source ~/src/dotfiles/config/.zoxide.nu
+
 print $"(ansi defb)ctrl-i(ansi reset): (ansi defr)TAB(ansi reset), (ansi defb)ctrl-m(ansi reset): (ansi defr)ENTER(ansi reset), (ansi defb)ctrl-[(ansi reset): (ansi defr)ESC(ansi reset)"
 print $"(ansi yb)alt(ansi reset): open ($alt_bindings | str join ', '), (ansi rb)ctrl(ansi reset): ($ctrl_bindings | str join ', ')"
 
