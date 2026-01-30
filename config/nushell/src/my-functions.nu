@@ -190,8 +190,11 @@ export def "my backup restore by-year" [serverip: string = "intel-pc"] {
 #
 # neovim
 #
-export alias e = nvim "+Telescope find_files"
+export alias f = nvim "+Telescope find_files"
+export alias e = nvim
 export alias "nvim emergency" = nvim -u ~/src/kickstart.nvim/minimal-vimrc.vim
+export alias ee = nvim emergency
+
 export def "nvim clean shada" [] {
     match $nu.os-info.name {
         "windows" => { fd swp ~/AppData/Local/nvim-data/swap -x rm },
