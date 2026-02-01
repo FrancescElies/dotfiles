@@ -341,18 +341,19 @@ def "config git" [] {
   # ^git maintenance start
 
   # https://jvns.ca/blog/2024/02/16/popular-git-config-options/#help-autocorrect-10
-  ^git config --global push.autosetupremote true
-  ^git config --global init.defaultBranch main
-  ^git config --global pull.rebase true
-  ^git config --global merge.conflictstyle zdiff3
-  ^git config --global rebase.autosquash true
-  ^git config --global push.default current
-  ^git config --global help.autocorrect 10
-  ^git config --global interactive.diffFilter delta --color-only
-  ^git config --global diff.algorithm histogram
   ^git config --global branch.sort -committerdate
+  ^git config --global diff.algorithm histogram
   ^git config --global fetch.prune true
+  ^git config --global format.signOff true
+  ^git config --global help.autocorrect 10
+  ^git config --global init.defaultBranch main
+  ^git config --global interactive.diffFilter delta --color-only
   ^git config --global log.date iso
+  ^git config --global merge.conflictstyle zdiff3
+  ^git config --global pull.rebase true
+  ^git config --global push.autosetupremote true
+  ^git config --global push.default current
+  ^git config --global rebase.autosquash true
   ^git config --global rebase.missingCommitsCheck error
   ^git config --global rebase.updateRefs true
 
