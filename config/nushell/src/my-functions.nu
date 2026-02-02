@@ -11,6 +11,11 @@ export def "aptf install" [] {
     sudo apt install ...(aptf search | get package)
 }
 
+export def excalidraw [] {
+    cd ~/src/oss/excalidraw
+    npm run start:production
+}
+
 # ripgrep->fzf->vim [QUERY]
 export def rg-fzf-nvim [] {
     let RELOAD = 'rg --column --color=always --smart-case {q}'
