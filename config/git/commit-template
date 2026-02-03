@@ -34,7 +34,7 @@
 #   * `Requested-by:`
 #   * `Reported-by:`
 #   * `Co-authored-by:`
-# ! * `Signed-off-by:` compulsory for some projects (e.g. aerc)!
+# ! * Signed-off-by: Francesc Elies <elies@posteo.net>
 #   * `Tested-by:` used in review _after_ submission to the mailing list. If
 #     minimal changes occur between respins, feel free to include that into your
 #     respin to keep track of previous reviews.
