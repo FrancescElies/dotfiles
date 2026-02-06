@@ -290,10 +290,11 @@ export def "python multi-fix" [] {
     pyright .
 }
 
+export def "config this-machine" [] { nvim ~/src/dotfiles/config/nushell/src/os-this-machine.nu }
 
 export module "my" {
 
-    export def "machine" [] { nvim ~/src/dotfiles/config/nushell/src/os-this-machine.nu }
+    export alias "config this-machine" = config this-machine
 
     export def "nvim config" [] { nvim ~/src/kickstart.nvim/init.lua }
 
