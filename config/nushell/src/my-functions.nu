@@ -240,11 +240,11 @@ export def pidof [name: string ] {
 
 # grep for specific process names
 export def "ps name" [name: string = "" ] {
-  if ($name | is-empty) {
+  (if ($name | is-empty) {
     ps --long | sort-by -in name | input list -d name --fuzzy
   } else {
     ps --long | find --ignore-case --columns [name] -i $name
-  }
+  }) | sort-by name
 }
 export alias psn = ps name
 
