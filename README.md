@@ -71,7 +71,7 @@ map K previousTab
 - https://www.nushell.sh/blog/2023-08-23-happy-birthday-nushell-4.html
 - https://github.com/dandavison/dotfiles
 - https://github.com/nushell/nu_scripts
-
+- Managing secrets https://github.com/slok/agebox
 # share your keystrokes
 Mac: KeyCastr
 Linux/Win/Mac: https://github.com/mulaRahul/keyviz
