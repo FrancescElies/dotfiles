@@ -345,6 +345,7 @@ def "config git" [] {
   ^git config --global diff.algorithm histogram
   ^git config --global fetch.prune true
   ^git config --global help.autocorrect 10
+  ^git config --global help.autocorrect prompt
   ^git config --global init.defaultBranch main
   ^git config --global interactive.diffFilter delta --color-only
   ^git config --global log.date iso
