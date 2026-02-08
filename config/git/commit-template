@@ -19,26 +19,26 @@
 
 # --- Trailers below (add when relevant) ---
 #
-#   * `Closes: <URL>` closes the ticket with the neutral `CLOSED` resolution.
-#   * `Fixes: <URL>` closes the ticket with the `FIXED` resolution.
-#   * `Fixes: <sha> ("<title>")` reference the commit that introduced a regression.
-#   * `Implements: <URL>` closes the ticket with the `IMPLEMENTED` resolution.
-#   * `References: <URL>` adds a comment to the ticket.
-#   * `Link:`
-#   * `Changelog-added:`
-#   * `Changelog-fixed:`
-#   * `Changelog-changed:`
-#   * `Changelog-deprecated:`
-#   * `Cc:`
-#   * `Suggested-by:`
-#   * `Requested-by:`
-#   * `Reported-by:`
-#   * `Co-authored-by:`
+#   * Closes: <URL> closes the ticket with the neutral `CLOSED` resolution.
+#   * Fixes: <URL> closes the ticket with the `FIXED` resolution.
+#   * Fixes: <sha> ("<title>") reference the commit that introduced a regression.
+#   * Implements: <URL> closes the ticket with the `IMPLEMENTED` resolution.
+#   * References: <URL> adds a comment to the ticket.
+#   * Link:
+#   * Changelog-added:
+#   * Changelog-fixed:
+#   * Changelog-changed:
+#   * Changelog-deprecated:
+#   * Cc:
+#   * Suggested-by:
+#   * Requested-by:
+#   * Reported-by:
+#   * Co-authored-by:
 # ! * Signed-off-by: Francesc Elies <elies@posteo.net>
-#   * `Tested-by:` used in review _after_ submission to the mailing list. If
+#   * Tested-by: used in review _after_ submission to the mailing list. If
 #     minimal changes occur between respins, feel free to include that into your
 #     respin to keep track of previous reviews.
-#   * `Reviewed-by:` used in review _after_ submission. If minimal changes occur
+#   * Reviewed-by: used in review _after_ submission. If minimal changes occur
 #     between respins, feel free to include that into your respin to keep track
 #     of previous reviews.
-#   * `Acked-by:` used in review _after_ submission.
+#   * Acked-by: used in review _after_ submission.
