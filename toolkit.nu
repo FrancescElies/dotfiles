@@ -344,7 +344,6 @@ def "config git" [] {
   ^git config --global branch.sort -committerdate
   ^git config --global diff.algorithm histogram
   ^git config --global fetch.prune true
-  ^git config --global format.signOff true
   ^git config --global help.autocorrect 10
   ^git config --global init.defaultBranch main
   ^git config --global interactive.diffFilter delta --color-only
@@ -356,6 +355,12 @@ def "config git" [] {
   ^git config --global rebase.autosquash true
   ^git config --global rebase.missingCommitsCheck error
   ^git config --global rebase.updateRefs true
+
+  # gpg
+  ^git config --global format.signOff true
+  ^git config --global user.signingKey 3B90F50EE678CC468870A2BEC6514C960DD0AC0B
+  ^git config --global commit.gpgsign true
+  ^git config --global tag.gpgsign true
 
   # Avoid data corruption
   ^git config --global transfer.fsckobjects true
