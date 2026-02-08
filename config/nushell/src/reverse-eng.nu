@@ -10,6 +10,10 @@
 
 # https://blog.devit.co/diving-into-radare2/
 
+# nmap -A ip
+# hashcat, johntheripper, hydra ::: rockyou.txt
+# foremost: file carving
+# sqlmap
 
 export alias r2 = radare2
 
