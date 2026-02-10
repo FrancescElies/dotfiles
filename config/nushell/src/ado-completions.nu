@@ -201,6 +201,16 @@ export module ado {
       ^git branch --no-color -r | lines | parse -r '^\*?(\s*|\s*\S* -> )(?P<branch>\S*$)' | get branch | uniq | parse "{remote}/{branch_name}" | get branch_name
     }
 
+    export def "list pipelines" [ ] {
+       ( az pipelines list | from json
+            | select id name path
+            | insert description { $'($in.path) :: ($in.name)'}
+            | rename -c { id: value }
+            | select value description
+            | sort-by description) 
+    }
+
+
     def "nu-complete pipeline-definitions" [] { [
         [value description];
         [42    pr]
@@ -225,7 +235,7 @@ export module ado {
     #
     # NOTE: https://learn.microsoft.com/en-us/azure/devops/boards/queries/query-operators-variables?view=azure-devops#query-macros-and-variables
     # @CurrentIteration, @CurrentIteration +/- n, @Follows, @MyRecentActivity,
-    # @RecentMentions, @RecentProjectActivity, and @TeamAreas. 
+    # @RecentMentions, @RecentProjectActivity, and @TeamAreas.
 
     export def "board query" [wiql: string] {
         let table = az boards query --output table --wiql $wiql -o json
