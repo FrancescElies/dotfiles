@@ -30,6 +30,11 @@ export def 'docs vim' [] {
   nvim *.md
 }
 
+export def 'docs dsp' [] {
+    start https://www.dspguide.com/eightres.htm
+}
+
+
 export def 'docs python' [] {
   let dir = ("~/src/oss/python-docs" | path expand)
   mkdir $dir
@@ -52,3 +57,4 @@ export def "docs rust" [] {
   rustup doc
   rust links
 }
+
