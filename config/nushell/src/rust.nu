@@ -62,6 +62,7 @@ export def "rust links" [] {
         [negative-programming https://github.com/tigerbeetle/tigerbeetle/blob/main/docs/TIGER_STYLE.md]
         [types-table          https://rustcurious.com/elements]
         [associated-types     https://gavinleroy.com/writings/i-heart-assoc-types.html]
+        [testing-proc-macros  https://ferrous-systems.com/blog/testing-proc-macros]
     ]
 }
 
