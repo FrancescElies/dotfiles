@@ -290,7 +290,20 @@ export def "python multi-fix" [] {
     pyright .
 }
 
-export def "config this-machine" [] { nvim ~/src/dotfiles/config/nushell/src/os-this-machine.nu }
+export alias "config aerc accounts" = nvim ~/src/dotfiles/config/aerc/accounts.conf
+export alias "config aerc binds" = nvim ~/src/dotfiles/config/aerc/binds.conf
+export alias "config aerc main" = nvim ~/src/dotfiles/config/aerc/aerc.conf
+export alias "config nvim" = nvim ~/src/kickstart.nvim/*.lua ~/src/kickstart.nvim/lua/custom/**/*.lua
+export alias "config broot" = nvim ~/src/dotfiles/config/broot/*.hjson
+export alias "config fd" = nvim ~/src/dotfiles/config/fd/*
+export alias "config zellij" = nvim ~/src/dotfiles/config/zellij/*.kdl
+export alias "config glazewm" = nvim ~/src/dotfiles/config/glazewm/*.yaml
+export alias "config sway" = nvim ~/src/dotfiles/config/sway/config ~/src/dotfiles/config/sway/scripts/*
+export alias "config ripgrep" = nvim ~/src/dotfiles/config/.ripgreprc
+export alias "config radare" = nvim ~/src/dotfiles/config/.radare2rc
+export alias "config psqlrc" = nvim ~/src/dotfiles/config/.psqlrc
+export alias "config violentmonkey" = nvim ~/src/dotfiles/config/violentmonkey/*.js
+export alias "config this-machine" = nvim ~/src/dotfiles/config/nushell/src/os-this-machine.nu
 
 export module "my" {
 
