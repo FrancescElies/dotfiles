@@ -87,7 +87,7 @@ def "config foot" [] {
 
 def "config aba" [] {
     print $"(ansi purple_bold)config aba(ansi reset)"
-    symlink --force ~/src/dotfiles/local/share/aba.toml ~/.local/share/aba
+    symlink --force ~/src/dotfiles/local/share/aba.toml ~/.local/share/aba.toml
 }
 
 
