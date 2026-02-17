@@ -85,6 +85,12 @@ def "config foot" [] {
     symlink --force ~/src/dotfiles/config/foot/ $config_dir
 }
 
+def "config aba" [] {
+    print $"(ansi purple_bold)config aba(ansi reset)"
+    symlink --force ~/src/dotfiles/local/share/aba.toml ~/.local/share/aba
+}
+
+
 def "install sway" [] {
     print $"(ansi purple_bold)install sway(ansi reset)"
     if not ('/usr/bin/sway' | path exists) {
@@ -457,6 +463,7 @@ export def bootstrap [] {
             }
             install sway
             config foot
+            config aba
             install keyd-remap
             install fonts
             if not (which nano | is-empty) { sudo apt remove -y nano }

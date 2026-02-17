@@ -7,3 +7,4 @@ config/broot/config/
 config/broot/data/
 samsung-uld-copy/
 config/glazewm/errors.log
+local/share/aba.toml
