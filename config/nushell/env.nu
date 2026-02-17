@@ -77,9 +77,9 @@ $env.RUSTC_WRAPPER = 'sccache'
 
 $env.RESTIC_PASSWORD_COMMAND = 'secret-tool lookup service restic'
 
-touch ~/.nu-start-dir
-# HACK: for alacritty, make we don't auto switch folders when using nvim's terminal
-if ($env.NVIM? | is-empty) {
-    print $"(ansi def)changed dir using .nu-start-dir(ansi reset)"
-    try { cd ( open ~/.nu-start-dir ) } catch { cd ~ }
-}
+# touch ~/.nu-start-dir
+# # HACK: for alacritty, make we don't auto switch folders when using nvim's terminal
+# if ($env.NVIM? | is-empty) {
+#     print $"(ansi def)changed dir using .nu-start-dir(ansi reset)"
+#     try { cd ( open ~/.nu-start-dir ) } catch { cd ~ }
+# }
