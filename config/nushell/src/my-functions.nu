@@ -293,6 +293,8 @@ export def "python multi-fix" [] {
 export alias "config aerc accounts" = nvim ~/src/dotfiles/config/aerc/accounts.conf
 export alias "config aerc binds" = nvim ~/src/dotfiles/config/aerc/binds.conf
 export alias "config aerc main" = nvim ~/src/dotfiles/config/aerc/aerc.conf
+export alias "config aerospace" = nvim ~/src/dotfiles/config/aerospace/aerospace.toml
+export alias "config alacritty" = nvim ~/src/dotfiles/config/alacritty/alacritty.toml
 export alias "config broot" = nvim ~/src/dotfiles/config/broot/*.hjson
 export alias "config fd" = nvim ~/src/dotfiles/config/fd/*
 export alias "config glazewm" = nvim ~/src/dotfiles/config/glazewm/*.yaml
@@ -303,6 +305,7 @@ export alias "config ripgrep" = nvim ~/src/dotfiles/config/.ripgreprc
 export alias "config sway" = nvim ~/src/dotfiles/config/sway/config ~/src/dotfiles/config/sway/scripts/*
 export alias "config this-machine" = nvim ~/src/dotfiles/config/nushell/src/os-this-machine.nu
 export alias "config violentmonkey" = nvim ~/src/dotfiles/config/violentmonkey/*.js
+export alias "config wezterm" = nvim ~/src/dotfiles/config/wezterm/wezterm.lua
 export alias "config zellij" = nvim ~/src/dotfiles/config/zellij/*.kdl
 
 export module "my" {
