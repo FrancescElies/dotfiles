@@ -89,4 +89,6 @@ on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
     enter = 'mode main'
     esc = 'mode main'
 
-
+[workspace-to-monitor-force-assignment]
+    1 = 'main'                       # main montitor
+    2 = 'secondary'                  # Non-main monitor in case when there are only two monitors
