@@ -218,9 +218,9 @@ local break_to_new_tab = wezterm.action_callback(function(_, pane) pane:move_to_
 
 config.keys = {
 
-  { key = '0', mods = 'ALT', action = wezterm.action.ResetFontSize },
-  { key = '-', mods = 'ALT', action = wezterm.action.DecreaseFontSize },
-  { key = '=', mods = 'ALT', action = wezterm.action.IncreaseFontSize },
+  { key = '0', mods = 'CTRL|SHIFT', action = wezterm.action.ResetFontSize },
+  { key = '-', mods = 'CTRL|SHIFT', action = wezterm.action.DecreaseFontSize },
+  { key = '=', mods = 'CTRL|SHIFT', action = wezterm.action.IncreaseFontSize },
 
   { key = 'z', mods = mods, action = act.TogglePaneZoomState },
   -- { key = 'd',   mods = mods,        action = act.DisableDefaultAssignment },  -- don't remember why
