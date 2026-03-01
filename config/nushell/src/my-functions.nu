@@ -200,6 +200,8 @@ export alias e = nvim
 export alias "nvim emergency" = nvim -u ~/src/kickstart.nvim/minimal-vimrc.vim
 export alias ee = nvim emergency
 
+extern "nvim" [ ...args ] 
+
 export def "nvim clean shada" [] {
     match $nu.os-info.name {
         "windows" => { fd swp ~/AppData/Local/nvim-data/swap -x rm },
