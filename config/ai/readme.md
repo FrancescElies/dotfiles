@@ -1,2 +1,2 @@
-# Best mode
-https://gist.github.com/burkeholland/88af0249c4b6aff3820bf37898c8bacf
+- Beast mode: https://gist.github.com/burkeholland/88af0249c4b6aff3820bf37898c8bacf
+-  https://www.copilotcraft.dev/
