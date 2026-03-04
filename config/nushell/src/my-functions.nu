@@ -200,28 +200,24 @@ export alias e = nvim
 export alias "nvim emergency" = nvim -u ~/src/kickstart.nvim/minimal-vimrc.vim
 export alias ee = nvim emergency
 
-extern "nvim" [ ...args ] 
-
-export def "nvim clean shada" [] {
+export def "nvim-clean-shada" [] {
     match $nu.os-info.name {
         "windows" => { fd swp ~/AppData/Local/nvim-data/swap -x rm },
         _ => { rm -rf ~/.local/state/nvim/shada },
     }
 }
-export def "nvim clean swap" [] {
+
+export def "nvim-clean-swap" [] {
     match $nu.os-info.name {
         "windows" => { fd swp ~/AppData/Local/nvim-data/swap -x rm },
         _ => { fd swp ~/.local/state/nvim/swap -x rm },
     }
 }
-export def "nvim pr-files" [] { nvim ...(git pr files) }
 
-export def "nvim server" [] {
-    nvim --listen ~/.cache/nvim/server.pipe --headless
-}
-export def "nvim client" [...file: path] {
-    nvim --remote --server ~/.cache/nvim/server.pipe ...$file
-}
+export def "nvim-pr-files" [] { nvim ...(git pr files) }
+
+export alias "nvim-server" = nvim --listen ~/.cache/nvim/server.pipe --headless
+export alias "nvim-client" = nvim --remote --server ~/.cache/nvim/server.pipe
 
 
 #
