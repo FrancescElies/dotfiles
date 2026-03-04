@@ -288,9 +288,9 @@ $env.config.keybindings = [
     }
 
     {
-        name: goto_to_project
-        modifier: alt
-        keycode: char_p
+        name: jump_to_project
+        modifier: control
+        keycode: char_j
         mode: [emacs, vi_normal, vi_insert]
         event: {
            send: executehostcommand,
