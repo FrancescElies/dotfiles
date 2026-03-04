@@ -455,6 +455,7 @@ export def bootstrap [] {
             input $"(ansi bb)run as admin(ansi reset): (ansi pi)($winget_install)(ansi reset) - press enter when done"
             windows config terminal
             symlink --force ~/src/dotfiles/bin/windows-os/win-update.ps1 ~/Desktop/win-update.ps1
+            symlink --force ~/src/dotfiles/bin/windows-os/admin-term.ps1 ~/Desktop/admin-term.ps1
         },
         "linux" => {
             if (which ^rustup | is-empty ) {
