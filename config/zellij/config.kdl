@@ -168,7 +168,7 @@ keybinds clear-defaults=true {
         bind "Alt o" { MoveTab "right"; }
         bind "Alt p" { TogglePaneInGroup; }
         bind "Alt Shift p" { ToggleGroupMarking; }
-        bind "x" { CloseFocus; SwitchToMode "locked"; }
+        bind "Alt x" { CloseFocus; SwitchToMode "locked"; }
         bind "Alt ;" {
             LaunchPlugin "filepicker" {
                 // floating true 

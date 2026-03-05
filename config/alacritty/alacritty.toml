@@ -65,6 +65,7 @@ bindings = [
 	#
     # Linux/Windows Specific
 	#
+    { key = "x", mods = "Control|Shift", action = "Quit" },
     { key = "N", mods = "Control|Shift", action = "CreateNewWindow" },
     # { key = "S", mods = "Control|Shift", action = "SpawnNewInstance" },
 
