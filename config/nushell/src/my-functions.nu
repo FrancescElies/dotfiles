@@ -195,7 +195,6 @@ export def "my backup restore by-year" [serverip: string = "intel-pc"] {
 #
 # neovim
 #
-export alias f = nvim "+Telescope find_files"
 export alias e = nvim
 export alias "nvim emergency" = nvim -u ~/src/kickstart.nvim/minimal-vimrc.vim
 export alias ee = nvim emergency

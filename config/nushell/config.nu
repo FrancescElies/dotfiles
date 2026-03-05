@@ -188,6 +188,8 @@ $env.config.menus = [
 ]
 
 # The default config record. This is where much of your global configuration is setup.
+#
+# https://www.nushell.sh/book/line_editor.html#vi-normal-actions
 $env.config.keybindings = [
     # https://www.nushell.sh/blog/2024-05-15-top-nushell-hacks.html
     {
@@ -227,13 +229,7 @@ $env.config.keybindings = [
          mode: [emacs, vi_normal, vi_insert]
          event: {
            send: executehostcommand,
-           # cmd: "commandline edit --insert (bro | path expand | path relative-to ('.' | path expand))"
-           cmd: "
-                nvim (
-                  fd --type file
-                  | fzf --preview 'bat --color=always --style=full --line-range=:500 {}'
-                )
-            "
+           cmd: "nvim '+Telescope find_files'"
          }
     }
 
@@ -262,7 +258,7 @@ $env.config.keybindings = [
     {
         name: jump_to_project
         modifier: control
-        keycode: enter # ctrl-enter or ctrl-j to fuzzy cd into directories
+        keycode: char_j # ctrl-enter or ctrl-j to fuzzy cd into directories
         mode: [emacs, vi_normal, vi_insert]
         event: {
            send: executehostcommand,
