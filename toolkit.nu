@@ -261,6 +261,7 @@ def "windows config terminal" [] {
     let alacritty_conf = ($env.APPDATA | path join "alacritty")
     rm -rf $alacritty_conf
     mklink /j ($alacritty_conf | path expand)  ('~/src/dotfiles/config/alacritty' | path expand --strict)
+    symlink --force ("./config/zellij" | path expand) ~/.config/zellij
 }
 
 export def "linux fix printer-samsung-M2026" [] {
