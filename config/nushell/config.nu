@@ -202,17 +202,6 @@ $env.config.keybindings = [
     }
 
     {
-         name: insert_absolute_File_with_Broot
-         modifier: control
-         keycode: char_a
-         mode: [emacs, vi_normal, vi_insert]
-         event: {
-           send: executehostcommand,
-           cmd: "commandline edit --insert (cd ~; bro)"
-         }
-    }
-
-    {
         # ctrl-enter or ctrl-j to fuzzy cd into directories
         name: fzf_dirs
         modifier: control
@@ -372,11 +361,8 @@ const ctrl_bindings = [
     $"(ansi rb)u(ansi reset)se \(fuzzy\)"
     $"(ansi rb)space(ansi reset) \(expands alias\)"
 ]
-const alt_bindings = [
-    $"(ansi yb)p(ansi reset)roject"
-]
 source ~/src/dotfiles/config/.zoxide.nu
 
-print $"(ansi defb)ctrl-i(ansi reset): (ansi defr)TAB(ansi reset), (ansi defb)ctrl-m(ansi reset): (ansi defr)ENTER(ansi reset), (ansi defb)ctrl-[(ansi reset): (ansi defr)ESC(ansi reset)"
-print $"(ansi yb)alt(ansi reset): open ($alt_bindings | str join ', '), (ansi rb)ctrl(ansi reset): ($ctrl_bindings | str join ', ')"
+# print $"(ansi defb)ctrl-i(ansi reset): (ansi defr)TAB(ansi reset), (ansi defb)ctrl-m(ansi reset): (ansi defr)ENTER(ansi reset), (ansi defb)ctrl-[(ansi reset): (ansi defr)ESC(ansi reset)"
+print $"(ansi rb)ctrl(ansi reset): ($ctrl_bindings | str join ', ')"
 
