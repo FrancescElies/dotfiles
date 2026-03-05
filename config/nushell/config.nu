@@ -202,23 +202,6 @@ $env.config.keybindings = [
     }
 
     {
-        # ctrl-enter or ctrl-j to fuzzy cd into directories
-        name: fzf_dirs
-        modifier: control
-        keycode: enter
-        mode: [emacs, vi_normal, vi_insert]
-        event: [
-          {
-            send: executehostcommand
-            cmd: "
-              cd ( fd --type directory --hidden
-                   | fzf --preview 'tree -C {} | head -n 200');
-            "
-          }
-        ]
-    }
-
-    {
         name: fzf_files
         modifier: control
         keycode: char_t
@@ -279,7 +262,7 @@ $env.config.keybindings = [
     {
         name: jump_to_project
         modifier: control
-        keycode: char_j
+        keycode: enter # ctrl-enter or ctrl-j to fuzzy cd into directories
         mode: [emacs, vi_normal, vi_insert]
         event: {
            send: executehostcommand,
