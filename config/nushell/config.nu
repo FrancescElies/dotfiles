@@ -212,11 +212,10 @@ $env.config.keybindings = [
           {
             send: executehostcommand
             cmd: "
-              commandline edit --append (
-                fd --type file --hidden
-                | fzf --preview 'bat --color=always --style=full --line-range=:500 {}'
-              );
-              commandline set-cursor --end
+                commandline edit --insert (
+                  fd --type file --hidden
+                  | fzf --preview 'bat --color=always --style=full --line-range=:500 {}'
+                );
             "
           }
         ]
@@ -241,17 +240,6 @@ $env.config.keybindings = [
          event: {
            send: executehostcommand,
            cmd: "cdroot"
-         }
-    }
-
-    {
-         name: lazygit
-         modifier: control
-         keycode: char_g
-         mode: [emacs, vi_normal, vi_insert]
-         event: {
-           send: executehostcommand,
-           cmd: "lazygit"
          }
     }
 
@@ -335,7 +323,7 @@ $env.config.keybindings = [
 source ~/src/dotfiles/config/nushell/src/os-this-machine.nu
 
 const ctrl_bindings = [
-    $"insert (ansi rb)a(ansi reset)bsolute (ansi rb)f(ansi reset)ile path"
+    $"insert (ansi rb)t(ansi reset)arget, edit (ansi rb)f(ansi reset)ile"
     $"(ansi rb)j(ansi reset)ump"
     $"(ansi rb)u(ansi reset)se \(fuzzy\)"
     $"(ansi rb)space(ansi reset) \(expands alias\)"
