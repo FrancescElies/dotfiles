@@ -1,3 +1,4 @@
+
 [accounts.gmail]
 format = "imap"
 root_mailbox = "INBOX"
@@ -13,6 +14,7 @@ send_mail = { hostname = "smtp.gmail.com", port = 587, auth = { type = "auto", u
 listing.index_style = "threaded"
 composing.editor_cmd = "nvim +'set ft=mail' {}"
 search_backend = "sqlite3"
+
 
 [accounts.posteo]
 format = "imap"
@@ -30,7 +32,3 @@ send_mail = { hostname = "smtp.gmail.com", port = 587, auth = { type = "auto", u
 listing.index_style = "threaded"
 composing.editor_cmd = "nvim +'set ft=mail' {}"
 search_backend = "sqlite3"
-
-# [shortcuts.listing]
-# open_thread = "Enter"
-# toggle_thread = "Space"
