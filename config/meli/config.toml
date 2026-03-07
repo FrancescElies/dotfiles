@@ -1,0 +1,36 @@
+[accounts.gmail]
+format = "imap"
+root_mailbox = "INBOX"
+server_hostname = "imap.gmail.com"
+server_port = 993
+server_username = "francesc.elies@gmail.com"
+server_password_command = "~/.venv/bin/keyring get gmail elies"
+use_oauth2 = false
+identity = "francesc.elies@gmail.com"
+display_name = "gmail"
+send_mail = { hostname = "smtp.gmail.com", port = 587, auth = { type = "auto", username = "francesc.elies@gmail.com", password = { type = "command_eval", value = "~/.venv/bin/keyring get gmail elies" } }, security = { type = "STARTTLS" } }
+# Nice defaults for listing & composing
+listing.index_style = "threaded"
+composing.editor_cmd = "nvim +'set ft=mail' {}"
+search_backend = "sqlite3"
+
+[accounts.posteo]
+format = "imap"
+root_mailbox = "INBOX"
+server_hostname = "posteo.de"
+server_port = 993
+server_username = "elies@posteo.net"
+# keyring set posteo elies
+server_password_command = "~/.venv/bin/keyring get posteo elies"
+use_oauth2 = false
+identity = "elies@posteo.de"
+display_name = "posteo"
+send_mail = { hostname = "smtp.gmail.com", port = 587, auth = { type = "auto", username = "francesc.elies@gmail.com", password = { type = "command_eval", value = "~/.venv/bin/keyring get gmail elies" } }, security = { type = "STARTTLS" } }
+# Nice defaults for listing & composing
+listing.index_style = "threaded"
+composing.editor_cmd = "nvim +'set ft=mail' {}"
+search_backend = "sqlite3"
+
+# [shortcuts.listing]
+# open_thread = "Enter"
+# toggle_thread = "Space"

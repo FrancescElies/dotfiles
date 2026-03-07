@@ -412,6 +412,16 @@ def "config bacon" [] {
     symlink --force ~/src/dotfiles/config/bacon $bacon_config_dir
 }
 
+def "config meli" [] {
+    let config_dir = match $nu.os-info.name {
+        "windows" => 'TODO' ,
+        "macos" => '~/.config/meli' ,
+        _ => "~/.config/meli" ,
+    }
+    if not ($config_dir | path exists) { mkdir $config_dir }
+    symlink --force ~/src/dotfiles/config/meli $config_dir
+}
+
 def "config aerc" [] {
     let config_dir = match $nu.os-info.name {
         "windows" => 'TODO' ,
@@ -438,6 +448,7 @@ export def bootstrap [] {
     config yt-dlp
     config bacon
     config aerc
+    config meli
     config radare2
     config psql
     config broot
