@@ -13,7 +13,7 @@ send_mail = { hostname = "smtp.gmail.com", port = 587, auth = { type = "auto", u
 # Nice defaults for listing & composing
 listing.index_style = "threaded"
 composing.editor_cmd = "nvim +'set ft=mail' {}"
-search_backend = "sqlite3"
+# search_backend = "sqlite3"  # downloads all emails
 
 
 [accounts.posteo]
@@ -31,4 +31,4 @@ send_mail = { hostname = "smtp.gmail.com", port = 587, auth = { type = "auto", u
 # Nice defaults for listing & composing
 listing.index_style = "threaded"
 composing.editor_cmd = "nvim +'set ft=mail' {}"
-search_backend = "sqlite3"
+# search_backend = "sqlite3"  # downloads all emails
