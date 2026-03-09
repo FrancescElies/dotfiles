@@ -21,10 +21,10 @@
 # https://donsnotes.com/tech/charsets/ascii.html
 
 [window]
-decorations = "None"  # "Full" | "None" | "Transparent" | "Buttonless"
+decorations = "Full"  # "Full" | "None" | "Transparent" | "Buttonless"
 padding = { x = 6, y = 6 }
 dynamic_padding = true
-startup_mode = "Fullscreen"  # "Windowed" | "Maximized" | "Fullscreen" | "SimpleFullscreen"
+startup_mode = "Maximized"  # "Windowed" | "Maximized" | "Fullscreen" | "SimpleFullscreen"
 
 [font]
 size = 12.0
