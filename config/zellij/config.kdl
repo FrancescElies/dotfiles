@@ -177,6 +177,9 @@ keybinds clear-defaults=true {
         }
         bind "Alt 2" {
             // https://github.com/leakec/multitask
+	    //
+	    // Install it:
+            //   http get https://github.com/leakec/multitask/releases/download/0.43.1/multitask.wasm | save ~/zellij-plugins/multitask.wasm
             MessagePlugin {
                 payload "multitask_run"
             }
