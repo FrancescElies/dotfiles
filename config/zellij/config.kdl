@@ -169,11 +169,17 @@ keybinds clear-defaults=true {
         bind "Alt p" { TogglePaneInGroup; }
         bind "Alt Shift p" { ToggleGroupMarking; }
         bind "Alt x" { CloseFocus; SwitchToMode "locked"; }
-        bind "Alt ;" {
+        bind "Alt 1" {
             LaunchPlugin "filepicker" {
-                // floating true 
-                close_on_selection true 
+                floating true
+                close_on_selection true
             };
+        }
+        bind "Alt 2" {
+            // https://github.com/leakec/multitask
+            MessagePlugin {
+                payload "multitask_run"
+            }
         }
 
     }
