@@ -246,7 +246,7 @@ $env.config.keybindings = [
     {
         name: jump_to_project
         modifier: control
-        keycode: char_j # ctrl-enter or ctrl-j to fuzzy cd into directories
+        keycode: enter # ctrl-enter same as ctrl-j
         mode: [emacs, vi_normal, vi_insert]
         event: {
            send: executehostcommand,
