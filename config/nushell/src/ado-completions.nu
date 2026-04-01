@@ -207,7 +207,7 @@ export module ado {
             | insert description { $'($in.path) :: ($in.name)'}
             | rename -c { id: value }
             | select value description
-            | sort-by description) 
+            | sort-by description)
     }
 
 
@@ -314,6 +314,14 @@ export module ado {
             | select status title type | sort-by type status
             | update cells -c [status] { $in | str replace approved ✅| str replace running 👟| str replace queued ⏳| str replace rejected ❌ }
         }
+    }
+
+    # list prs for year
+    export def "list prs-year" [year: string] {
+        let my_query = $"[?creationDate>='($year)-01-01' && creationDate<='($year)-12-31']"
+        ( az repos pr list --status all -ojson --query $my_query --top 1000000
+                    | from json | select pullRequestId status createdBy.displayName title
+                    | rename -c {createdBy.displayName:  createdBy} )
     }
 
     # list my pull requests
