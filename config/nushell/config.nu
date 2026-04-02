@@ -152,7 +152,9 @@ $env.config.hooks.env_change = {
             code: {
                 $env.path ++= [
                     ($env.PWD | path join 'target/debug')
+                    ($env.PWD | path join 'target/debug/examples')
                     ($env.PWD | path join 'target/release')
+                    ($env.PWD | path join 'target/release/examples')
                 ]
             }
         }
