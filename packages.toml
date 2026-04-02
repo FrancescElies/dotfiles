@@ -37,6 +37,7 @@ aichat = "LLM CLI tool"
 # go install github.com/sst/opencode@v0.0.52
 coreutils = "Cross-platform rewrite of GNU coreutils"
 lstr = "tree viewer"
+tree-sitter-cli = "Tree-sitter grammars from the command line"
 # caliguda = "nicer dd replacement, burning tool"
 # himalaya = "cli mail tool"
 bat = "cat clone"

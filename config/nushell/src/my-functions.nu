@@ -201,14 +201,14 @@ export alias ee = nvim emergency
 
 export def "nvim-clean-shada" [] {
     match $nu.os-info.name {
-        "windows" => { fd swp ~/AppData/Local/nvim-data/swap -x rm },
+        "windows" => { rm -rf ~/AppData/Local/nvim-data/shada },
         _ => { rm -rf ~/.local/state/nvim/shada },
     }
 }
 
 export def "nvim-clean-swap" [] {
     match $nu.os-info.name {
-        "windows" => { fd swp ~/AppData/Local/nvim-data/swap -x rm },
+        "windows" => { rm -rf ~/AppData/Local/nvim-data/swap },
         _ => { fd swp ~/.local/state/nvim/swap -x rm },
     }
 }
