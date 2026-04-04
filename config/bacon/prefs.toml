@@ -70,7 +70,7 @@ listen = true
 #  - message: description of the item
 #  - context: unstyled lines of output, separated with escaped newlines (`\\n`)
 [exports.locations]
-auto = false
+auto = true
 exporter = "locations"
 path = ".bacon-locations"
 line_format = "{item-idx}: {kind} {path}:{line}:{column} {message}"
