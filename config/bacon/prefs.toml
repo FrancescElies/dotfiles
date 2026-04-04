@@ -5,7 +5,7 @@
 
 # Uncomment to have bacon listen for commands on
 # a 'bacon.socket' unix socket (on unix)
-# listen = true
+listen = true
 
 # Uncomment and change the value (true/false) to
 # specify whether bacon should start in summary mode
