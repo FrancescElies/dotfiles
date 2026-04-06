@@ -432,3 +432,9 @@ function __setprompt {
 	PS4='\[${DARKGRAY}\]+\[${NOCOLOR}\] '
 }
 PROMPT_COMMAND='__setprompt'
+
+
+# opens nushell on login
+# if ! [ "$TERM" = "dumb" ] && [ -z "$BASH_EXECUTION_STRING" ]; then
+# 	exec nu
+# fi
