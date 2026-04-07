@@ -56,7 +56,6 @@ args = ["-l"] # Use login shell to ensure your shell's dotfiles are sourced.
 # For a full list of key names, see `alacritty-bindings(5)` or the Alacritty man page.
 [keyboard]
 bindings = [
-	#
     # macOS Specific
 	#
     { key = "C", mods = "Command", action = "Copy" },
@@ -73,6 +72,9 @@ bindings = [
 
     { key = "C", mods = "Control|Shift", action = "Copy" },
     { key = "V", mods = "Control|Shift", action = "Paste" },
+
+    { key = "Enter", mods = "Alt", action = "ReceiveChar" },
+    { key = "F11", action = "ToggleFullscreen" },
 
     # Vi Mode (default: Ctrl+Shift+Space to toggle)
     # This allows vim-like navigation in the scrollback buffer.
