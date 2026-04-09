@@ -213,7 +213,7 @@ def "config yt-dlp" [] {
 
 def "install debian packages" [] {
     print $"(ansi pi)install debian packages(ansi reset)"
-    sudo apt install -y ...(open packages.toml | get debian | transpose | get column0) 
+    sudo apt install -y ...(open packages.toml | get debian | transpose | get column0)
     sudo systemctl enable syncthing@cesc.service
     sudo apt show ntpsec-ntpdate
 }
@@ -356,7 +356,7 @@ def "config git" [] {
   ^git config --global init.defaultBranch main
   ^git config --global interactive.diffFilter delta --color-only
   ^git config --global log.date iso
-  ^git config --global merge.conflictstyle zdiff3
+  # ^git config --global merge.conflictstyle zdiff3
   ^git config --global pull.rebase true
   ^git config --global push.autosetupremote true
   ^git config --global push.default current
