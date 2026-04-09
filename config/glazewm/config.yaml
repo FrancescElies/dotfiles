@@ -138,6 +138,7 @@ window_rules:
       - window_process: { equals: "Flow.Launcher" }
         window_title: { equals: "Settings" }
       - window_process: { equals: "Max" }
+      - window_process: { equals: "M365Copilot" }
       - window_process: { equals: "TotalMixFX_x64" }
       - window_process: { equals: "firefaceusb_x64" }
       - window_process: { equals: "Audacity" }
