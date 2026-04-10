@@ -395,7 +395,7 @@ def "config git" [] {
   ^git config --global core.untrackedcache true
   ^git config --global core.fsmonitor true
 
-  ^git config --global commit.template ~/src/dotfiles/config/git/commit-template
+  # ^git config --global commit.template ~/src/dotfiles/config/git/commit-template
 }
 
 def "config bashrc" [] { symlink --force ~/src/dotfiles/config/.bashrc ~/.bashrc }
