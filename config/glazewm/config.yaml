@@ -143,7 +143,7 @@ window_rules:
       - window_process: { equals: "firefaceusb_x64" }
       - window_process: { equals: "Audacity" }
 
-  - commands: ["move --workspace 2"]
+  - commands: ["move --workspace 1"]
     match:
       - window_process: { regex: "Max" }
 
