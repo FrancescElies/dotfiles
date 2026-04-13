@@ -71,11 +71,13 @@ $env.BR_INSTALL = "no"
 $env.BROOT_CONFIG_DIR = ("~/src/dotfiles/config/nushell/broot-config" | path expand)
 
 $env.FZF_DEFAULT_COMMAND = "fd --type file --hidden"
+$env.SKIM_DEFAULT_COMMAND = "fd --type file --hidden"
 
 $env.RUST_BACKTRACE = 1
 $env.RUSTC_WRAPPER = 'sccache'
 
 $env.RESTIC_PASSWORD_COMMAND = 'secret-tool lookup service restic'
+
 
 # touch ~/.nu-start-dir
 # # HACK: for alacritty, make we don't auto switch folders when using nvim's terminal
