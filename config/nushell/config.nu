@@ -18,7 +18,7 @@ $env.NU_LIB_DIRS = [
 use ~/src/dotfiles/config/nushell/src/ado-completions.nu *
 # use ~/src/dotfiles/config/nushell/src/ai-completions.nu *
 # use ~/src/dotfiles/config/nushell/src/bat-completions.nu *
-# use ~/src/dotfiles/config/nushell/src/broot-helpers.nu *
+use ~/src/dotfiles/config/nushell/src/broot.nu *
 # use ~/src/dotfiles/config/nushell/src/btm-completions.nu *
 use ~/src/dotfiles/config/nushell/src/cargo-completions.nu *
 # use ~/src/dotfiles/config/nushell/src/clipboard.nu *

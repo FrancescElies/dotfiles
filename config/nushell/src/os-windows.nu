@@ -23,7 +23,7 @@ export def --wrapped "sudo config" [
 }
 
 export module win {
-    use broot-helpers.nu *
+    use broot.nu *
     # file version and signature viewer from file
     export def "read version" [file: path] {
         ^sigcheck -nobanner $file | lines | skip 1 | parse --regex '\s*(?<name>.+?):(?<value>.+)'

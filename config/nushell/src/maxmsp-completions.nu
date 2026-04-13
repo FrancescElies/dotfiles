@@ -1,4 +1,4 @@
-use broot-helpers.nu *
+use broot.nu *
 use my-functions.nu *
 use reverse-eng.nu *
 use utils.nu *
