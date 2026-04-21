@@ -1,4 +1,5 @@
 [python]
+jrnl = "Collect your thoughts and notes without leaving the command line"
 keyring = "cli and lib to easyly access the system keyring"
 aw-client = "client library for activitywatch "
 weasyprint = "helping web developers to create PDF documents. It turns simple HTML pages into gorgeous statistical reports, invoices, tickets"
