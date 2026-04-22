@@ -13,6 +13,7 @@ match $nu.os-info.name {
             ('/Program Files/WinHTTrack' | path expand)
             ('/Program Files/Neovim/bin' | path expand)
             ('/Program Files/Git/usr/bin' | path expand)
+            ('/Program Files (x86)/Gow/bin' | path expand)
             ('/Program Files/WIBU-SYSTEMS/AxProtector/Devkit/bin' | path expand)
             ('/Program Files/CodeMeter/DevKit/bin' | path expand)
             ('/Program Files/LLVM/bin' | path expand)
