@@ -178,6 +178,18 @@ export module win {
         ~/AppData/Local/Microsoft/WindowsApps/WinDbgX.exe ...$args
     }
 
+    # Change system display settings
+    export def "display-switch" [
+        --external(-x) # show only external display
+        --extend(-e)   # extend main display with connected one
+    ] {
+        if $external {
+            run-external DisplaySwitch /external
+        }
+        if $extend {
+            run-external DisplaySwitch /extend
+        }
+    }
 
     export def "open last dump" [] { start (ls ('/dumps' | path expand) | sort-by modified | last | get name) }
 
