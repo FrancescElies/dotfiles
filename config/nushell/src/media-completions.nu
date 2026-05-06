@@ -1,6 +1,10 @@
 #
 # ffmpeg -i VIDEO.mp4 -vf unsharp=13:13:5 VIDEO-unsharp.mp4
 
+# https://github.com/mifi/lossless-cut
+# https://github.com/OpenShot/openshot-qt
+# https://github.com/mltframework/shotcut
+
 export module youtube {
     export def download-audio [ url: string ] {
         let yt_dlp = "~/bin/yt-dlp" | path expand
