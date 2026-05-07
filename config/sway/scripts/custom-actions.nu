@@ -10,6 +10,7 @@ let action = [
     toggle-external-display
     mount-usb
     umount-usb
+    firefox
 ] | to text | bemenu
 
 cd $current_dir
@@ -66,5 +67,8 @@ match $action {
         udisksctl unmount -b $"($device)1"
         notify-send "UnMount USB" $"($device)1 removed form ($path), see `lsblk -f`"
     },
+    "firefox" => {
+        firefox
+    }
     _ => { notify-send Err $"($action) not found" }
 }
