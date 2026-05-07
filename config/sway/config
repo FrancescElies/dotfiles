@@ -131,7 +131,6 @@ bar {
 
 ### Key bindings
 
-    bindsym $mod+Shift+f exec firefox
     bindsym $mod+Return exec $term
     # Kill focused window
     bindsym $mod+Shift+q kill
@@ -206,7 +205,7 @@ bar {
     bindsym $mod+w layout tabbed
     bindsym $mod+e layout toggle split
 
-    bindsym $mod+f fullscreen
+    bindsym $mod+Shift+f fullscreen
 
     # Toggle the current focus between tiling and floating mode
     bindsym $mod+Shift+space floating toggle
