@@ -195,9 +195,9 @@ export def "my backup restore by-year" [serverip: string = "intel-pc"] {
 #
 # neovim
 #
-export alias e = nvim
 export alias "nvim emergency" = nvim -u ~/src/kickstart.nvim/minimal-vimrc.vim
-export alias ee = nvim emergency
+export alias ve = nvim emergency
+export alias v = nvim
 
 export def "nvim-clean-shada" [] {
     match $nu.os-info.name {

@@ -150,6 +150,7 @@ alias cls='clear'
 alias apt-get='sudo apt-get'
 alias multitail='multitail --no-repeat -c'
 alias vis='vim "+set si"'
+alias v='nvim'
 
 # alias chmod commands
 alias mx='chmod a+x'
