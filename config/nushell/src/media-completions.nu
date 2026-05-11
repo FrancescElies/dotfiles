@@ -1,6 +1,7 @@
 #
 # ffmpeg -i VIDEO.mp4 -vf unsharp=13:13:5 VIDEO-unsharp.mp4
 
+# https://github.com/sylikc/jpegview
 # https://github.com/mifi/lossless-cut
 # https://github.com/OpenShot/openshot-qt
 # https://github.com/mltframework/shotcut
