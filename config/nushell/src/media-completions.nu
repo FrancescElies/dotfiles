@@ -30,7 +30,15 @@ export module video {
     # See https://stackoverflow.com/questions/12026381/ffmpeg-converting-mov-files-to-mp4
     # for smaller file set crf to 25–26, use 20-21 for higher quality
     export def shrink [input_video: path] {
-        ffmpeg -i $input_video -vcodec libx265 -crf 28  $"(($input_video|path parse).stem)-libx265-crf28.mp4"
+        ( ffmpeg -i $input_video
+          -c:v libx264 -profile:v high -level 4.0 -pix_fmt yuv420p  # video: h264, pixel format: yuv420p
+          -vf scale=1280:-2  # resize
+          -c:a aac -b:a 128k  #  audio: aac
+          -movflags +faststart  # streaming (video starts immediately)
+          -crf 18  # crf: 18 → very high quality, 23 → default (good balance), 28 → smaller file, lower quality
+          $"(($input_video|path parse).stem)-libx264-crf28.mp4" )
+
+        # ffmpeg -i $input_video -vcodec libx265 -crf 28  $"(($input_video|path parse).stem)-libx265-crf28.mp4"
         # ffmpeg -i input.mp4 -c:v libx265 -crf 26 -preset medium -tag:v hvc1 -c:a aac -b:a 128k output.mp4
         # ffmpeg -i input.mp4 -vcodec libx264 -crf 28 -preset fast -acodec aac -b:a 128k -movflags +faststart output.mp4
     }
