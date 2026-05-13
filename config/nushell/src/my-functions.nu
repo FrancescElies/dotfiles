@@ -251,6 +251,32 @@ export def "ps count" [] {
 }
 export alias psc = ps count
 
+# --------------------------------------------------
+# zellij
+
+def "nu-complete zellij-list-sessions" [] { zellij list-sessions --short | lines }
+
+def zellij-attach [name: string@"nu-complete zellij-list-sessions"] {
+    zellij attach --create $"($name)"
+}
+export alias za = zellij-attach
+
+def zellij-delete-session [name: string@"nu-complete zellij-list-sessions"] {
+    zellij delete-session $"($name)"
+}
+export alias zd = zellij-delete-session
+
+export alias zls = zellij list-sessions
+
+def zellij-kill-session [name: string@"nu-complete zellij-list-sessions"] {
+    zellij kill-session $"($name)"
+}
+export alias zkill = zellij kill-session
+export alias zkill-all = zellij kill-session-all-sessions
+
+# --------------------------------------------------
+
+
 def "nu-complete list-process-names" [] { ps | get name | sort | uniq }
 
 # kill specified process with substring
@@ -263,10 +289,10 @@ export def "ps kill-name" [...names: string@"nu-complete list-process-names"] {
 }
 export alias killn = ps kill-name
 
-# copilot
+# ask ai
 export def hey [...words: string] {
     # maybe use other elia, tgpt, aichat
-    gh copilot explain $"($words | str join ' ')"
+    gh copilot -p $"($words | str join ' ')"
 }
 
 
