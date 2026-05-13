@@ -280,7 +280,12 @@ export module win {
     export def "copy debug-session-software" [] { echo "winget install --silent BurntSushi.ripgrep.MSVC sharkdp.fd dystroy.broot TomHudson.gron" | clip }
 
 
-    export def update [--force(-f)] {
+    export def "admin term" [] {
+        `C:\Program Files\Make Me Admin\MakeMeAdminUI.exe`
+        powershell Start-Process alacritty -Verb runAs
+    }
+
+    export def "admin update" [--force(-f)] {
         print $"(ansi pb)Checking for Windows OS updates...(ansi reset)"
         run-external ~/src/dotfiles/bin/windows-os/win-update.ps1 ( if $force { '-Force' } else { '' } )
     }
