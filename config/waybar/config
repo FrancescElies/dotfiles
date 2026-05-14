@@ -30,14 +30,14 @@
         "all-outputs": false,
         "format": "{icon}",
         "format-icons": {
-            "1: ": "",
-            "2: ": "",
-            "3: ": "",
-            "4: ": "",
-            "5: ": "",
-            "urgent": "",
-            "focused": "",
-            "default": ""
+            "1: ": "1",
+            "2: ": "2",
+            "3: ": "3",
+            "4: ": "4",
+            "5: ": "5",
+            "urgent": "!",
+            "focused": "*",
+            "default": "-"
         }
     },
 
