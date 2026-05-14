@@ -107,6 +107,7 @@ def "install sway" [] {
         if (which bluetui | is-empty) {
             cargo install bluetui
         }
+        symlink --force ~/src/dotfiles/config/waybar/ ~/.config/waybar
         symlink --force ~/src/dotfiles/config/sway/ ~/.config/sway
         symlink --force ~/src/dotfiles/config/fuzzel/ ~/.config/fuzzel
         symlink --force ~/src/dotfiles/config/kanshi/ ~/.config/kanshi

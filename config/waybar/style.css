@@ -1,0 +1,172 @@
+
+/* Catppuccin Mocha palette */
+@define-color base   #1e1e2e;
+@define-color mantle #181825;
+@define-color crust  #11111b;
+@define-color surface0 #313244;
+@define-color surface1 #45475a;
+@define-color surface2 #585b70;
+@define-color overlay0 #6c7086;
+@define-color text   #cdd6f4;
+@define-color subtext0 #a6adc8;
+@define-color blue   #89b4fa;
+@define-color mauve  #cba6f7;
+@define-color pink   #f5c2e7;
+@define-color green  #a6e3a1;
+@define-color yellow #f9e2af;
+@define-color peach  #fab387;
+@define-color red    #f38ba8;
+
+* {
+    font-family: "JetBrainsMono Nerd Font", monospace;
+    font-size: 11px;
+    border: none;
+    border-radius: 0;
+    min-height: 0;
+}
+
+window#waybar {
+    background: transparent;
+    color: @text;
+}
+
+/* Floating pill container */
+.modules-left,
+.modules-center,
+.modules-right {
+    background: @base;
+    border-radius: 8px;
+    padding: 0 4px;
+    margin: 0 2px;
+}
+
+/* ── Workspaces ────────────────────────── */
+#workspaces {
+    margin: 0 4px;
+}
+
+#workspaces button {
+    padding: 1px 8px;
+    margin: 2px 1px;
+    color: @subtext0;
+    background: transparent;
+    border-radius: 8px;
+    transition: all 150ms ease;
+}
+
+#workspaces button:hover {
+    background: @surface0;
+    color: @text;
+}
+
+#workspaces button.focused {
+    background: @surface0;
+    color: @blue;
+}
+
+#workspaces button.urgent {
+    background: @red;
+    color: @base;
+}
+
+#workspaces button.empty {
+    color: @surface2;
+}
+
+/* ── Mode ──────────────────────────────── */
+#mode {
+    padding: 1px 8px;
+    color: @peach;
+    font-weight: bold;
+}
+
+/* ── Scratchpad ────────────────────────── */
+#scratchpad {
+    padding: 1px 8px;
+    color: @mauve;
+}
+
+/* ── Window title ──────────────────────── */
+#window {
+    padding: 1px 8px;
+    color: @subtext0;
+    font-style: italic;
+}
+
+/* ── Generic module style ──────────────── */
+#mpris,
+#pulseaudio,
+#backlight,
+#battery,
+#network,
+#clock,
+#tray {
+    padding: 1px 8px;
+    color: @text;
+}
+
+/* ── Module accent colors ───────────────── */
+#clock {
+    color: @blue;
+    font-weight: bold;
+}
+
+#battery {
+    color: @green;
+}
+
+#battery.warning {
+    color: @yellow;
+}
+
+#battery.critical {
+    color: @red;
+    animation: blink 1s step-end infinite;
+}
+
+#battery.charging {
+    color: @green;
+}
+
+#network {
+    color: @mauve;
+}
+
+#network.disconnected {
+    color: @overlay0;
+}
+
+#pulseaudio {
+    color: @peach;
+}
+
+#pulseaudio.muted {
+    color: @overlay0;
+}
+
+#backlight {
+    color: @yellow;
+}
+
+#mpris {
+    color: @pink;
+}
+
+#tray {
+    padding: 2px 6px;
+}
+
+#tray > .passive {
+    -gtk-icon-effect: dim;
+}
+
+#tray > .needs-attention {
+    -gtk-icon-effect: highlight;
+    background: @red;
+    border-radius: 6px;
+}
+
+/* ── Blink animation for critical battery ── */
+@keyframes blink {
+    to { color: @base; background: @red; border-radius: 6px; padding: 1px 8px; }
+}
