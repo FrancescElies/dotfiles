@@ -2,7 +2,7 @@
 # SwayFX compositor: https://github.com/WillPower3309/swayfx
 #
 # Dependencies:
-#   Terminal    : alacritty
+#   Terminal    : foot/alacritty
 #   Launcher    : bemenu
 #   Bar         : waybar
 #   Screenshots : grimshot (sway-contrib)
@@ -19,7 +19,7 @@
 #  Variables
 # ─────────────────────────────────────────────
 set $mod   Mod1
-set $term  alacritty
+set $term  foot
 set $menu  bemenu-run --no-overlap --prompt '  run: ' --list 8 --center --width-factor 0.3
 set $lock  swaylock -f --color 1e1e2e --indicator-radius 80 --ring-color 89b4fa --key-hl-color cdd6f4
 
