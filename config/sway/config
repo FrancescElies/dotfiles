@@ -136,7 +136,7 @@ bar {
     bindsym $mod+Shift+q kill
     # Start your launcher
     bindsym $mod+Shift+d exec $menu
-    bindsym $mod++d exec ~/.config/sway/scripts/custom-actions.nu
+    bindsym $mod+d exec ~/.config/sway/scripts/custom-actions.nu
 
     # Drag floating windows by holding down $mod and left mouse button.
     # Resize them with right mouse button + $mod.
