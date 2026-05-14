@@ -16,6 +16,8 @@
         "sway/window"
     ],
     "modules-right": [
+        "cpu",
+        "memory",
         "mpris",
         "pulseaudio",
         "backlight",
@@ -56,6 +58,16 @@
     "sway/window": {
         "max-length": 60,
         "tooltip": false
+    },
+
+    "cpu": {
+        "interval": 2,
+        "format": " cpu {usage}%"
+    },
+
+    "memory": {
+        "interval": 2,
+        "format": " ram {percentage}%"
     },
 
     "mpris": {
