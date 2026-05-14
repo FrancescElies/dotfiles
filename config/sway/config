@@ -19,7 +19,7 @@
 #  Variables
 # ─────────────────────────────────────────────
 set $mod   Mod1
-set $term  foot
+set $term  alacritty
 set $menu  bemenu-run --no-overlap --prompt '  run: ' --list 8 --center --width-factor 0.3
 set $lock  swaylock -f --color 1e1e2e --indicator-radius 80 --ring-color 89b4fa --key-hl-color cdd6f4
 
@@ -157,7 +157,7 @@ bindsym $mod+period workspace next
 bindsym $mod+Return       exec $term
 bindsym $mod+Shift+q      kill
 bindsym $mod+Shift+d      exec $menu
-bindsym $mod+d            exec ~/.config/sway/scripts/custom-actions.nu  # was $mod++d (typo)
+bindsym $mod+d            exec ~/.config/sway/scripts/custom-actions.nu
 bindsym $mod+Shift+c      reload
 bindsym $mod+Shift+e      exec ~/.config/sway/scripts/logout-menu.nu
 bindsym $mod+Ctrl+l       exec $lock
