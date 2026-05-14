@@ -189,7 +189,9 @@ bindsym $mod+a          focus parent
 
 # Scratchpad
 bindsym $mod+Shift+minus move scratchpad
+# [f]loating or [-]
 bindsym $mod+minus       scratchpad show
+bindsym $mod+f           scratchpad show
 
 # ─────────────────────────────────────────────
 #  Resize Mode
