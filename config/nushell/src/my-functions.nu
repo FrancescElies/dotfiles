@@ -198,11 +198,11 @@ export def "my backup restore by-year" [serverip: string = "intel-pc"] {
 
 export alias "nvim emergency" = nvim -u ~/src/kickstart.nvim/minimal-vimrc.vim
 
-export alias md='nvim -c ":set ft=markdown"'
+export alias md = nvim -c ":set ft=markdown"
 export alias v = nvim
 export alias ve = nvim emergency
 export alias vis = nvim "+set si"
-export alias vmd='nvim -c ":set ft=markdown"'
+export alias vmd = nvim -c ":set ft=markdown"
 export alias vmin = nvim -u NONE -i NONE --no-plugins
 
 export def "nvim-clean-shada" [] {
