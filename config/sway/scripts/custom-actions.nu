@@ -5,14 +5,14 @@ const current_dir = path self .
 let menu = {  bemenu --no-overlap --prompt '  run: ' --list 15 --center --width-factor 0.3  }
 
 let action = [
-    clipboard
-    bluetuith
-    # blueman
-    wifi
-    toggle-external-display
-    mount-usb
-    umount-usb
     firefox
+    blueman
+    bluetuith
+    clipboard
+    toggle-external-display
+    usb-mount
+    usb-umount
+    wifi
 ] | to text | do $menu
 
 cd $current_dir
@@ -57,13 +57,13 @@ match $action {
             $active_displays | where $it.name =~ "HDMI" | each { swaymsg  $"output ($in.name) disable"}
         }
     },
-    "mount-usb" => {
+    "usb-mount" => {
         let device = lsblk -r -o PATH,MOUNTPOINT,TRAN | from csv --separator ' ' | where TRAN == usb | get PATH | to text | do $menu
         udisksctl mount -b $"($device)1"
         let path = lsblk -r -o PATH,MOUNTPOINT | from csv --separator ' ' | where PATH == $"($device)1" | get MOUNTPOINT.0
         notify-send "Mount USB" $"($device)1 is now at ($path), see `lsblk -f`"
     },
-    "umount-usb" => {
+    "usb-umount" => {
         let device = lsblk -r -o PATH,MOUNTPOINT,TRAN | from csv --separator ' ' | where TRAN == usb | get PATH | to text | do $menu
         let path = lsblk -r -o PATH,MOUNTPOINT | from csv --separator ' ' | where PATH == $"($device)1" | get MOUNTPOINT.0
         udisksctl unmount -b $"($device)1"
