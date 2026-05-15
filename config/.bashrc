@@ -149,8 +149,9 @@ alias less='less -R'
 alias cls='clear'
 alias apt-get='sudo apt-get'
 alias multitail='multitail --no-repeat -c'
-alias vis='vim "+set si"'
 alias v='nvim'
+alias vis='nvim "+set si"'
+alias vmin='nvim -u NONE -i NONE --no-plugins'
 
 # alias chmod commands
 alias mx='chmod a+x'
