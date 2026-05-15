@@ -248,9 +248,10 @@ keybindings:
   - commands: ['toggle-tiling']
     bindings: ['lalt+t']
 
-  # Change the focused window to be fullscreen.
-  - commands: ['toggle-fullscreen']
-    bindings: ['lalt+f']
+  # # Change the focused window to be fullscreen.
+  # - commands: ['toggle-fullscreen']
+    # WARN: doesn't work, but don't need it
+  #   bindings: ['lalt+shift+f']
 
   # Minimize focused window.
   - commands: ['toggle-minimized']
