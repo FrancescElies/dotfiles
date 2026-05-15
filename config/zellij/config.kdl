@@ -178,21 +178,20 @@ keybinds clear-defaults=true {
         bind "Alt p" { TogglePaneInGroup; }
         bind "Alt Shift p" { ToggleGroupMarking; }
         bind "Alt x" { CloseFocus; SwitchToMode "locked"; }
-        bind "Alt 1" {
-            LaunchPlugin "filepicker" {
-                floating true
-                close_on_selection true
-            };
-        }
-        bind "Alt 2" {
-            // https://github.com/leakec/multitask
-	    //
-	    // Install it:
-            //   http get https://github.com/leakec/multitask/releases/download/0.43.1/multitask.wasm | save ~/zellij-plugins/multitask.wasm
-            MessagePlugin {
-                payload "multitask_run"
-            }
-        }
+        // bind "Alt 1" {
+        //     LaunchPlugin "filepicker" {
+        //         floating true
+        //         close_on_selection true
+        //     };
+        // }
+        // bind "Alt 2" {
+        //     // https://github.com/leakec/multitask
+        //     // Install it:
+        //     //   http get https://github.com/leakec/multitask/releases/download/0.43.1/multitask.wasm | save ~/zellij-plugins/multitask.wasm
+        //     MessagePlugin {
+        //         payload "multitask_run"
+        //     }
+        // }
 
     }
     shared_except "locked" "renametab" "renamepane" {
