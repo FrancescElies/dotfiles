@@ -149,9 +149,14 @@ alias less='less -R'
 alias cls='clear'
 alias apt-get='sudo apt-get'
 alias multitail='multitail --no-repeat -c'
+
+alias md='nvim -c ":set ft=markdown"'
 alias v='nvim'
+alias ve='nvim -u ~/src/kickstart.nvim/minimal-vimrc.vim'
 alias vis='nvim "+set si"'
+alias vmd='nvim -c ":set ft=markdown"'
 alias vmin='nvim -u NONE -i NONE --no-plugins'
+
 
 # alias chmod commands
 alias mx='chmod a+x'

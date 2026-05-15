@@ -195,11 +195,15 @@ export def "my backup restore by-year" [serverip: string = "intel-pc"] {
 #
 # neovim
 #
+
 export alias "nvim emergency" = nvim -u ~/src/kickstart.nvim/minimal-vimrc.vim
-export alias ve = nvim emergency
+
+export alias md='nvim -c ":set ft=markdown"'
 export alias v = nvim
-alias vis = nvim "+set si"
-alias vmin = nvim -u NONE -i NONE --no-plugins
+export alias ve = nvim emergency
+export alias vis = nvim "+set si"
+export alias vmd='nvim -c ":set ft=markdown"'
+export alias vmin = nvim -u NONE -i NONE --no-plugins
 
 export def "nvim-clean-shada" [] {
     match $nu.os-info.name {
@@ -216,10 +220,6 @@ export def "nvim-clean-swap" [] {
 }
 
 export def "nvim-pr-files" [] { nvim ...(git pr files) }
-
-export alias "nvim-server" = nvim --listen ~/.cache/nvim/server.pipe --headless
-export alias "nvim-client" = nvim --remote --server ~/.cache/nvim/server.pipe
-
 
 #
 # process
