@@ -97,10 +97,25 @@ exec wl-paste -t text --watch clipman store --unique
 exec wl-paste -t image --watch clipman store
 
 # Lock + idle management
-exec swayidle -w timeout 300  '$lock' \
+exec swayidle -w timeout 3600  '$lock' \
     timeout 600  'swaymsg "output * dpms off"' \
     resume       'swaymsg "output * dpms on"' \
     before-sleep '$lock'
+
+#  ──── 10min ───────── 60min ─────── suspend
+#        │               │                │
+#        ▼               ▼                ▼
+#   screen off       lock screen      lock screen
+#        │
+#  (move mouse)
+#        │
+#        ▼
+#   screen on
+#
+# At 10 min → screen off
+# At 60 min → lock fires regardless of screen state
+# Moving the mouse after 10 min turns the screen back on, but the 60 min lock
+# timer keeps running
 
 # ─────────────────────────────────────────────
 #  Status Bar → Waybar
