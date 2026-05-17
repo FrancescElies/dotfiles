@@ -132,7 +132,7 @@ workspaces:
   - name: '8'
   - name: '9'
 
-window_rules:
+window_rules: # NOTE: Winlister or AutoHotkey's Window Spy can be useful for getting info about a window
   - commands: ["set-floating"]
     match:
       - window_process: { equals: "Flow.Launcher" }
