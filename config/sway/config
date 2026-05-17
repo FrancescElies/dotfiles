@@ -18,7 +18,11 @@
 # ─────────────────────────────────────────────
 #  Variables
 # ─────────────────────────────────────────────
-set $mod   Mod1
+# Shift, Lock (for Caps Lock), Control, Mod1 (for Alt), Mod2 (for Num Lock),
+# Mod3 (for XKB modifier Mod3), Mod4 (for the Logo key), and Mod5 (for AltGr).
+# In addition,  you  can use the aliases  Ctrl (for Control), Alt (for Alt),
+# and Super (for the Logo key).
+set $mod   Super
 set $term  alacritty
 set $menu  bemenu-run --no-overlap --prompt '  run: ' --list 8 --center --width-factor 0.3
 set $lock  swaylock -f --color 1e1e2e --indicator-radius 80 --ring-color 89b4fa --key-hl-color cdd6f4
