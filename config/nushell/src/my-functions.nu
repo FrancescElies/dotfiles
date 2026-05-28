@@ -268,7 +268,7 @@ def zellij-delete-session [name: string@"nu-complete zellij-list-sessions"] {
 }
 export alias zd = zellij-delete-session
 
-export alias zls = zellij list-sessions
+export alias zl = zellij list-sessions
 
 def zellij-kill-session [name: string@"nu-complete zellij-list-sessions"] {
     zellij kill-session $"($name)"
