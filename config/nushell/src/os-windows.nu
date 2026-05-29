@@ -7,6 +7,9 @@
 # https://github.com/mmozeiko/wcap small recording util
 
 # export alias sudo = ^gsudo
+
+export alias watchexec = watchexec --shell none  # workaround for https://github.com/watchexec/watchexec/issues/1050
+
 def "nu-complete sudo-cache-param" [] { [help on off] }
 export def "sudo cache" [param: string@"nu-complete sudo-cache-param" ] {
     ^gsudo cache $param
@@ -21,6 +24,15 @@ export def --wrapped "sudo config" [
 ] {
     ^gsudo config config $key $global $reset ...$rest
 }
+
+# list available wibu executables
+export def "wibu ls-bin" [] {
+ [
+   (ls `/Program Files/WIBU-SYSTEMS/AxProtector/Devkit/bin/*exe`)
+   (ls `/Program Files/CodeMeter/DevKit/bin/*exe` )
+ ] | flatten | get name | each {$in | path expand }
+}
+
 
 export module win {
     use broot.nu *
