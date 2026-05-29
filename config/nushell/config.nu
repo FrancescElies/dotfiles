@@ -23,6 +23,7 @@ use ~/src/dotfiles/config/nushell/src/cargo-completions.nu *
 use ~/src/dotfiles/config/nushell/src/clipboard.nu *
 use ~/src/dotfiles/config/nushell/src/docs.nu *  # NOTE: a bit slow
 use ~/src/dotfiles/config/nushell/src/fd-completions.nu *
+use ~/src/dotfiles/config/nushell/src/zig-completions.nu *
 # use ~/src/dotfiles/config/nushell/src/flamegraph-completions.nu *
 # use ~/src/dotfiles/config/nushell/src/fnm.nu *
 # use ~/src/dotfiles/config/nushell/src/gh-completions.nu *

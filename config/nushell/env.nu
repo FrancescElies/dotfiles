@@ -46,6 +46,7 @@ match $nu.os-info.name {
 $env.path ++= [
     '~/.zvm/bin'
     '~/.zvm/self'
+    '~/.local/share/zvm/bin'  # https://github.com/lispking/zvm
     '~/src/radare2/prefix/bin'
     '~/go/bin'
     '~/.cargo/bin'
