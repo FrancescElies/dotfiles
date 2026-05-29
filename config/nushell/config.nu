@@ -16,50 +16,38 @@ $env.NU_LIB_DIRS = [
 #     cog.outl(f"use {this_repo / file} *".replace('\\', '/'))
 # ]]]*/
 use ~/src/dotfiles/config/nushell/src/ado-completions.nu *
-# use ~/src/dotfiles/config/nushell/src/ai-completions.nu *
-# use ~/src/dotfiles/config/nushell/src/bat-completions.nu *
+use ~/src/dotfiles/config/nushell/src/bat-completions.nu *
 use ~/src/dotfiles/config/nushell/src/broot.nu *
-# use ~/src/dotfiles/config/nushell/src/btm-completions.nu *
+use ~/src/dotfiles/config/nushell/src/btm-completions.nu *
 use ~/src/dotfiles/config/nushell/src/cargo-completions.nu *
-# use ~/src/dotfiles/config/nushell/src/clipboard.nu *
-# use ~/src/dotfiles/config/nushell/src/docs.nu *
+use ~/src/dotfiles/config/nushell/src/clipboard.nu *
+use ~/src/dotfiles/config/nushell/src/docs.nu *  # NOTE: a bit slow
 use ~/src/dotfiles/config/nushell/src/fd-completions.nu *
 # use ~/src/dotfiles/config/nushell/src/flamegraph-completions.nu *
 # use ~/src/dotfiles/config/nushell/src/fnm.nu *
 # use ~/src/dotfiles/config/nushell/src/gh-completions.nu *
-# use ~/src/dotfiles/config/nushell/src/git-my-alias.nu *
-# use ~/src/dotfiles/config/nushell/src/git-pr.nu *
 # use ~/src/dotfiles/config/nushell/src/history-utils.nu *
 # use ~/src/dotfiles/config/nushell/src/hosts-completions.nu *
 use ~/src/dotfiles/config/nushell/src/just-completions.nu *
 # use ~/src/dotfiles/config/nushell/src/man.nu *
 use ~/src/dotfiles/config/nushell/src/maxmsp-completions.nu *
 use ~/src/dotfiles/config/nushell/src/media-completions.nu *
-# use ~/src/dotfiles/config/nushell/src/miniserve-completions.nu *
+use ~/src/dotfiles/config/nushell/src/miniserve-completions.nu *
 use ~/src/dotfiles/config/nushell/src/my-functions.nu *
 use ~/src/dotfiles/config/nushell/src/git-aliases.nu *
 use ~/src/dotfiles/config/nushell/src/git-completions.nu *
-# use ~/src/dotfiles/config/nushell/src/nupass.nu *
-# use ~/src/dotfiles/config/nushell/src/ouch-completions.nu *
-# use ~/src/dotfiles/config/nushell/src/parse-help.nu *
-# use ~/src/dotfiles/config/nushell/src/pnpm-completions.nu *
+use ~/src/dotfiles/config/nushell/src/ouch-completions.nu *
+use ~/src/dotfiles/config/nushell/src/pnpm-completions.nu *
 use ~/src/dotfiles/config/nushell/src/pueue-completions.nu *
-# use ~/src/dotfiles/config/nushell/src/pytest-completions.nu *
+use ~/src/dotfiles/config/nushell/src/pytest-completions.nu *
 use ~/src/dotfiles/config/nushell/src/reverse-eng.nu *
-# use ~/src/dotfiles/config/nushell/src/rg-completions.nu *
-# use ~/src/dotfiles/config/nushell/src/rust.nu *
+use ~/src/dotfiles/config/nushell/src/rg-completions.nu *
+use ~/src/dotfiles/config/nushell/src/rust.nu *
 use ~/src/dotfiles/config/nushell/src/rustup-completions.nu *
 use ~/src/dotfiles/config/nushell/src/ssh-completions.nu *
 use ~/src/dotfiles/config/nushell/src/symlinks.nu *
-# use ~/src/dotfiles/config/nushell/src/ttyper-completions.nu *
-# use ~/src/dotfiles/config/nushell/src/utils.nu *
+use ~/src/dotfiles/config/nushell/src/watchexec-completions.nu *
 # use ~/src/dotfiles/config/nushell/src/vpn.nu *
-# use ~/src/dotfiles/config/nushell/src/wezterm-completions.nu *
-# use ~/src/dotfiles/config/nushell/src/wibu.nu *
-# use ~/src/dotfiles/config/nushell/src/winget-completions.nu *
-# use ~/src/dotfiles/config/nushell/src/work.nu *
-# use ~/src/dotfiles/config/nushell/src/zellij-completions.nu *
-# use ~/src/dotfiles/config/nushell/src/zig.nu *
 # [[[end]]]
 
 
