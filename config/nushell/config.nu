@@ -241,20 +241,7 @@ $env.config.keybindings = [
         mode: [emacs, vi_normal, vi_insert]
         event: {
            send: executehostcommand,
-           cmd: ' cd (
-               ls ~/src
-               | append (try {ls --full-paths ~/src/oss})
-               | append (try {ls --full-paths /s})
-               | append (try {ls --full-paths /s/my-maxpats/*})
-               | append (try {ls --full-paths /s/*-worktrees/*})
-               | append (try {ls --full-paths /s/*-wt/*})
-               | append (try {ls --full-paths /s/customerprj/*})
-               | append ~/Downloads
-               | append ~/Desktop
-               | where type in [dir, symlink] | get name
-               | input list --fuzzy $"Goto (ansi mu)project(ansi reset):"
-           );
-           '
+           cmd: ''
         }
    }
 

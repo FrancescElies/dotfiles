@@ -59,6 +59,29 @@ export alias lg = lazygit
 
 export alias todos = nvim ~/src/_notes/src/todos.md
 
+def "nu-complete projects" [] { {
+    options: { completion_algorithm: fuzzy, case_sensitive: false, positional: false, sort: true, },
+    completions: ( ls ~/src
+                    | append (try {ls --full-paths ~/src/oss})
+                    | append (try {ls --full-paths /s})
+                    | append (try {ls --full-paths /s/my-*/*})
+                    | append (try {ls --full-paths /s/*-worktrees/*})
+                    | append (try {ls --full-paths /s/*-wt/*})
+                    | append (try {ls --full-paths /s/*prj/*})
+                    | where type in [dir, symlink] | get name
+                    | append ~/Downloads
+                    | append ~/Desktop
+ )
+}}
+
+export def --env "goto" [path?: path@"nu-complete projects"] {
+    cd (if ($path | is-empty) {
+            (nu-complete projects).completions | input list --fuzzy $"Goto (ansi mu)project(ansi reset):"
+        } else {
+            $path
+    });
+}
+
 # # create big file
 # export def "my create big-file" [filesize: filesize, outfile: path = bigfile.txt] {
 #     use std repeat
