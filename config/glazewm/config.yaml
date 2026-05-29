@@ -202,23 +202,23 @@ layouts:
 keybindings:
   # Shift focus in a given direction.
   - commands: ['focus --direction left']
-    bindings: ['control+shift+h', 'control+shift+left']
+    bindings: ['control+shift+h']
   - commands: ['focus --direction right']
-    bindings: ['control+shift+l', 'control+shift+right']
+    bindings: ['control+shift+l']
   - commands: ['focus --direction up']
-    bindings: ['control+shift+k', 'control+shift+up']
+    bindings: ['control+shift+k']
   - commands: ['focus --direction down']
-    bindings: ['control+shift+j', 'control+shift+down']
+    bindings: ['control+shift+j']
 
   # Move focused window in a given direction.
   - commands: ['move --direction left']
-    bindings: ['control+shift+alt+h', 'control+shift+alt+left']
+    bindings: ['control+shift+alt+h']
   - commands: ['move --direction right']
-    bindings: ['control+shift+alt+l', 'control+shift+alt+right']
+    bindings: ['control+shift+alt+l']
   - commands: ['move --direction up']
-    bindings: ['control+shift+alt+k', 'control+shift+alt+up']
+    bindings: ['control+shift+alt+k']
   - commands: ['move --direction down']
-    bindings: ['control+shift+alt+j', 'control+shift+alt+down']
+    bindings: ['control+shift+alt+j']
 
   # As an lalternative to the resize keybindings above, resize mode enables
   # resizing via arrow keys or HJKL. The binding mode is defined above with
