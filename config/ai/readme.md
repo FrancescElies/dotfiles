@@ -43,6 +43,7 @@
    | `/share` | Export session to markdown, HTML, or GitHub Gist |
    | `/chronicle` | Browse past session history and insights |
    | `/context` | See token usage in the context window |
+   | `/statusline` | configure statusline items (branch, efforts, quota)|
 
    ### 🔍 Research & Planning
    | Command | Description |
