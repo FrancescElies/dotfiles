@@ -23,6 +23,7 @@ match $nu.os-info.name {
     },
     "macos" => {
         $env.path ++= [
+            '~/.local/share/bob/nvim-bin'
             '/opt/homebrew/bin'
             '/usr/local/bin'
             '~/Library/Python/3.12/bin'
@@ -30,11 +31,11 @@ match $nu.os-info.name {
     },
     "linux" => {
         $env.path ++= [
+            '~/.local/share/bob/nvim-bin'
             '/home/linuxbrew/.linuxbrew/bin'
             '/usr/local/bin'
             '/usr/local/go/bin'
             '/var/lib/flatpak/exports/share'
-            '~/.local/share/bob/nvim-bin'
             "~/.rye/shims"
             '~/.local/share/flatpak/exports/share'
         ]

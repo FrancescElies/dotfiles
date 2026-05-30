@@ -52,6 +52,7 @@ if platform.is_mac then
     PATH = table.concat({
       wezterm.home_dir .. '/.cargo/bin',
       wezterm.home_dir .. '/bin',
+      wezterm.home_dir .. '/.local/share/bob/nvim-bin',
       '/opt/homebrew/bin',
       os.getenv 'PATH',
     }, ':'),
