@@ -190,6 +190,7 @@ export def "zig links" [] {
     [
         [name                 link];
         [zig-guide https://zig.guide/]
+        [zig-cookbook https://cookbook.ziglang.cc]
         [zig-book https://pedropark99.github.io/zig-book/]
         [zig-lings https://codeberg.org/ziglings/exercises]
         [zig-docs https://ziglang.org/documentation/master/std/]
