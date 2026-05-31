@@ -29,20 +29,12 @@ export alias "git bblame" = ^git blame -w -C -C -C
 export alias "git log-pretty" = ^git log --graph --pretty=format:'%C(auto)%h -%d %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
 export alias "git log-pretty-merges" = git log-pretty --merges --first-parent
 
-export alias uncommit = ^git reset --soft HEAD~1
-export alias unadd = ^git reset HEAD
+export alias "git uncommit" = ^git reset --soft HEAD~1
+export alias "git unadd" = ^git reset HEAD
 
-export def push [--upstream(-u): string = "origin", --force-with-lease(-f), --force(-F)] {
-  mut args = []
-  if $force_with_lease != null { $args = ($args | append $'--force-with-lease') }
-  if $force != null { $args = ($args | append $'--force') }
-  ^git push ...$args --set-upstream $upstream (git rev-parse --abbrev-ref HEAD)
+export def "git mmerge-base" [rev: string@"nu-complete git remote branches with prefix"] {
+    git merge-base (git rev-parse --abbrev-ref HEAD) $rev 
 }
-export def pull [--upstream(-u): string = "origin"] { ^git pull --set-upstream $upstream (git rev-parse --abbrev-ref HEAD) }
-
-# git rebase merge base
-export def merge-base [ rev: string@"nu-complete git remote branches with prefix" ] { git merge-base (git rev-parse --abbrev-ref HEAD) $rev }
-
 
 # Repack repositories in current folder
 # repacker: repack a repo the way Linus recommends.
