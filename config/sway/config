@@ -27,6 +27,7 @@ set $term  alacritty
 set $menu  bemenu-run --no-overlap --prompt '  run: ' --list 8 --center --width-factor 0.3
 set $lock  swaylock -f --color 1e1e2e --indicator-radius 80 --ring-color 89b4fa --key-hl-color cdd6f4
 
+include /etc/sway/config.d/*
 include /etc/sway/config-vars.d/*
 include ~/.config/sway/*.swayconf
 
@@ -268,7 +269,5 @@ bindsym $mod+Ctrl+v exec clipman pick --tool bemenu
 # for_window [app_id="pavucontrol"]   floating enable, resize set 600 400
 # for_window [app_id="nm-connection-editor"] floating enable
 # for_window [title="Picture-in-Picture"] floating enable, sticky enable
-
-include /etc/sway/config.d/*
 
 # vi: ft=swayconfig shiftwidth=4 tabstop=4 expandtab
