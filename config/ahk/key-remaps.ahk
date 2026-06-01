@@ -17,11 +17,11 @@
 
 #SingleInstance Force
 
-; Tap = Esc, Hold = Ctrl+Shift
-*CapsLock::Send "{Blind}{Ctrl down}{Shift down}"
+; Tap = Esc, Hold = Ctrl+Alt
+*CapsLock::Send "{Blind}{Ctrl down}{Alt down}"
 *CapsLock Up::
 {
-    Send "{Blind}{Ctrl up}{Shift up}"
+    Send "{Blind}{Ctrl up}{Alt up}"
     If (A_PriorKey = "CapsLock")
         Send "{Esc}"
 }

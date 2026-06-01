@@ -202,137 +202,137 @@ layouts:
 keybindings:
   # Shift focus in a given direction.
   - commands: ['focus --direction left']
-    bindings: ['control+shift+h']
+    bindings: ['control+alt+h']
   - commands: ['focus --direction right']
-    bindings: ['control+shift+l']
+    bindings: ['control+alt+l']
   - commands: ['focus --direction up']
-    bindings: ['control+shift+k']
+    bindings: ['control+alt+k']
   - commands: ['focus --direction down']
-    bindings: ['control+shift+j']
+    bindings: ['control+alt+j']
 
   # Move focused window in a given direction.
   - commands: ['move --direction left']
-    bindings: ['control+shift+alt+h']
+    bindings: ['control+alt+shift+h']
   - commands: ['move --direction right']
-    bindings: ['control+shift+alt+l']
+    bindings: ['control+alt+shift+l']
   - commands: ['move --direction up']
-    bindings: ['control+shift+alt+k']
+    bindings: ['control+alt+shift+k']
   - commands: ['move --direction down']
-    bindings: ['control+shift+alt+j']
+    bindings: ['control+alt+shift+j']
 
   # As an lalternative to the resize keybindings above, resize mode enables
   # resizing via arrow keys or HJKL. The binding mode is defined above with
   # the name 'resize'.
   - commands: ['wm-enable-binding-mode --name resize']
-    bindings: ['control+shift+r']
+    bindings: ['control+alt+r']
 
-  # Disables window management and all other keybindings until control+shift+alt+p
+  # Disables window management and all other keybindings until control+alt+shift+p
   # is pressed again.
   - commands: ['wm-toggle-pause']
-    bindings: ['control+shift+alt+p']
+    bindings: ['control+alt+shift+p']
 
   # Change tiling direction. This determines where new tiling windows will
   # be inserted.
   - commands: ['toggle-tiling-direction']
-    bindings: ['control+shift+b']  # WARN: control+shift+v shdows paste in terminal
+    bindings: ['control+alt+b']  # WARN: control+alt+v shdows paste in terminal
 
   # Change focus from tiling windows -> floating -> fullscreen.
   # conflicts with flow search
   - commands: ['wm-cycle-focus']
-    bindings: ['control+shift+space']
+    bindings: ['control+alt+space']
 
   # Change the focused window to be floating.
   - commands: ['toggle-floating --centered']
-    bindings: ['control+shift+alt+space']
+    bindings: ['control+alt+shift+space']
 
   # Change the focused window to be tiling.
   - commands: ['toggle-tiling']
-    bindings: ['control+shift+t']
+    bindings: ['control+alt+t']
 
   # # Change the focused window to be fullscreen.
   - commands: ['toggle-fullscreen']
-    bindings: ['control+shift+f']
+    bindings: ['control+alt+f']
 
   # Minimize focused window.
   - commands: ['toggle-minimized']
-    bindings: ['control+shift+m']
+    bindings: ['control+alt+m']
 
   # Close focused window.
   - commands: ['close']
-    bindings: ['control+shift+alt+q']
+    bindings: ['control+alt+shift+q']
 
   # Kill GlazeWM process safely.
   - commands: ['wm-exit']
-    bindings: ['control+shift+alt+e']
+    bindings: ['control+alt+shift+e']
 
   # Re-evaluate configuration file.
   - commands: ['wm-reload-config']
-    bindings: ['control+shift+alt+c']  # c - same as sway
+    bindings: ['control+alt+shift+c']  # c - same as sway
 
   # Redraw all windows.
   - commands: ['wm-redraw']
-    bindings: ['control+shift+alt+w']
+    bindings: ['control+alt+shift+w']
 
   # Launch CMD terminal. lalternatively, use `shell-exec wt` or
   # `shell-exec %ProgramFiles%/Git/git-bash.exe` to start Windows
   # Terminal and Git Bash respectively.
   - commands: ['shell-exec alacritty']
-    bindings: ['control+shift+enter']
+    bindings: ['control+alt+enter']
 
   # Focus the next/previous active workspace defined in `workspaces` config.
   - commands: ['focus --next-active-workspace']
-    bindings: ['control+shift+s']
+    bindings: ['control+alt+s']
   - commands: ['focus --prev-active-workspace']
-    bindings: ['control+shift+a']
+    bindings: ['control+alt+a']
 
 
   # Change focus to a workspace defined in `workspaces` config.
   - commands: ['focus --workspace 1']
-    bindings: ['control+shift+1']
+    bindings: ['control+alt+1']
   - commands: ['focus --workspace 2']
-    bindings: ['control+shift+2']
+    bindings: ['control+alt+2']
   - commands: ['focus --workspace 3']
-    bindings: ['control+shift+3']
+    bindings: ['control+alt+3']
   - commands: ['focus --workspace 4']
-    bindings: ['control+shift+4']
+    bindings: ['control+alt+4']
   - commands: ['focus --workspace 5']
-    bindings: ['control+shift+5']
+    bindings: ['control+alt+5']
   - commands: ['focus --workspace 6']
-    bindings: ['control+shift+6']
+    bindings: ['control+alt+6']
   - commands: ['focus --workspace 7']
-    bindings: ['control+shift+7']
+    bindings: ['control+alt+7']
   - commands: ['focus --workspace 8']
-    bindings: ['control+shift+8']
+    bindings: ['control+alt+8']
   - commands: ['focus --workspace 9']
-    bindings: ['control+shift+9']
+    bindings: ['control+alt+9']
 
   # Move the focused window's parent workspace to a monitor in a given
   # direction.
   - commands: ['move-workspace --direction left']
-    bindings: ['control+shift+alt+a']
+    bindings: ['control+alt+shift+a']
   - commands: ['move-workspace --direction right']
-    bindings: ['control+shift+alt+f']
+    bindings: ['control+alt+shift+f']
   - commands: ['move-workspace --direction up']
-    bindings: ['control+shift+alt+d']
+    bindings: ['control+alt+shift+d']
   - commands: ['move-workspace --direction down']
-    bindings: ['control+shift+alt+s']
+    bindings: ['control+alt+shift+s']
 
   # Move focused window to a workspace defined in `workspaces` config.
   - commands: ['move --workspace 1', 'focus --workspace 1']
-    bindings: ['control+shift+alt+1']
+    bindings: ['control+alt+shift+1']
   - commands: ['move --workspace 2', 'focus --workspace 2']
-    bindings: ['control+shift+alt+2']
+    bindings: ['control+alt+shift+2']
   - commands: ['move --workspace 3', 'focus --workspace 3']
-    bindings: ['control+shift+alt+3']
+    bindings: ['control+alt+shift+3']
   - commands: ['move --workspace 4', 'focus --workspace 4']
-    bindings: ['control+shift+alt+4']
+    bindings: ['control+alt+shift+4']
   - commands: ['move --workspace 5', 'focus --workspace 5']
-    bindings: ['control+shift+alt+5']
+    bindings: ['control+alt+shift+5']
   - commands: ['move --workspace 6', 'focus --workspace 6']
-    bindings: ['control+shift+alt+6']
+    bindings: ['control+alt+shift+6']
   - commands: ['move --workspace 7', 'focus --workspace 7']
-    bindings: ['control+shift+alt+7']
+    bindings: ['control+alt+shift+7']
   - commands: ['move --workspace 8', 'focus --workspace 8']
-    bindings: ['control+shift+alt+8']
+    bindings: ['control+alt+shift+8']
   - commands: ['move --workspace 9', 'focus --workspace 9']
-    bindings: ['control+shift+alt+9']
+    bindings: ['control+alt+shift+9']
