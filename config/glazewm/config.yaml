@@ -234,7 +234,7 @@ keybindings:
   # Change tiling direction. This determines where new tiling windows will
   # be inserted.
   - commands: ['toggle-tiling-direction']
-    bindings: ['control+alt+b']  # WARN: control+alt+v shdows paste in terminal
+    bindings: ['control+alt+v']
 
   # Change focus from tiling windows -> floating -> fullscreen.
   # conflicts with flow search
