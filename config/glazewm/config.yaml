@@ -262,6 +262,9 @@ binding_modes:
 
 layouts:
   default: "tiled"
+  workspaces:
+    1: "stacked"
+    2: "fullscreen"
 
 keybindings:
   # Shift focus in a given direction.
