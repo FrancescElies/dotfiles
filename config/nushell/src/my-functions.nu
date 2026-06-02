@@ -57,7 +57,10 @@ export alias lg = lazygit
 #     $in | recurse | update item { to nuon }
 # }
 
-export alias todos = nvim ~/src/_notes/src/todos.md
+export def --env notes []  {
+    cd ~/src/notes
+    nvim '+Telescope find_files'
+}
 
 def "nu-complete projects" [] { {
     options: { completion_algorithm: fuzzy, case_sensitive: false, positional: false, sort: true, },
