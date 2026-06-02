@@ -46,7 +46,21 @@ overlay use toolkit
 toolkit bootstrap
 ```
 
-## Firefox
+
+## Links
+- https://www.nushell.sh/blog/2023-08-23-happy-birthday-nushell-4.html
+- https://github.com/dandavison/dotfiles
+- https://github.com/nushell/nu_scripts
+- Managing secrets https://github.com/slok/agebox
+
+
+## Software
+| Name | Description |
+| -------------- | --------------- |
+| Cactus  | image viewer, https://handmade.network/projects|
+| KeyCastr  |share keystrokes, Linux/Win/Mac: https://github.com/mulaRahul/keyviz|
+
+### Firefox
 `about:profiles` click Open Folder in the Root Directory section add a
 `user.js` and paste contents from
 [BetterFox](https://github.com/yokoffing/BetterFox?tab=readme-ov-file)
@@ -60,18 +74,8 @@ Some extensions: ublock, decentraleyes, still don't care about cookies, privacy 
 | `browser.sessionstore.restore_on_demand` | false |
 
 
-### Vimium
+#### Vimium
 Mapping for when using vertical tabs
-```
-map J nextTab
-map K previousTab
-```
 
-## Links
-- https://www.nushell.sh/blog/2023-08-23-happy-birthday-nushell-4.html
-- https://github.com/dandavison/dotfiles
-- https://github.com/nushell/nu_scripts
-- Managing secrets https://github.com/slok/agebox
-# share your keystrokes
-Mac: KeyCastr
-Linux/Win/Mac: https://github.com/mulaRahul/keyviz
+    map J nextTab
+    map K previousTab
