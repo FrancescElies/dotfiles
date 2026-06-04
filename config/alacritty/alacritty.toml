@@ -25,6 +25,7 @@ decorations = "Full"  # "Full" | "None" | "Transparent" | "Buttonless"
 padding = { x = 6, y = 6 }
 dynamic_padding = true
 startup_mode = "Maximized"  # "Windowed" | "Maximized" | "Fullscreen" | "SimpleFullscreen"
+option_as_alt = 'Both'  # macOS: treat the option key as alt.
 
 [font]
 size = 9.0
@@ -48,9 +49,9 @@ multiplier = 3
 [selection]
 save_to_clipboard = true
 
-[terminal.shell]
-program = "nu"
-args = ["-l"] # Use login shell to ensure your shell's dotfiles are sourced.
+# [terminal.shell]
+# program = "nu"
+# args = ["-l"] # Use login shell to ensure your shell's dotfiles are sourced.
 
 # Modifier keys: Shift, Control, Alt, Super (Windows/Cmd key)
 # For a full list of key names, see `alacritty-bindings(5)` or the Alacritty man page.
