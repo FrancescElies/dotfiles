@@ -86,8 +86,10 @@ alias mv='mv -i'
 # Environment Variables
 export EDITOR=nvim
 export VISUAL=nvim
-export PAGER=less
 export LESS='-R' # Allow colors in less
+export PAGER=less
+
+export PATH=~/bin:~/.cargo/bin:$PATH
 
 # Miscellaneous
 #
