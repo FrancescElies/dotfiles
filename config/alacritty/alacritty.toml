@@ -49,9 +49,12 @@ multiplier = 3
 [selection]
 save_to_clipboard = true
 
-# [terminal.shell]
-# program = "nu"
-# args = ["-l"] # Use login shell to ensure your shell's dotfiles are sourced.
+# MAC: edit /etc/paths.d/custom and append where nu is e.g. ~/.cargo/bin/
+# WINDOWS: add ~/.cargo/bin/ to environment variables
+# NIX:  /etc/environment
+[terminal.shell]
+program = "nu"
+args = ["-l"] # Use login shell to ensure your shell's dotfiles are sourced.
 
 # Modifier keys: Shift, Control, Alt, Super (Windows/Cmd key)
 # For a full list of key names, see `alacritty-bindings(5)` or the Alacritty man page.
