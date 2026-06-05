@@ -58,3 +58,26 @@
 - **`Ctrl+T`** — toggle reasoning display (see Copilot's thinking)
 - **`Ctrl+X → B`** — move current task to background
 - **`/every 5m run tests`** — schedule a recurring prompt/check
+
+Files:
+- .github/copilot-instructions.md: stable project knowledge
+- SESSION_HANDOFF.md: what happened today
+- TODO.md: next actions
+
+#### copy pasta
+
+# Sentences
+
+        Act like a senior engineer reviewing this. Be strict and practical.
+        If you are unsure, say so explicitly instead of guessing.
+        Do not assume missing information. Only use what is given.
+        Be concise. No filler. Only the important parts.
+        Go deep on the critical parts, skip basics.
+        Use bullet points and highlight key insights.
+        Give me actionable steps, not just explanation.
+
+        Read AGENT_CONTEXT.md before doing anything else
+
+        Summarize the current state, open tasks, decisions mad, and next steps into SESSION_HANDOFF.md
+
+        Read SESSION_HANDOFF.md and continue where we left off
