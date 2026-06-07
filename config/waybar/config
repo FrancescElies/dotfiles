@@ -20,7 +20,7 @@
         "memory",
         "mpris",
         "pulseaudio",
-        "backlight",
+        // "backlight", // not used
         "battery",
         "network",
         "clock",
@@ -88,11 +88,11 @@
     },
 
     "pulseaudio": {
-        "format": "{icon} {volume}%",
+        "format": "{icon}{volume}%",
         "format-muted": " muted",
         "format-icons": {
-            "headphone": "",
-            "default": ["", "", ""]
+            "headphone": "󰋋",
+            "default": ["🔈", "🔈", "🔈"]
         },
         "on-click": "pavucontrol",
         "tooltip-format": "{desc} — {volume}%"
@@ -110,14 +110,14 @@
             "critical": 15
         },
         "format": "{icon} {capacity}%",
-        "format-charging": " {capacity}%",
-        "format-plugged":  " {capacity}%",
-        "format-icons": ["", "", "", "", ""],
+        "format-charging": "󱐋{capacity}%",
+        "format-plugged":  "{capacity}%",
+        "format-icons": ["󰁺", "󰁼", "󰁾", "󰂁", "󰂅"],
         "tooltip-format": "{timeTo}, {power:.1f}W"
     },
 
     "network": {
-        "format-wifi":         " {essid}",
+        "format-wifi":         "󰖪{essid}",
         "format-ethernet":     "󰈀 {ipaddr}",
         "format-disconnected": "󰖪 offline",
         "tooltip-format-wifi": "{signalStrength}% — {ipaddr}",
