@@ -71,7 +71,7 @@ Files:
         Act like a senior engineer reviewing this. Be strict and practical.
         If you are unsure, say so explicitly instead of guessing.
         Do not assume missing information. Only use what is given.
-        Be concise. No filler. Only the important parts.
+        Be extremely concise. No filler. Only the important parts.
         Go deep on the critical parts, skip basics.
         Use bullet points and highlight key insights.
         Give me actionable steps, not just explanation.
