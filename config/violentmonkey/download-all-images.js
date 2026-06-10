@@ -17,7 +17,8 @@
     right: "12px",
     zIndex: 99999,
     padding: "8px 12px",
-    background: "#222",
+    background: "#a0c4ff",
+    color: black;
     color: "#fff",
     borderRadius: "6px",
     border: "none",
