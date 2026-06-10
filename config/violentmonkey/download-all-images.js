@@ -10,7 +10,7 @@
 (function () {
   "use strict";
   const btn = document.createElement("button");
-  btn.textContent = "Download images";
+  btn.textContent = "images";
   Object.assign(btn.style, {
     position: "fixed",
     bottom: "12px",
