@@ -161,6 +161,15 @@ def "install neovim" [] {
     }
 }
 
+def "config kanata" [] {
+    let config_dir = match $nu.os-info.name {
+        "windows" => '~\AppData\Roaming\kanata' ,
+        "macos" => '~/Library/Application Support/kanata' ,
+        _ => "~/.config/kanata" ,
+    }
+    symlink --force ~/src/dotfiles/config/kanata/ $config_dir
+}
+
 def "config pueue" [] {
     let config_dir = match $nu.os-info.name {
         "windows" => '~\AppData\Roaming\pueue' ,
@@ -455,6 +464,7 @@ export def bootstrap [] {
     config broot
     config himalaya
     config pueue
+    config kanata
 
     match $nu.os-info.name {
         "windows" => {

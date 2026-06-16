@@ -1,0 +1,4 @@
+(defcfg process-unmapped-keys yes)
+(defsrc caps)
+(deflayer base @capsmod)
+(defalias capsmod (tap-hold 200 200 esc (multi lmet lalt)))
