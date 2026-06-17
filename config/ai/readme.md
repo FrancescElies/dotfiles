@@ -4,68 +4,69 @@
 - omo.dev: oh-my-openagent
 - pi.dev:  a minimal terminal coding harness
 
-## Useful copilot cli commands
+ ### Pi model picking strategy
 
-### 🧠 Modes (Shift+Tab to cycle)
-| Mode               | What it does                                                   |
-| ------             | -------------                                                  |
-| **Plan mode**      | Copilot asks questions, builds a plan *before* coding          |
-| **Autopilot mode** | Fully autonomous — runs end-to-end without asking for approval |
+ - Default driver in pi: `gpt-5.4` or `claude-sonnet-4.6`, quality/cost balance for an agent loop
+ - Codex-style autonomous coding (*long agent runs, lots of tool calls*): `gpt-5.3-codex`
+ - Architecture, a gnarly bug, security audits: `claude-opus-4.8` (each request costs ~10x )
+ - Cycle list for `Ctrl+P` suggestion:
 
-### 💻 Code & Review
-| Command   | Description                                                  |
-| --------- | -------------                                                |
-| `/diff`   | Review all changes in your session with syntax highlighting  |
-| `/review` | AI code review of staged/unstaged changes before committing  |
-| `/pr`     | Operate on pull requests for the current branch              |
-| `Esc×2`   | **Undo/rewind** — reverts file changes to any prior snapshot |
+Other:
+ - Fast cheap mode (*lots of small edits, tight loops*): `claude-haiku-4.5` or `gpt-5.4-mini`
+ - Free tier: `gpt-4.1` and `gpt-5-mini` (for autocomplete-style and casual chat)
 
-### 🤖 Agents & Delegation
-| Command      | Description                                                          |
-| ---------    | -------------                                                        |
-| `& <prompt>` | Delegate to the **cloud agent** — frees your terminal while it works |
-| `/delegate`  | Send the session to GitHub; Copilot creates a PR                     |
-| `/resume`    | Switch between local and remote sessions                             |
-| `/fleet`     | Parallel subagent execution for big tasks                            |
-| `/agent`     | Browse & select specialized agents                                   |
 
-### 🔧 Customization & Extensions
-| Command                      | Description                                                                           |
-| ---------                    | -------------                                                                         |
-| `/mcp`                       | Add/manage MCP servers (connect any tool)                                             |
-| `/plugin install owner/repo` | Install a plugin directly from a GitHub repo, e.g. `/plugin install obra/superpowers` |
-| `/skills`                    | Manage markdown-based skill files                                                     |
-| `/model`                     | Switch AI model mid-session (Claude, GPT, Gemini)                                     |
-| `/init`                      | Initialize Copilot instructions for the repo                                          |
+# Pi Shortcuts
 
-### 📋 Session Management
-| Command       | Description                                         |
-| ---------     | -------------                                       |
-| `/compact`    | Compress history to free up context window          |
-| `/rewind`     | Undo last turn and revert file changes              |
-| `/share`      | Export session to markdown, HTML, or GitHub Gist    |
-| `/chronicle`  | Browse past session history and insights            |
-| `/context`    | See token usage in the context window               |
-| `/statusline` | configure statusline items (branch, efforts, quota) |
+## Model switching
 
-### 🔍 Research & Planning
-| Command        | Description                                 |
-| ---------      | -------------                               |
-| `/research`    | Deep research using GitHub search + web     |
-| `/plan`        | Create an implementation plan before coding |
-| `@ <file>`     | Mention a file to include it in context     |
-| `# <issue/PR>` | Reference GitHub issues or PRs directly     |
+| Key            | Action                                                             |
+| ---            | ---                                                                |
+| `Ctrl+P`       | Cycle to next model (sonnet → gpt-5.4 → haiku → opus)              |
+| `Shift+Ctrl+P` | Cycle backwards                                                    |
+| `Ctrl+L`       | Open full model selector                                           |
+| `Shift+Tab`    | Cycle thinking level (off → minimal → low → medium → high → xhigh) |
+| `Ctrl+T`       | Collapse / expand thinking blocks                                  |
 
-### ⚡ Power Tips
-- **`! <shell cmd>`** — run shell commands inline without leaving the chat
-- **`Ctrl+T`** — toggle reasoning display (see Copilot's thinking)
-- **`Ctrl+X → B`** — move current task to background
-- **`/every 5m run tests`** — schedule a recurring prompt/check
+## Input editing
 
-Files:
-- .github/copilot-instructions.md: stable project knowledge
-- SESSION_HANDOFF.md: what happened today
-- TODO.md: next actions
+| Key           | Action                                                   |
+| ---           | ---                                                      |
+| `Enter`       | Submit                                                   |
+| `Shift+Enter` | New line (multiline prompt)                              |
+| `Alt+Enter`   | Queue a follow-up message (sends after current response) |
+| `Alt+Up`      | Restore queued messages back to editor                   |
+
+## Control
+
+| Key      | Action                         |
+| ---      | ---                            |
+| `Escape` | Cancel / abort running request |
+| `Ctrl+C` | Clear editor                   |
+| `Ctrl+D` | Exit (when editor is empty)    |
+
+## Sessions
+
+| Key       | Action                            |
+| ---       | ---                               |
+| `/new`    | New session                       |
+| `/fork`   | Fork current session (branch off) |
+| `/resume` | Pick a past session to resume     |
+| `/tree`   | Open session tree navigator       |
+
+## Output navigation
+
+| Key                           | Action                        |
+| ---                           | ---                           |
+| `Ctrl+O`                      | Collapse / expand tool output |
+| `Ctrl+V` (`Alt+V` on Windows) | Paste image from clipboard    |
+
+## Tips (this setup)
+
+- **Haiku for throw-away questions** — one `Ctrl+P` press away, ask, cycle back.
+- **Opus for hard problems** — 2× `Ctrl+P`; don't leave it as default or it burns quota on every session.
+- **Long prompts** → `Ctrl+G` opens `$EDITOR` (`set $EDITOR=nvim` or `code --wait` in shell profile).
+- **Thinking level** → `Shift+Tab` before submitting; `medium` is default, bump to `high`/`xhigh` for architecture or gnarly bugs.
 
 #### copy pasta
 
