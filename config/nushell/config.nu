@@ -213,6 +213,20 @@ $env.config.keybindings = [
     }
 
     {
+         name: find_any_file_and_edit
+         modifier: control
+         keycode: char_s
+         mode: [emacs, vi_normal, vi_insert]
+         event: {
+           send: executehostcommand,
+           cmd: "
+                goto
+                nvim '+Telescope find_files'
+           "
+         }
+    }
+
+    {
          name: find_file_and_edit
          modifier: control
          keycode: char_f
@@ -241,7 +255,7 @@ $env.config.keybindings = [
         mode: [emacs, vi_normal, vi_insert]
         event: {
            send: executehostcommand,
-           cmd: ''
+           cmd: 'goto'
         }
    }
 
