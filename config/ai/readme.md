@@ -3,6 +3,11 @@
 - Anvil: A chat mode for GitHub Copilot CLI
 - omo.dev: oh-my-openagent
 - pi.dev:  a minimal terminal coding harness
+    ```bash
+     pi install npm:pi-vim
+     pi install npm:pi-token-burden
+     pi install npm:pi-btw
+    ```
 
  ### Pi model picking strategy
 
