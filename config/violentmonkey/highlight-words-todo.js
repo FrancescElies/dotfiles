@@ -16,6 +16,8 @@
     FIXME: '#ff5252',
     HACK: '#ff9800',
     NOTE: '#7baf7b',
+    DONE: '#7bd07b',
+    FIXED: '#7bd07b',
     WAIT: '#ddbe0b'
   };
   const WORDS = Object.keys(KEYWORDS);
