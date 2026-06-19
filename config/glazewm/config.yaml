@@ -210,7 +210,7 @@ window_rules: # NOTE: Winlister or AutoHotkey's Window Spy can be useful for get
       - window_process: { equals: "firefaceusb_x64" }
       - window_process: { equals: "Audacity" }
 
-  - commands: ["move --workspace 1"]
+  - commands: ["move --workspace 2"]
     match:
       - window_process: { regex: "Max" }
 
