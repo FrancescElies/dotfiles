@@ -8,7 +8,6 @@
     "github-copilot/gpt-5.4-mini"
   ],
   "packages": [
-    "npm:pi-btw",
     "npm:pi-token-burden",
     "npm:@ff-labs/pi-fff",
     "npm:pi-web-access",
