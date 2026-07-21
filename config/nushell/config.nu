@@ -239,7 +239,7 @@ $env.config.keybindings = [
         event: [
           {
             send: executehostcommand
-            cmd: " cd ( fd --type dir --hidden | input list --fuzzy ) "
+            cmd: " cd ( fd --type dir --hidden | lines | input list --fuzzy ) "
           }
         ]
     }
