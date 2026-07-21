@@ -50,7 +50,8 @@
   "skills": [
     "-skills/ghidra/SKILL.md",
     "-skills/web-browser/SKILL.md",
-    "-skills/zellij/SKILL.md"
+    "-skills/zellij/SKILL.md",
+    "-skills/frontend-desing/SKILL.md"
   ],
   "enableInstallTelemetry": false
 }
