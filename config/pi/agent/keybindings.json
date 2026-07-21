@@ -1,5 +1,6 @@
 {
   "app.editor.external": ["ctrl+e"],
+  "app.model.select": ["ctrl+shift+p"],
   "tui.select.up": ["up", "ctrl+p"],
   "tui.select.down": ["down", "ctrl+n"]
 }
