@@ -17,7 +17,7 @@ export def excalidraw [] {
 }
 
 # ripgrep->fzf->vim [QUERY]
-export def rg-fzf-nvim [] {
+export def rg-fzf-vim [] {
     let RELOAD = 'rg --column --color=always --smart-case {q}'
     let OPENER = '
         if $env.FZF_SELECT_COUNT == 0 {
@@ -43,20 +43,26 @@ export def rg-fzf-nvim [] {
         --preview-window '~4,+{2}+4/3,<80(up)'
         --query "$*" )
 }
-# ripgrep->fzf->vim [QUERY]
-export alias rfv = rg-fzf-nvim
+# ripgrep->vim [QUERY]
+export alias rgv = rg-fzf-vim
 
 export alias lg = lazygit
 
-# # something like gron
-# export def gronu [] {
-#     use std-rfc/iter recurse
-#     $in | recurse | update item { to nuon }
-# }
+# makes json grappable (à la gron)
+export def grepson [] {
+    use std-rfc/iter recurse
+    let input = $in
+    if ($input | describe -d).type == string {
+        $input | from json | recurse | update item { to nuon }
+    } else {
+        $input | recurse | update item { to nuon }
+    }
+}
 
 export def --env notes []  {
     cd ~/src/notes
-    nvim '+Telescope find_files'
+    # nvim '+Telescope find_files'
+    nvim '+FFFFind'
 }
 
 def "nu-complete projects" [] { {
@@ -221,12 +227,17 @@ export def "my backup restore by-year" [serverip: string = "intel-pc"] {
 
 export alias "nvim emergency" = nvim -u ~/src/kickstart.nvim/minimal-vimrc.vim
 
-export alias md = nvim -c ":set ft=markdown"
+# Open files in nvim that match a certain semantic topic
+export def "nvim semantic-search" [topic: string] {
+    nvim -c ((semble search $topic | from json).results | select file_path start_line | each {$"edit +($in.start_line) ($in.file_path)"} | str join " | ")
+}
+
 export alias v = nvim
+export alias vs = nvim semantic-search
 export alias ve = nvim emergency
-export alias vis = nvim "+set si"
-export alias vmd = nvim -c ":set ft=markdown"
-export alias vmin = nvim -u NONE -i NONE --no-plugins
+export alias vmarkdown = nvim -c ":set ft=markdown"
+export alias vjson = nvim -c ":set ft=json"
+export alias vbare = nvim -u NONE -i NONE --no-plugins
 
 export def "nvim-clean-shada" [] {
     match $nu.os-info.name {
@@ -459,12 +470,29 @@ export def nato-alphabet [] {
 export def --wrapped pi [...args] {
     match $nu.os-info.name {
         "windows" => {
-            fnm exec --using v24 -- pi.cmd ...$args
+            fnm exec --using v25 -- pi.cmd ...$args
         },
         _ => {
-            fnm exec --using v24 -- pi ...$args
+            fnm exec --using v25 -- pi ...$args
         }
     }
-
-
 }
+
+export def --env pienv [] { fnm use v25 }
+
+export def --env pidocs [] {
+    let root = match $nu.os-info.name {
+        "windows" => (fnm exec --using v25 -- npm.cmd root -g)
+        _ => (fnm exec --using v25 -- npm root -g)
+    }
+    let docs = $root | str trim | path join "@earendil-works/pi-coding-agent/docs"
+    nvim -c $'cd ($docs)' -c 'e index.md'
+}
+
+
+export alias ado-pr-reply = python ~/src/dotfiles/bin/ado-pr-reply.py
+export alias compile-commands = python ~/src/dotfiles/bin/compile-commands.py
+export alias firefox-tabs-to-md = python ~/src/dotfiles/bin/firefox-tabs-to-md.py
+export alias local-ai = python ~/src/dotfiles/bin/local-ai.py
+export alias text-extract-concepts = python ~/src/dotfiles/bin/text-extract-concepts.py
+export alias text-ranks = python ~/src/dotfiles/bin/text-ranks.py

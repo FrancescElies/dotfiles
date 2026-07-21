@@ -7,6 +7,7 @@
 
 -- NOTE: environment variable WEZTERM_CONFIG_DIR should point to this file
 local wezterm = require 'wezterm'
+
 local act = wezterm.action
 -- local mux = wezterm.mux
 local io = require 'io'
@@ -18,6 +19,19 @@ local platform = {
   is_mac = string.find(wezterm.target_triple, 'apple') ~= nil,
 }
 
+local sys = require('widgets')
+
+sys.apply_to_config(config, {
+  right = {
+    sys.battery.charge.widget(),
+    sys.cpu.utilization.widget(),
+    sys.ram.utilization.widget(),
+    sys.network.download.widget(),
+    sys.network.upload.widget(),
+  },
+  separator = { text = "|", color = "#3b4261" },
+})
+
 -- Troubleshooting
 -- https://wezfurlong.org/wezterm/troubleshooting.html
 
@@ -26,14 +40,17 @@ local config = {}
 if wezterm.config_builder then
   config = wezterm.config_builder()
 end
-
+config.colors = {
+  split = '#449999', -- split lines between panes color
+}
 -- https://wezfurlong.org/wezterm/config/fonts.html
 -- https://www.jetbrains.com/lp/mono/
 -- https://github.com/microsoft/cascadia-code
 -- https://github.com/tonsky/FiraCode
 -- https://github.com/adobe-fonts/source-code-pro
+-- https://fonts.google.com/specimen/IBM+Plex+Sans
 
-config.font_size = 11
+config.font_size = 10
 
 config.disable_default_key_bindings = true
 config.hide_tab_bar_if_only_one_tab = true
@@ -66,14 +83,16 @@ local function normalize_path(path)
 end
 
 local home = normalize_path(wezterm.home_dir)
+--
+-- Common Folder Paths
+--
 local folders_to_search = {}
 if platform.is_win then
   folders_to_search = {
     home .. '/src',
-    home .. '/src/work',
-    home .. '/src/work/ekl-worktrees',
-    home .. '/src/work/customerprj/',
     home .. '/src/oss',
+    '/s/eklang-wt/',
+    '/s/customerprj/',
   }
 else
   folders_to_search = {
@@ -82,15 +101,23 @@ else
   }
 end
 
+--
+-- Shell Profiles
+--
+local nushell = wezterm.home_dir .. '/.cargo/bin/nu'
 local launch_menu = {}
 if platform.is_win then
   -- wezterm.log_info 'on windows'
-  config.default_prog = { wezterm.home_dir .. '/bin/nu' }
+  config.default_prog = { nushell }
   launch_menu = {
     { label = 'PowerShell Core', args = { 'pwsh' } },
     { label = 'PowerShell Desktop', args = { 'powershell' } },
     { label = 'Command Prompt', args = { 'cmd' } },
-    { label = 'Nushell', args = { wezterm.home_dir .. '/bin/nu' } },
+    {
+      label = 'Visual Studio Prompt',
+      args = { 'cmd', ' /k', '"c:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\Common7\\Tools\\VsDevCmd.bat"' },
+    },
+    { label = 'Nushell', args = { nushell } },
   }
 else
   -- wezterm.log_info 'on mac or linux'
@@ -105,8 +132,8 @@ config.launch_menu = launch_menu
 
 -- Styling Inactive Panes
 config.inactive_pane_hsb = {
-  saturation = 0.9, -- smaller values can make it appear more washed out
-  brightness = 1, -- dims or increases the perceived amount of light
+  saturation = 0.5, -- smaller values can make it appear more washed out
+  brightness = 1., -- dims or increases the perceived amount of light
 }
 
 config.mouse_bindings = {
@@ -137,6 +164,7 @@ config.mouse_bindings = {
 }
 
 local mods = 'CTRL|SHIFT'
+local mods2 = 'CTRL|SHIFT|ALT'
 
 local edit_pane_in_nvim = wezterm.action_callback(function(window, pane)
   -- Retrieve the text from the pane
@@ -156,7 +184,7 @@ local edit_pane_in_nvim = wezterm.action_callback(function(window, pane)
   window:perform_action(act.SplitHorizontal { args = { 'nu', '-e', 'nvim ' .. name } }, pane)
 
   -- Wait "enough" time for vim to read the file before we remove it.
-  -- The window creation and process spawn are asynchronous wrt. running
+  -- The window creation and process spawn are asynchronous wrt. Running
   -- this script and are not awaitable, so we just pick a number.
   --
   -- Note: We don't strictly need to remove this file, but it is nice
@@ -199,8 +227,7 @@ local open_project = wezterm.action_callback(function(window, pane)
               name = id,
               spawn = {
                 cwd = label,
-                -- args = { 'nu', '-e', 'nvim' }, -- open nvim
-                args = { 'nu' }, -- just open shell
+                args = { 'nu', '-e', 'nvim' },
               },
             },
             pane
@@ -219,9 +246,8 @@ local break_to_new_tab = wezterm.action_callback(function(_, pane) pane:move_to_
 
 config.keys = {
 
-  { key = '0', mods = 'CTRL|SHIFT', action = wezterm.action.ResetFontSize },
-  { key = '-', mods = 'CTRL|SHIFT', action = wezterm.action.DecreaseFontSize },
-  { key = '=', mods = 'CTRL|SHIFT', action = wezterm.action.IncreaseFontSize },
+  { key = '_', mods = mods, action = wezterm.action.DecreaseFontSize },
+  { key = '+', mods = mods, action = wezterm.action.IncreaseFontSize },
 
   { key = 'z', mods = mods, action = act.TogglePaneZoomState },
   -- { key = 'd',   mods = mods,        action = act.DisableDefaultAssignment },  -- don't remember why
@@ -241,42 +267,43 @@ config.keys = {
   { key = 'F10', mods = 'NONE', action = wezterm.action.ToggleAlwaysOnTop },
   { key = 'F11', mods = 'NONE', action = act.ToggleFullScreen },
 
-  -- { key = 's', mods = mods, action = act { SplitVertical = { domain = 'CurrentPaneDomain' } } },
-  -- { key = 'v', mods = mods, action = act { SplitHorizontal = { domain = 'CurrentPaneDomain' } } },
+  { key = 's', mods = mods, action = act { SplitVertical = { domain = 'CurrentPaneDomain' } } },
+  { key = '|', mods = mods, action = act { SplitHorizontal = { domain = 'CurrentPaneDomain' } } },
   { key = 'n', mods = mods, action = new_pane }, -- poor man's zellij New split pane
 
   { key = 'a', mods = mods, action = act.ActivateCommandPalette }, -- [c]ommands
   { key = 'd', mods = mods, action = act.ShowDebugOverlay },
-  { key = 's', mods = mods, action = act.Search { CaseInSensitiveString = '' } }, -- [f]ind
+  { key = 'f', mods = mods, action = act.Search { CaseInSensitiveString = '' } }, -- [f]ind
   { key = 'r', mods = mods, action = act.RotatePanes 'Clockwise' }, -- [r]otate panes
   { key = 'u', mods = mods, action = act.CharSelect }, -- insert [u]nicode character, e.g. emoji
 
-  -- Workspaces (alt + shift)
-  { key = 'o', mods = mods, action = act.ShowLauncherArgs { flags = 'FUZZY|WORKSPACES' } },
+  { key = 'o', mods = mods, action = act.ShowLauncherArgs { flags = 'FUZZY|WORKSPACES|DOMAINS|TABS' } }, -- [o]pen
   { key = 'p', mods = mods, action = open_project },
 
-  { key = 't', mods = mods, action = act.ActivateTabRelative(1) },
-  { key = 'w', mods = mods, action = act.SwitchWorkspaceRelative(1) },
+  { key = '{', mods = mods, action = act.ActivateTabRelative(-1) },
+  { key = '}', mods = mods, action = act.ActivateTabRelative(1) },
+  { key = '<', mods = mods, action = act.SwitchWorkspaceRelative(-1) },
+  { key = '>', mods = mods, action = act.SwitchWorkspaceRelative(1) },
 
   -- adjust panes
-  { key = 'LeftArrow', mods = mods, action = act.AdjustPaneSize { 'Left', 3 } },
-  { key = 'RightArrow', mods = mods, action = act.AdjustPaneSize { 'Right', 3 } },
-  { key = 'DownArrow', mods = mods, action = act.AdjustPaneSize { 'Down', 3 } },
-  { key = 'UpArrow', mods = mods, action = act.AdjustPaneSize { 'Up', 3 } },
+  { key = 'h', mods = mods2, action = act.AdjustPaneSize { 'Left', 3 } },
+  { key = 'j', mods = mods2, action = act.AdjustPaneSize { 'Down', 3 } },
+  { key = 'k', mods = mods2, action = act.AdjustPaneSize { 'Up', 3 } },
+  { key = 'l', mods = mods2, action = act.AdjustPaneSize { 'Right', 3 } },
 
   { key = 'h', mods = mods, action = act.ActivatePaneDirection 'Left' },
   { key = 'j', mods = mods, action = act.ActivatePaneDirection 'Down' },
   { key = 'k', mods = mods, action = act.ActivatePaneDirection 'Up' },
   { key = 'l', mods = mods, action = act.ActivatePaneDirection 'Right' },
 
-  { key = 'x', mods = mods, action = act.CloseCurrentPane { confirm = false } },
+  { key = 'q', mods = mods, action = act.CloseCurrentPane { confirm = false } },
 
   { key = 'b', mods = mods, action = break_to_new_tab },
 
   { key = 'e', mods = mods, action = edit_pane_in_nvim },
 
-  { key = 'c', mods = 'CTRL|SHIFT', action = act.CopyTo 'ClipboardAndPrimarySelection' },
-  { key = 'v', mods = 'CTRL|SHIFT', action = act.PasteFrom 'Clipboard' },
+  { key = 'c', mods = mods, action = act.CopyTo 'ClipboardAndPrimarySelection' },
+  { key = 'v', mods = mods, action = act.PasteFrom 'Clipboard' },
 }
 
 config.switch_to_last_active_tab_when_closing_tab = true
@@ -291,12 +318,6 @@ config.hyperlink_rules = {
   { regex = '\\{(\\w+://\\S+)\\}', format = '$1', highlight = 1 },
   -- Matches: a URL in angle brackets: <URL>
   { regex = '<(\\w+://\\S+)>', format = '$1', highlight = 1 },
-  -- Matches:  numbers
-  -- {
-  --   regex = '(\\d+)',
-  --   format = 'https://mbbm-ast.visualstudio.com/AST/_workitems/edit/$1',
-  --   highlight = 1,
-  -- },
   -- Then handle URLs not wrapped in brackets
   { regex = '[^(]\\b(\\w+://\\S+[)/a-zA-Z0-9-]+)', format = '$1', highlight = 1 },
   -- implicit mailto link

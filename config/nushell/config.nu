@@ -1,4 +1,4 @@
-# https://github.com/nushell/nushell/blob/main/crates/nu-utils/src/default_files/default_config.nu
+# https://github.com/nushell/nushell/blob/main/crates/nu-config/default_files/default_config.nu
 
 $env.NU_LIB_DIRS = [
     "~/src/dotfiles/config/nushell/src"
@@ -15,10 +15,9 @@ $env.NU_LIB_DIRS = [
 #     this_repo = Path("~/src/dotfiles/config/nushell")
 #     cog.outl(f"use {this_repo / file} *".replace('\\', '/'))
 # ]]]*/
+use ~/src/dotfiles/config/nushell/src/ai.nu *
 use ~/src/dotfiles/config/nushell/src/ado-completions.nu *
-use ~/src/dotfiles/config/nushell/src/bat-completions.nu *
 use ~/src/dotfiles/config/nushell/src/broot.nu *
-use ~/src/dotfiles/config/nushell/src/btm-completions.nu *
 use ~/src/dotfiles/config/nushell/src/cargo-completions.nu *
 use ~/src/dotfiles/config/nushell/src/clipboard.nu *
 use ~/src/dotfiles/config/nushell/src/docs.nu *  # NOTE: a bit slow
@@ -26,7 +25,6 @@ use ~/src/dotfiles/config/nushell/src/fd-completions.nu *
 use ~/src/dotfiles/config/nushell/src/zig-completions.nu *
 # use ~/src/dotfiles/config/nushell/src/flamegraph-completions.nu *
 # use ~/src/dotfiles/config/nushell/src/fnm.nu *
-# use ~/src/dotfiles/config/nushell/src/gh-completions.nu *
 # use ~/src/dotfiles/config/nushell/src/history-utils.nu *
 # use ~/src/dotfiles/config/nushell/src/hosts-completions.nu *
 use ~/src/dotfiles/config/nushell/src/just-completions.nu *
@@ -38,7 +36,6 @@ use ~/src/dotfiles/config/nushell/src/my-functions.nu *
 use ~/src/dotfiles/config/nushell/src/git-aliases.nu *
 use ~/src/dotfiles/config/nushell/src/git-completions.nu *
 use ~/src/dotfiles/config/nushell/src/ouch-completions.nu *
-use ~/src/dotfiles/config/nushell/src/pnpm-completions.nu *
 use ~/src/dotfiles/config/nushell/src/pueue-completions.nu *
 use ~/src/dotfiles/config/nushell/src/pytest-completions.nu *
 use ~/src/dotfiles/config/nushell/src/reverse-eng.nu *
@@ -67,7 +64,7 @@ $env.config.show_banner = false
 # $env.config.buffer_editor = ["nvim" "-u" "~/src/kickstart.nvim/minimal-vimrc.vim"]
 $env.config.buffer_editor = ["nvim"]
 $env.config.shell_integration.osc7 = true
-$env.config.shell_integration.osc133 = true
+$env.config.shell_integration.osc133 = false   # causing autoscrolling issues in wezterm
 # https://www.nushell.sh/book/custom_completions.html
 # $env.config.completions.algorithm = "prefix"
 $env.config.completions.algorithm = "fuzzy"
@@ -216,7 +213,7 @@ $env.config.keybindings = [
          mode: [emacs, vi_normal, vi_insert]
          event: {
            send: executehostcommand,
-           cmd: "nvim '+Telescope find_files'"
+           cmd: "nvim '+FFFFind'"
          }
     }
 
@@ -239,7 +236,7 @@ $env.config.keybindings = [
         event: [
           {
             send: executehostcommand
-            cmd: " cd ( fd --type dir --hidden | input list --fuzzy ) "
+            cmd: " cd ( fd --type dir --hidden | lines | input list --fuzzy ) "
           }
         ]
     }

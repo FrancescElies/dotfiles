@@ -7,6 +7,8 @@
 
 use git-completions.nu "nu-complete git checkout"
 
+
+
 export def "nu-complete semmantic-message" [] {
     # https://gist.github.com/joshbuchea/6f47e86d2510bce28f8e7f42ae84c716
     [
@@ -26,6 +28,10 @@ export def "nu-complete semmantic-message" [] {
 
 export module ado {
 
+    export alias "pr reply" = python ~/src/dotfiles/bin/ado-pr-reply.py
+
+    export alias "workitem edit" = python ~/src/dotfiles/bin/ado-workitem-edit.py
+
     def "nu-complete my-tasks" [] {
         (ls my tasks)
         | rename -c {id: value,  title: description} | select value description
@@ -39,17 +45,6 @@ export module ado {
 
     const dbfile = ('~/.git-ado.json' | path expand )
 
-    export def read_git_ado_db [] {
-        if ($dbfile | path exists) {
-            open $dbfile
-        } else {
-            []
-        }
-    }
-    export def write_git_ado_db [db] {
-        $db | to json | save -f $dbfile
-    }
-
     # review a pr on a separate folder
     export def "pr review" [ branch: string ] {
         git fetch --all | ignore
@@ -60,48 +55,27 @@ export module ado {
     }
 
     # git worktree add - convenience wrapper
-    export def "worktree add" [
-        branch: string # branch to create or checkout, e.g. cesc/1234-my-description
-        path: path # checkout location
+    export def "worktree add-for-story" [
+        story: int@"nu-complete my-stories"  # story number
+        desc: string,
         --startingat(-@): string@"nu-complete git checkout"  # create a new branch starting at <commit-ish> e.g. master,
         # custom stuff
-        --story(-s): int@"nu-complete my-stories"  # story number
         --task(-t): int@"nu-complete my-tasks"   # task number
         --no-pr # don't create pr
     ] {
-        let branch_name = if ($branch | is-empty) { (git rev-parse --abbrev-ref HEAD) } else { $branch }
 
-        let db = read_git_ado_db
-
-        mut data = {
-            name: $branch_name
-            story: (if $story == null { 0 } else { $story })
-            task: (if $task == null { 0 } else { $task })
-            pr: 0
-        }
-
-
-        let repo_name = pwd | path basename | str replace ".git" ""
-        # make sure path has no slashes coming from branch name
-        # let branch_folder = $branch | str replace -a -r `[\\/]` "-"
-        # let path = (".." | path join $"($repo_name)-($branch_folder)")
+        # make sure path has no weird stuff, spaces, slashes ...
+        let branch_norm = $desc | str lowercase | str replace -a --regex `[\\/ ]` "-"
+        let new_branch = $"cesc/($branch_norm)"
+        let new_dir = (".." | path join $branch_norm)
 
         git fetch --all
         if ($startingat | is-empty) {
-            print $"(ansi pb)git worktree add -B ($branch) ($path)(ansi reset)"
-            git worktree add -B $branch $path
+            print $"(ansi pb)git worktree add -B ($new_branch) ($new_dir)(ansi reset)"
+            git worktree add -B $new_branch $new_dir
         } else {
-            print $"(ansi pb)git worktree add -B ($branch) ($path) ($startingat)(ansi reset)"
-            git worktree add -B $branch $path $startingat
-        }
-
-        write_git_ado_db ($db | append $data)
-        if not $no_pr {
-            cd $path
-            let title = $branch
-            let pr = pr new $"🏗️: ($title)" --draft
-            $data.pr = $pr.id
-            write_git_ado_db ($db | append $data)
+            print $"(ansi pb)git worktree add -B ($new_branch) ($new_dir) ($startingat)(ansi reset)"
+            git worktree add -B $new_branch $new_dir $startingat
         }
     }
 
@@ -144,19 +118,15 @@ export module ado {
 
         nvim $description
 
-        let db = read_git_ado_db
         let current_branch = (git rev-parse --abbrev-ref HEAD)
-        # let work_items = ([
-        #     ( $db | where name == $current_branch | get story.0 )
-        #     ( $db | where name == $current_branch | get task.0 )
-        # ] | where { $in != 0})
+        let work_items = $description | parse --regex '#(?<num>\d+)' | get num
 
         mut args = []
+        if ($work_items | is-not-empty) { $args = ($args | append [--work-items ...($work_items)]) }
         if $draft { $args = ($args | append '--draft') }
         ( ^az repos pr create --open --delete-source-branch
             --description ...($description | open | lines)
             --auto-complete -t $target_branch
-            # --work-items ...($work_items)
             --title $title
             ...$args
             -o json
@@ -251,9 +221,9 @@ export module ado {
                             System.WorkItemType: type,
                             System.IterationPath: iteration_path,
                             System.Title: title
-                            System.ChangedDate: canged_date
+                            System.ChangedDate: changed_date
                             System.CreatedDate: created_date }
-        | sort-by state created_date title
+        | sort-by state changed_date created_date title
         | move id --first
         | move state --after id
         | move type --after state
@@ -307,13 +277,19 @@ export module ado {
 
     # list my pull requests
     export def "ls prs" [] {
-        let my_query = "[].{title: title, createdby: createdBy.displayName, reviewers: reviewers, status: status, repo: repository.name, id: pullRequestId, draft: isDraft }"
-        let prs = az repos pr list -ojson --query $my_query | from json | select id status createdby reviewers title draft
+        let my_query = "[].{title: title, createdby: createdBy.displayName, reviewers: reviewers, status: status, repo: repository.name, id: pullRequestId, draft: isDraft, source: sourceRefName, target: targetRefName}"
+        let prs = az repos pr list -ojson --query $my_query | from json | select id status createdby title source target draft reviewers | update cells -c [source target] { $in | str replace refs/heads/ '' }
         $prs | insert ci-status {
             pr status $in.id
             | select status title type | sort-by type status
             | update cells -c [status] { $in | str replace approved ✅| str replace running 👟| str replace queued ⏳| str replace rejected ❌ }
         }
+    }
+
+    export def "ls prs-of-current-branch" [] {
+        (az repos pr list --source-branch (git rev-parse --abbrev-ref HEAD)
+        | from json
+        | select pullRequestId title description)
     }
 
     # list prs for year
@@ -325,13 +301,13 @@ export module ado {
     }
 
     export def "ls prs completed" [] {
-        let my_query = "[].{title: title, createdby: createdBy.displayName, reviewers: reviewers, status: status, repo: repository.name, id: pullRequestId, lastMergeCommit: lastMergeCommit.commitId }"
-        let prs = az repos pr list --status completed -ojson --query $my_query | from json | select id createdby title lastMergeCommit
+        let my_query = "[].{title: title, createdby: createdBy.displayName, reviewers: reviewers, status: status, repo: repository.name, id: pullRequestId, lastMergeCommit: lastMergeCommit.commitId, source: sourceRefName, target: targetRefName }"
+        let prs = az repos pr list --status completed -ojson --query $my_query | from json | select id createdby title source target lastMergeCommit | update cells -c [source target] { $in | str replace refs/heads/ '' }
         $prs
     }
 
     export def "ls prs mine" [--draft] {
-        let my_query = "[].{title: title, createdby: createdBy.displayName, reviewers: reviewers, status: status, repo: repository.name, id: pullRequestId, draft: isDraft }"
+        let my_query = "[].{title: title, createdby: createdBy.displayName, reviewers: reviewers, status: status, repo: repository.name, id: pullRequestId, draft: isDraft, source: sourceRefName, target: targetRefName }"
         let prs = az repos pr list -ojson --query $my_query | from json | where createdby =~ "Francesc" | select id status title draft
         let prs = if $draft { $prs | where draft } else { $prs | where not draft }
         $prs | insert ci-status {
@@ -342,6 +318,23 @@ export module ado {
     }
 
     def "nu-complete pr-id" [] { (ls prs mine) | rename -c {id: value,  title: description} }
+
+    export def "pr update description" [ pr_id?: number@"nu-complete pr-id" ] {
+        let pr_id = if ($pr_id | is-empty) {
+            az repos pr list --source-branch $"(git branch --show-current)" --status active | from json | input list --fuzzy --display title | get pullRequestId
+        } else {
+            $pr_id
+        }
+        let tmp = (mktemp --suffix .md)
+        let desc = az repos pr show --id $pr_id | from json | get description
+        $desc | save -f $tmp
+        nvim $tmp
+        let desc = ((open --raw $tmp | lines))
+        let repo = az repos pr update --id $pr_id --description ...$desc | from json | get repository.webUrl
+        let pr_url = $"($repo)/pullrequest/($pr_id)"
+        print $"PR: (ansi pb)($pr_url)(ansi reset) 👈"
+        rm $tmp
+    }
 
     export def "pr rejected-or-expired-policies" [ pr_id: number@"nu-complete pr-id" ] {
         ( az repos pr policy list --id $pr_id -ojson | from json
@@ -396,7 +389,7 @@ export module ado {
             | select mappedPath name type remoteUrl versions )
     }
 
-    def "nu-complete my-workitems" [] {
+    def "nu-complete workitem open-mine" [] {
         [ | | { ls my stories }
           | | { ls my tasks }
           | | { ls assigned-to-me }
@@ -407,7 +400,7 @@ export module ado {
           | rename -c {id: value,  title: description} | select value description
     }
 
-    export def "open workitems" [ ...workitems: int@"nu-complete my-workitems" ] {
+    export def "workitem open" [ ...workitems: int@"nu-complete workitem open-mine" ] {
         if ($in | is-empty) {
             $workitems | each {start $"https://($env.ADO_ORGANIZATION).visualstudio.com/($env.ADO_PROJECT)/_workitems/edit/($in)" }
         } else {
@@ -415,9 +408,9 @@ export module ado {
         }
     }
 
-    export def "open my-workitems" [] {
-        ls my stories | open workitems
-        ls my tasks | open workitems
+    export def "open workitem open-mine" [] {
+        ls my stories | workitem open
+        ls my tasks | workitem open
     }
 
     export def "ls my recent-mentions" [] {
