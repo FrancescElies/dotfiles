@@ -2,7 +2,7 @@
   "lastChangelogVersion": "0.80.10",
   "defaultProvider": "github-copilot",
   "defaultModel": "gpt-5.4-mini",
-  "defaultThinkingLevel": "medium",
+  "defaultThinkingLevel": "xhigh",
   "enabledModels": [
     "github-copilot/claude-sonnet-4.6",
     "github-copilot/gpt-5.4-mini"
