@@ -1,0 +1,22 @@
+local wezterm = require("wezterm")
+
+local VERSION = "1.0.0"
+wezterm.log_info("widgets.wez v" .. VERSION)
+
+local function get_plugin_dir()
+  for _, plugin in ipairs(wezterm.plugin.list()) do
+    if plugin.component:find("widgets") and plugin.component:find("wez") then
+      return plugin.plugin_dir
+    end
+  end
+  return nil
+end
+
+local plugin_dir = get_plugin_dir()
+if plugin_dir then
+  package.path = plugin_dir .. "/plugin/?.lua;"
+    .. plugin_dir .. "/plugin/systems/?.lua;"
+    .. (package.path or "")
+end
+
+return require("widgets.systems.init")

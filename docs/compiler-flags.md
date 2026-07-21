@@ -1,3 +1,13 @@
+
+```nu
+   clang -fsanitize=address,undefined -fsanitize-address-use-after-scope -fno-sanitize-recover=undefined -g -O1 -fno-omit-frame-pointer a
+
+   # runtime env vars
+   ASAN_OPTIONS=detect_leaks=1
+   UBSAN_OPTIONS=print_stacktrace=1pp.c -o app
+
+
+
  ### Warnings (compile-time, all builds)
 
  ```makefile
@@ -39,7 +49,7 @@
    -Wstack-usage=512         # warn if a stack frame exceeds N bytes (tune per target)
  ```
 
- ────────────────────────────────────────────────────────────────────────────────
+---
 
  ### Sanitizers (dev/test builds only — too slow for production)
 
@@ -76,19 +86,3 @@
 `-fstrict-aliasing`         : enables compiler to assume no aliasing → also enables -Wstrict-aliasing
 
  ────────────────────────────────────────────────────────────────────────────────
-
- ### Static analysis (beyond flags)
-
- These flags alone won't catch everything. Complement with:
-
- ┌──────────────────────────────┬─────────────────────────────────────────────────────────────┐
- │ Tool                         │ What it adds                                                │
- ├──────────────────────────────┼─────────────────────────────────────────────────────────────┤
- │ -fanalyzer (GCC 10+)         │ Inter-procedural static analysis, null/use-after-free paths │
- ├──────────────────────────────┼─────────────────────────────────────────────────────────────┤
- │ clang --analyze / scan-build │ Clang static analyzer                                       │
- ├──────────────────────────────┼─────────────────────────────────────────────────────────────┤
- │ cppcheck                     │ Standalone, good for embedded C, low false-positive rate    │
- ├──────────────────────────────┼─────────────────────────────────────────────────────────────┤
- │ clang-tidy                   │ Lint + style + bugprone checks, configurable                │
- └──────────────────────────────┴─────────────────────────────────────────────────────────────┘

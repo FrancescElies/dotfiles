@@ -162,6 +162,7 @@ const maxpreferences = ("~/AppData/Roaming/Cycling '74/Max 9/Settings/maxprefere
 # opens maxinterface.json
 export def "Max edit interface" [] { nvim "C:/Program Files/Cycling '74/Max 9/resources/interfaces/maxinterface.json" }
 export def "Max edit maxpreferences" [] { nvim $maxpreferences }
+export def "Max edit maxsearchpaths" [] { nvim "~/AppData/Roaming/Cycling '74/Max 9/Settings/maxsearchpaths.txt" }
 
 export def --env "goto-max settings" [] { cd "~/AppData/Roaming/Cycling '74/Max 9/Settings"; lsg }
 export def --env "goto-max installation-dir" [] { cd "C:/Program Files/Cycling '74/Max 9"; lsg }

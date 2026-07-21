@@ -53,6 +53,7 @@ save_to_clipboard = true
 # WINDOWS: add ~/.cargo/bin/ to environment variables
 # NIX:  /etc/environment
 [terminal.shell]
+# program = "/Users/cesc/.cargo/bin/nu"  # MAC
 program = "nu"
 args = ["-l"] # Use login shell to ensure your shell's dotfiles are sourced.
 

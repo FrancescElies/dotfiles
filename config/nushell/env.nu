@@ -15,10 +15,10 @@ match $nu.os-info.name {
             ('/Program Files/Neovim/bin' | path expand)
             ('/Program Files/Git/usr/bin' | path expand)
             ('/Program Files (x86)/Gow/bin' | path expand)
+            ('/Program Files (x86)/Dr. Memory/bin64' | path expand)
             ('/Program Files/WIBU-SYSTEMS/AxProtector/Devkit/bin' | path expand)
             ('/Program Files/CodeMeter/DevKit/bin' | path expand)
             ('/Program Files/LLVM/bin' | path expand)
-            ('/Program Files/nodejs' | path expand)
             ("/Program Files/Cycling '74/Max 9" | path expand)
         ]
     },
@@ -56,10 +56,24 @@ $env.path ++= [
     # pipx puts binaries in .local/bin
     '~/.local/bin'
     '~/bin'
+    '~/src/dotfiles/bin/'
 ]
 try { $env.path ++= ( ls ~/bin | where type == dir | get name ) }
 try { $env.path ++= ( ls ~/bin/*/bin | get name ) }
 try { $env.path ++= ( ls /usr/local/*/bin | get name ) }
+
+
+if (which fnm | is-not-empty) {
+    ^fnm env --json | from json | load-env
+
+    $env.PATH = $env.PATH | prepend ($env.FNM_MULTISHELL_PATH | path join (if $nu.os-info.name == 'windows' {''} else {'bin'}))
+    $env.config.hooks.env_change.PWD = (
+        $env.config.hooks.env_change.PWD? | append {
+            condition: {|| ['.nvmrc' '.node-version', 'package.json'] | any {|el| $el | path exists}}
+            code: {|| ^fnm use --install-if-missing --silent-if-unchanged}
+        }
+    )
+}
 
 $env.path = ( $env.path | uniq )
 
