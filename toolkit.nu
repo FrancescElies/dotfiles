@@ -389,6 +389,13 @@ def "config git" [] {
   ^git config --global fetch.fsckobjects true
   ^git config --global receive.fsckObjects true
 
+  ^git config --global merge.tool nvimdiff
+  ^git config --global merge.conflictstyle diff3
+  ^git config --global mergetool.nvimdiff.cmd 'nvim -d $LOCAL $REMOTE $MERGED -c "$wincmd w" -c "wincmd J"'
+  ^git config --global diff.tool nvimdiff
+  ^git config --global diff.colorMoved default
+
+
   # REuse REordered REsolution, tells ^git to remember conflicts so if it sees them again he won't ask about it.
   ^git config --global rerere.enabled true
   ^git config --global branch.sort -committerdate
