@@ -15,7 +15,7 @@
   (chord sd s) (chord sd d) @;mod)
 
 (defalias
-  grl (tap-hold 200 200 esc (multi lmet lalt))
+  grl (tap-hold 200 200 ` (multi lmet lalt))
   caps (tap-hold 200 200 esc ctl)
   ;mod (tap-hold 200 200 ; ctl)
 )
