@@ -8,15 +8,17 @@
 
 (defcfg process-unmapped-keys yes)
 
-(defsrc tab caps j k u i ;)
+(defsrc grv caps j k u i ;)
 
-(deflayer base @tabmod @capsmod
+(deflayer base @grl @caps
   (chord jk j) (chord jk k)
   (chord ui u) (chord ui i) @;mod)
 
-(defalias tabmod (tap-hold 200 200 esc (multi lmet lalt)))
-(defalias capsmod (tap-hold 200 200 esc ctl))
-(defalias ;mod (tap-hold 200 200 ; ctl))
+(defalias
+  grl (tap-hold 200 200 esc (multi lmet lalt))
+  caps (tap-hold 200 200 esc ctl)
+  ;mod (tap-hold 200 200 ; ctl)
+)
 
 ;; chords
 (defchords jk $chord-timeout
