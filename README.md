@@ -55,10 +55,15 @@ toolkit bootstrap
 
 
 ## Software
-| Name | Description |
-| -------------- | --------------- |
-| Cactus  | image viewer, https://handmade.network/projects|
-| KeyCastr  |share keystrokes, Linux/Win/Mac: https://github.com/mulaRahul/keyviz|
+
+| Name                  | Description                                                          |
+| --------------        | ---------------                                                      |
+| Cactus                | image viewer, https://handmade.network/projects                      |
+| KeyCastr              | share keystrokes, Linux/Win/Mac: https://github.com/mulaRahul/keyviz |
+| ililim/dual-key-remap | Remap any key to any other two keys on Windows                       |
+| karabiner             | remap keys on macos                                                  |
+| keyd                  | remap keys on linux                                                  |
+
 
 ### Firefox
 `about:profiles` click Open Folder in the Root Directory section add a
