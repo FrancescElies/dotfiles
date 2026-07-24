@@ -299,6 +299,10 @@ export module win {
         powershell Start-Process alacritty -Verb runAs
     }
 
+    export def "maximize windows" [] {
+        run-external ~/src/dotfiles/bin/windows-os/maximize-all-windows.ps1
+    }
+
     export def "admin update" [--force(-f)] {
         print $"(ansi pb)Checking for Windows OS updates...(ansi reset)"
         run-external ~/src/dotfiles/bin/windows-os/win-update.ps1 ( if $force { '-Force' } else { '' } )
