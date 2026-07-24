@@ -216,7 +216,7 @@ $env.config.keybindings = [
          mode: [emacs, vi_normal, vi_insert]
          event: {
            send: executehostcommand,
-           cmd: "nvim '+Telescope find_files'"
+           cmd: "nvim '+FFFFind'"
          }
     }
 

@@ -56,7 +56,8 @@ export alias lg = lazygit
 
 export def --env notes []  {
     cd ~/src/notes
-    nvim '+Telescope find_files'
+    # nvim '+Telescope find_files'
+    nvim '+FFFFind'
 }
 
 def "nu-complete projects" [] { {
