@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "0.80.10",
+  "lastChangelogVersion": "0.81.1",
   "defaultProvider": "github-copilot",
   "defaultModel": "gpt-5.4-mini",
   "defaultThinkingLevel": "medium",
@@ -46,9 +46,9 @@
       "extensions": [
         "-index.ts"
       ]
-    }
+    },
+    "npm:pi-btw"
   ],
-  "hideThinkingBlock": false,
   "theme": "dark",
   "extensions": [
     "-extensions/azure-devops-mcp/index.ts",
