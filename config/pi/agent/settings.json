@@ -10,7 +10,15 @@
   "packages": [
     "npm:pi-token-burden",
     "npm:@ff-labs/pi-fff",
-    "npm:pi-web-access",
+    {
+      "source": "npm:pi-web-access",
+      "extensions": [
+        "+index.ts"
+      ],
+      "skills": [
+        "+skills\\librarian\\SKILL.md"
+      ]
+    },
     "npm:pi-hermes-memory",
     {
       "source": "npm:pi-mcp-adapter",
