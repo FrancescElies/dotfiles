@@ -47,7 +47,8 @@
         "-index.ts"
       ]
     },
-    "npm:pi-btw"
+    "npm:pi-btw",
+    "npm:pi-subagents"
   ],
   "theme": "dark",
   "extensions": [
