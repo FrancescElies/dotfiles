@@ -1,4 +1,4 @@
-# https://github.com/nushell/nushell/blob/main/crates/nu-utils/src/default_files/default_config.nu
+# https://github.com/nushell/nushell/blob/main/crates/nu-config/default_files/default_config.nu
 
 $env.NU_LIB_DIRS = [
     "~/src/dotfiles/config/nushell/src"
