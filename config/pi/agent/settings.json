@@ -1,8 +1,8 @@
 {
   "lastChangelogVersion": "0.81.1",
   "defaultProvider": "github-copilot",
-  "defaultModel": "gpt-5.4-mini",
   "defaultThinkingLevel": "medium",
+  "defaultModel": "claude-opus-4.8",
   "enabledModels": [
     "github-copilot/claude-sonnet-4.6",
     "github-copilot/gpt-5.4-mini"
