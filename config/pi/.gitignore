@@ -1,9 +1,8 @@
-agent/fff/frecency.mdb/
 agent/**/*.db*
 agent/*.sqlite
 agent/auth.json
 agent/bin
-agent/extensions/
+agent/fff/frecency.mdb/
 agent/mcp-cache.json
 agent/models-store.json
 agent/models.json
@@ -12,8 +11,11 @@ agent/pi-hermes-memory/
 agent/projects-memory/
 agent/sessions
 agent/trust.json
+context-mode/
 free-telemetry.json
 free.json
 free.log
+node_modules/
+package-lock.json
 provider-cache.json
-context-mode/
+agent/.pi-hermes-locks.*

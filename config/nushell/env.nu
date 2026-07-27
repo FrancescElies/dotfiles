@@ -18,7 +18,6 @@ match $nu.os-info.name {
             ('/Program Files/WIBU-SYSTEMS/AxProtector/Devkit/bin' | path expand)
             ('/Program Files/CodeMeter/DevKit/bin' | path expand)
             ('/Program Files/LLVM/bin' | path expand)
-            ('/Program Files/nodejs' | path expand)
             ("/Program Files/Cycling '74/Max 9" | path expand)
         ]
     },
@@ -60,6 +59,15 @@ $env.path ++= [
 try { $env.path ++= ( ls ~/bin | where type == dir | get name ) }
 try { $env.path ++= ( ls ~/bin/*/bin | get name ) }
 try { $env.path ++= ( ls /usr/local/*/bin | get name ) }
+
+
+if ((which fnm).0.path | path exists) {
+    let fnm_env = (fnm env --json | from json)
+    $fnm_env | load-env
+    let node_path = $"($fnm_env.FNM_MULTISHELL_PATH)"
+    $env.path = [$node_path] ++ $env.path
+    fnm use --install-if-missing v26
+}
 
 $env.path = ( $env.path | uniq )
 

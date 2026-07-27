@@ -1,25 +1,34 @@
 {
   "lastChangelogVersion": "0.81.1",
   "defaultProvider": "github-copilot",
-  "defaultThinkingLevel": "medium",
-  "defaultModel": "claude-opus-4.8",
-  "enabledModels": [
-    "github-copilot/claude-sonnet-4.6",
-    "github-copilot/gpt-5.4-mini"
-  ],
   "packages": [
-    "npm:pi-token-burden",
-    "npm:@ff-labs/pi-fff",
+    {
+      "source": "npm:@monotykamary/pi-startup-tracer",
+      "extensions": [
+        "-index.ts"
+      ]
+    },
+    {
+      "source": "npm:@ff-labs/pi-fff",
+      "extensions": [
+        "-src\\index.ts"
+      ]
+    },
     {
       "source": "npm:pi-web-access",
       "extensions": [
-        "+index.ts"
+        "-index.ts"
       ],
       "skills": [
-        "+skills\\librarian\\SKILL.md"
+        "-skills\\librarian\\SKILL.md"
       ]
     },
-    "npm:pi-hermes-memory",
+    {
+      "source": "npm:pi-hermes-memory",
+      "extensions": [
+        "+src\\index.ts"
+      ]
+    },
     {
       "source": "npm:pi-mcp-adapter",
       "extensions": [
@@ -40,25 +49,41 @@
         "-pi-extension/index.js"
       ]
     },
-    "npm:context-mode",
+    {
+      "source": "npm:context-mode",
+      "extensions": [
+        "-build\\adapters\\pi\\extension.js"
+      ],
+      "skills": [
+        "-skills\\context-mode\\SKILL.md",
+        "-skills\\ctx-doctor\\SKILL.md",
+        "-skills\\ctx-index\\SKILL.md",
+        "-skills\\ctx-insight\\SKILL.md",
+        "-skills\\ctx-purge\\SKILL.md",
+        "-skills\\ctx-search\\SKILL.md",
+        "-skills\\ctx-stats\\SKILL.md",
+        "-skills\\ctx-upgrade\\SKILL.md"
+      ]
+    },
     {
       "source": "npm:pi-free",
       "extensions": [
         "-index.ts"
       ]
-    },
-    "npm:pi-btw",
-    "npm:pi-subagents"
+    }
   ],
   "theme": "dark",
   "extensions": [
-    "-extensions/azure-devops-mcp/index.ts"
+    "+extensions/azure-devops-mcp/index.ts",
+    "-extensions\\azure-devops-mcp\\index.ts"
   ],
   "skills": [
     "-skills/ghidra/SKILL.md",
     "-skills/web-browser/SKILL.md",
     "-skills/zellij/SKILL.md",
-    "-skills/frontend-design/SKILL.md"
+    "-skills/frontend-design/SKILL.md",
+    "-skills\\summarize\\SKILL.md"
   ],
-  "enableInstallTelemetry": false
+  "enableInstallTelemetry": false,
+  "hideThinkingBlock": false
 }

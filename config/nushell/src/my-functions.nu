@@ -460,10 +460,10 @@ export def nato-alphabet [] {
 export def --wrapped pi [...args] {
     match $nu.os-info.name {
         "windows" => {
-            fnm exec --using v24 -- pi.cmd ...$args
+            fnm exec --using v26 -- pi.cmd ...$args
         },
         _ => {
-            fnm exec --using v24 -- pi ...$args
+            fnm exec --using v26 -- pi ...$args
         }
     }
 
