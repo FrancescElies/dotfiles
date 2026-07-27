@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "0.81.1",
+  "lastChangelogVersion": "0.82.1",
   "defaultProvider": "github-copilot",
   "packages": [
     {
@@ -11,7 +11,7 @@
     {
       "source": "npm:@ff-labs/pi-fff",
       "extensions": [
-        "-src\\index.ts"
+        "+src\\index.ts"
       ]
     },
     {
@@ -43,10 +43,17 @@
         "-skills/ponytail-debt/SKILL.md",
         "-skills/ponytail-gain/SKILL.md",
         "-skills/ponytail-help/SKILL.md",
-        "-skills/ponytail-review/SKILL.md"
+        "-skills/ponytail-review/SKILL.md",
+        "+skills\\ponytail\\SKILL.md",
+        "+skills\\ponytail-audit\\SKILL.md",
+        "+skills\\ponytail-debt\\SKILL.md",
+        "+skills\\ponytail-gain\\SKILL.md",
+        "+skills\\ponytail-help\\SKILL.md",
+        "+skills\\ponytail-review\\SKILL.md"
       ],
       "extensions": [
-        "-pi-extension/index.js"
+        "-pi-extension/index.js",
+        "+pi-extension\\index.js"
       ]
     },
     {
@@ -82,7 +89,7 @@
     "-skills/web-browser/SKILL.md",
     "-skills/zellij/SKILL.md",
     "-skills/frontend-design/SKILL.md",
-    "-skills\\summarize\\SKILL.md"
+    "+skills\\summarize\\SKILL.md"
   ],
   "enableInstallTelemetry": false,
   "hideThinkingBlock": false
