@@ -52,14 +52,13 @@
   ],
   "theme": "dark",
   "extensions": [
-    "-extensions/azure-devops-mcp/index.ts",
-    "-extensions/outlook/index.ts"
+    "-extensions/azure-devops-mcp/index.ts"
   ],
   "skills": [
     "-skills/ghidra/SKILL.md",
     "-skills/web-browser/SKILL.md",
     "-skills/zellij/SKILL.md",
-    "-skills/frontend-desing/SKILL.md"
+    "-skills/frontend-design/SKILL.md"
   ],
   "enableInstallTelemetry": false
 }
