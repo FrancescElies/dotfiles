@@ -1,9 +1,13 @@
 agent/**/*.db*
 agent/*.sqlite
+agent/.pi-hermes-locks.*
 agent/auth.json
 agent/bin
 agent/fff/frecency.mdb/
 agent/mcp-cache.json
+agent/mcp-cache.json
+agent/mcp-npx-cache.json
+agent/mcp-onboarding.json
 agent/models-store.json
 agent/models.json
 agent/npm/
@@ -18,4 +22,3 @@ free.log
 node_modules/
 package-lock.json
 provider-cache.json
-agent/.pi-hermes-locks.*
