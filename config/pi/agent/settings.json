@@ -32,7 +32,7 @@
     {
       "source": "npm:pi-mcp-adapter",
       "extensions": [
-        "-index.ts"
+        "+index.ts"
       ]
     },
     {
@@ -88,7 +88,8 @@
     "-skills/web-browser/SKILL.md",
     "-skills/zellij/SKILL.md",
     "-skills/frontend-design/SKILL.md",
-    "+skills/summarize/SKILL.md"
+    "+skills/summarize/SKILL.md",
+    "-skills/graphify/SKILL.md"
   ],
   "enableInstallTelemetry": false,
   "hideThinkingBlock": false
