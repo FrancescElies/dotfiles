@@ -61,12 +61,17 @@ try { $env.path ++= ( ls ~/bin/*/bin | get name ) }
 try { $env.path ++= ( ls /usr/local/*/bin | get name ) }
 
 
-if ((which fnm).0.path | path exists) {
-    let fnm_env = (fnm env --json | from json)
-    $fnm_env | load-env
-    let node_path = $"($fnm_env.FNM_MULTISHELL_PATH)"
-    $env.path = [$node_path] ++ $env.path
-    fnm use --install-if-missing v26
+if (which fnm | is-not-empty) {
+    ^fnm env --json | from json | load-env
+
+    $env.PATH = $env.PATH | prepend ($env.FNM_MULTISHELL_PATH | path join (if $nu.os-info.name == 'windows' {''} else {'bin'}))
+    $env.config.hooks.env_change.PWD = (
+        $env.config.hooks.env_change.PWD? | append {
+            condition: {|| ['.nvmrc' '.node-version', 'package.json'] | any {|el| $el | path exists}}
+            code: {|| ^fnm use --install-if-missing --silent-if-unchanged}
+        }
+    )
+    fnm use v26
 }
 
 $env.path = ( $env.path | uniq )
