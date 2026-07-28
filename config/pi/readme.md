@@ -14,5 +14,11 @@ https://pi.dev/docs/latest/
 
 # Packages
 
+## code search
+    uv tool install semble
+    semble install
+    uv tool install graphifyy
+    graphify install --platform pi
+
 ## subagents
     pi install git:github.com/HazAT/pi-interactive-subagents
