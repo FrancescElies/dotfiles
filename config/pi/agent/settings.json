@@ -11,7 +11,7 @@
     {
       "source": "npm:@ff-labs/pi-fff",
       "extensions": [
-        "+src\\index.ts"
+        "+src/index.ts"
       ]
     },
     {
@@ -20,13 +20,13 @@
         "-index.ts"
       ],
       "skills": [
-        "-skills\\librarian\\SKILL.md"
+        "-skills/librarian/SKILL.md"
       ]
     },
     {
       "source": "npm:pi-hermes-memory",
       "extensions": [
-        "+src\\index.ts"
+        "+src/index.ts"
       ]
     },
     {
@@ -44,32 +44,32 @@
         "-skills/ponytail-gain/SKILL.md",
         "-skills/ponytail-help/SKILL.md",
         "-skills/ponytail-review/SKILL.md",
-        "+skills\\ponytail\\SKILL.md",
-        "+skills\\ponytail-audit\\SKILL.md",
-        "+skills\\ponytail-debt\\SKILL.md",
-        "+skills\\ponytail-gain\\SKILL.md",
-        "+skills\\ponytail-help\\SKILL.md",
-        "+skills\\ponytail-review\\SKILL.md"
+        "+skills/ponytail/SKILL.md",
+        "+skills/ponytail-audit/SKILL.md",
+        "+skills/ponytail-debt/SKILL.md",
+        "+skills/ponytail-gain/SKILL.md",
+        "+skills/ponytail-help/SKILL.md",
+        "+skills/ponytail-review/SKILL.md"
       ],
       "extensions": [
         "-pi-extension/index.js",
-        "+pi-extension\\index.js"
+        "+pi-extension/index.js"
       ]
     },
     {
       "source": "npm:context-mode",
       "extensions": [
-        "-build\\adapters\\pi\\extension.js"
+        "-build/adapters/pi/extension.js"
       ],
       "skills": [
-        "-skills\\context-mode\\SKILL.md",
-        "-skills\\ctx-doctor\\SKILL.md",
-        "-skills\\ctx-index\\SKILL.md",
-        "-skills\\ctx-insight\\SKILL.md",
-        "-skills\\ctx-purge\\SKILL.md",
-        "-skills\\ctx-search\\SKILL.md",
-        "-skills\\ctx-stats\\SKILL.md",
-        "-skills\\ctx-upgrade\\SKILL.md"
+        "-skills/context-mode/SKILL.md",
+        "-skills/ctx-doctor/SKILL.md",
+        "-skills/ctx-index/SKILL.md",
+        "-skills/ctx-insight/SKILL.md",
+        "-skills/ctx-purge/SKILL.md",
+        "-skills/ctx-search/SKILL.md",
+        "-skills/ctx-stats/SKILL.md",
+        "-skills/ctx-upgrade/SKILL.md"
       ]
     },
     {
@@ -81,15 +81,14 @@
   ],
   "theme": "dark",
   "extensions": [
-    "+extensions/azure-devops-mcp/index.ts",
-    "-extensions\\azure-devops-mcp\\index.ts"
+    "-extensions/azure-devops-mcp/index.ts"
   ],
   "skills": [
     "-skills/ghidra/SKILL.md",
     "-skills/web-browser/SKILL.md",
     "-skills/zellij/SKILL.md",
     "-skills/frontend-design/SKILL.md",
-    "+skills\\summarize\\SKILL.md"
+    "+skills/summarize/SKILL.md"
   ],
   "enableInstallTelemetry": false,
   "hideThinkingBlock": false
