@@ -222,8 +222,13 @@ export def "my backup restore by-year" [serverip: string = "intel-pc"] {
 
 export alias "nvim emergency" = nvim -u ~/src/kickstart.nvim/minimal-vimrc.vim
 
-export alias md = nvim -c ":set ft=markdown"
+# Open files in nvim that match a certain semantic topic
+export def "nvim semantic-search" [topic: string] {
+    nvim -c ((semble search $topic | from json).results | select file_path start_line | each {$"edit +($in.start_line) ($in.file_path)"} | str join " | ")
+}
+
 export alias v = nvim
+export alias vs = nvim semantic-search
 export alias ve = nvim emergency
 export alias vis = nvim "+set si"
 export alias vmd = nvim -c ":set ft=markdown"
