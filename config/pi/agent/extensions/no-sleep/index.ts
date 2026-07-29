@@ -1,4 +1,3 @@
-import { ffi } from "node-ffi-napi";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { spawn } from "node:child_process";
 import type { ChildProcess } from "node:child_process";
@@ -8,6 +7,36 @@ const WINDOWS = process.platform === "win32";
 
 type Scope = "agent" | "session";
 type Level = "info" | "warning" | "error";
+
+// Lazily loaded on Windows only (via dynamic import, ESM-safe), so a
+// missing/broken native module never breaks extension load on macOS
+// or any other platform.
+type Kernel32 = {
+  SetThreadExecutionState: (flags: number) => number;
+};
+let kernel32: Kernel32 | undefined;
+let kernel32LoadFailed = false;
+
+async function getKernel32(): Promise<Kernel32 | undefined> {
+  if (!WINDOWS || kernel32LoadFailed) {
+    return kernel32;
+  }
+  if (kernel32) {
+    return kernel32;
+  }
+  try {
+    const ffiModule = await import("node-ffi-napi");
+    const ffi = (ffiModule as any).default ?? ffiModule;
+    kernel32 = ffi.Library("kernel32", {
+      SetThreadExecutionState: ["uint32", ["uint32"]],
+    }) as Kernel32;
+    return kernel32;
+  } catch (error) {
+    kernel32LoadFailed = true;
+    lastError = error instanceof Error ? error.message : String(error);
+    return undefined;
+  }
+}
 
 let sleepPrevention: ChildProcess | undefined;
 let enabled = readBooleanEnv("PI_NO_SLEEP", true);
@@ -43,8 +72,8 @@ function notify(ctx: ExtensionContext | undefined, message: string, level: Level
   }
 }
 
-function start(ctx?: ExtensionContext): void {
-  if (!enabled || sleepPrevention) {
+async function start(ctx?: ExtensionContext): Promise<void> {
+  if (!enabled || sleepPrevention || sleepPreventionActive) {
     return;
   }
 
@@ -79,12 +108,19 @@ function start(ctx?: ExtensionContext): void {
       }
     });
   } else if (WINDOWS) {
-    // Use node-ffi-napi to call SetThreadExecutionState directly
-    const flags = 0x80000001; // ES_CONTINUOUS | ES_SYSTEM_REQUIRED
+    const lib = await getKernel32();
+    if (!lib) {
+      notify(ctx, `No Sleep: failed to start sleep prevention: ${lastError ?? "node-ffi-napi unavailable"}`, "error");
+      return;
+    }
+
+    let flags = 0x80000001; // ES_CONTINUOUS | ES_SYSTEM_REQUIRED
     if (readBooleanEnv("PI_NO_SLEEP_DISPLAY", false)) {
       flags |= 0x00000002; // ES_DISPLAY_REQUIRED
     }
-    const result = ffi("kernel32.dll", "SetThreadExecutionState")(flags);
+
+    lastError = undefined;
+    const result = lib.SetThreadExecutionState(flags);
     if (result === 0) {
       lastError = "failed to start sleep prevention";
       notify(ctx, `No Sleep: failed to start sleep prevention: ${lastError}`, "error");
@@ -95,7 +131,7 @@ function start(ctx?: ExtensionContext): void {
   }
 }
 
-function stop(ctx?: ExtensionContext): void {
+async function stop(ctx?: ExtensionContext): Promise<void> {
   const child = sleepPrevention;
   sleepPrevention = undefined;
 
@@ -111,24 +147,24 @@ function stop(ctx?: ExtensionContext): void {
     }
   }
 
-  if (WINDOWS) {
-    // For Windows, we use FFI to set the execution state, so no child process to kill
-    // Reset the state
-    ffi("kernel32.dll", "SetThreadExecutionState")(0);
+  if (WINDOWS && sleepPreventionActive) {
+    // Reset execution state back to normal (ES_CONTINUOUS only).
+    const lib = await getKernel32();
+    lib?.SetThreadExecutionState(0x80000000);
     sleepPreventionActive = false;
   }
 }
 
-function reconcile(ctx?: ExtensionContext): void {
+async function reconcile(ctx?: ExtensionContext): Promise<void> {
   if (!enabled) {
-    stop(ctx);
+    await stop(ctx);
     return;
   }
 
   if (scope === "session" || agentActive) {
-    start(ctx);
+    await start(ctx);
   } else {
-    stop(ctx);
+    await stop(ctx);
   }
 }
 
@@ -137,7 +173,12 @@ function describeState(): string {
     return "No Sleep is inactive: sleep prevention is only supported on macOS and Windows.";
   }
 
-  const state = sleepPrevention ? `active (pid ${sleepPrevention.pid ?? "unknown"})` : "idle";
+  const active = MACOS ? Boolean(sleepPrevention) : sleepPreventionActive;
+  const state = active
+    ? MACOS
+      ? `active (pid ${sleepPrevention?.pid ?? "unknown"})`
+      : "active"
+    : "idle";
   const display = readBooleanEnv("PI_NO_SLEEP_DISPLAY", false) ? "yes" : "no";
   return [
     `No Sleep is ${enabled ? "enabled" : "disabled"}.`,
@@ -146,34 +187,41 @@ function describeState(): string {
     `keeps display awake: ${display}`,
     lastError ? `last error: ${lastError}` : undefined,
   ]
-  .filter(Boolean)
-  .join("\n");
+    .filter(Boolean)
+    .join("\n");
 }
 
 export default function noSleepExtension(pi: ExtensionAPI) {
   const cleanupOnProcessExit = () => {
-    stop(undefined);
+    // Best-effort synchronous cleanup on process exit; the async
+    // Windows reset can't reliably complete here, so at minimum
+    // terminate the macOS caffeinate child.
+    const child = sleepPrevention;
+    sleepPrevention = undefined;
+    if (child && child.exitCode === null && !child.killed) {
+      child.kill("SIGTERM");
+    }
   };
   process.once("exit", cleanupOnProcessExit);
 
-  pi.on("session_start", (_event, ctx) => {
+  pi.on("session_start", async (_event, ctx) => {
     agentActive = false;
-    reconcile(ctx);
+    await reconcile(ctx);
   });
 
-  pi.on("agent_start", (_event, ctx) => {
+  pi.on("agent_start", async (_event, ctx) => {
     agentActive = true;
-    reconcile(ctx);
+    await reconcile(ctx);
   });
 
-  pi.on("agent_end", (_event, ctx) => {
+  pi.on("agent_end", async (_event, ctx) => {
     agentActive = false;
-    reconcile(ctx);
+    await reconcile(ctx);
   });
 
-  pi.on("session_shutdown", (_event, ctx) => {
+  pi.on("session_shutdown", async (_event, ctx) => {
     agentActive = false;
-    stop(ctx);
+    await stop(ctx);
     process.off("exit", cleanupOnProcessExit);
   });
 
@@ -184,19 +232,19 @@ export default function noSleepExtension(pi: ExtensionAPI) {
 
       if (command === "on" || command === "enable") {
         enabled = true;
-        reconcile(ctx);
+        await reconcile(ctx);
       } else if (command === "off" || command === "disable") {
         enabled = false;
-        reconcile(ctx);
+        await reconcile(ctx);
       } else if (command === "toggle") {
         enabled = !enabled;
-        reconcile(ctx);
+        await reconcile(ctx);
       } else if (command === "agent") {
         scope = "agent";
-        reconcile(ctx);
+        await reconcile(ctx);
       } else if (command === "session") {
         scope = "session";
-        reconcile(ctx);
+        await reconcile(ctx);
       } else if (command && command !== "status") {
         notify(ctx, "Usage: /no-sleep [status|on|off|toggle|agent|session]", "warning");
         return;
