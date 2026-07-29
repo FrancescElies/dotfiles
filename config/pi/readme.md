@@ -2,6 +2,8 @@
 
 https://pi.dev/docs/latest/
 
+    npm install -g --ignore-scripts @earendil-works/pi-coding-agent
+
 # Other configs
 
 > [!NOTE]
