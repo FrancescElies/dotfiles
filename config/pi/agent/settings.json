@@ -2,7 +2,6 @@
   "lastChangelogVersion": "0.82.1",
   "packages": [
     "git:github.com/DietrichGebert/ponytail@v4.8.4",
-    "git:github.com/apmantza/pi-free@v2.2.10",
     "git:github.com/chandra447/pi-hermes-memory@v0.9.1",
     "npm:@ff-labs/pi-fff@0.10.1"
   ],
@@ -16,6 +15,5 @@
   ],
   "enableInstallTelemetry": false,
   "hideThinkingBlock": false,
-  "defaultModel": "cline-free/glm-5.2",
   "defaultThinkingLevel": "high"
 }
