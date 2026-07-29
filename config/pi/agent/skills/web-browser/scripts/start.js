@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-import { spawn, execSync } from "node:child_process";
-import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { spawn } from "node:child_process";
+import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -99,13 +99,50 @@ function resolveChromeBinary() {
     return process.env.BROWSER_BIN;
   }
 
-  const candidates = [
-    "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-    "/Applications/Chromium.app/Contents/MacOS/Chromium",
-    "/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary",
-  ];
+  const platform = process.platform;
+  let candidates = [];
+  if (platform === "darwin") {
+    candidates = [
+      "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+      "/Applications/Chromium.app/Contents/MacOS/Chromium",
+      "/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary",
+    ];
+  } else if (platform === "win32") {
+    const pf = process.env["ProgramFiles"] || "C:\\Program Files";
+    const pfx86 = process.env["ProgramFiles(x86)"] || "C:\\Program Files (x86)";
+    const localApp = process.env["LOCALAPPDATA"] || join(HOME, "AppData", "Local");
+    candidates = [
+      join(pf, "Google", "Chrome", "Application", "chrome.exe"),
+      join(pfx86, "Google", "Chrome", "Application", "chrome.exe"),
+      join(localApp, "Google", "Chrome", "Application", "chrome.exe"),
+      join(pf, "Google", "Chrome Beta", "Application", "chrome.exe"),
+      join(pf, "Chromium", "Application", "chrome.exe"),
+    ];
+  } else {
+    // linux / other unix
+    candidates = [
+      "/usr/bin/google-chrome",
+      "/usr/bin/google-chrome-stable",
+      "/usr/bin/chromium",
+      "/usr/bin/chromium-browser",
+      "/snap/bin/chromium",
+      "/opt/google/chrome/chrome",
+    ];
+  }
 
   return candidates.find((path) => existsSync(path)) || null;
+}
+
+function resolveSourceProfileDir() {
+  const platform = process.platform;
+  if (platform === "darwin") {
+    return join(HOME, "Library", "Application Support", "Google", "Chrome");
+  }
+  if (platform === "win32") {
+    const localApp = process.env["LOCALAPPDATA"] || join(HOME, "AppData", "Local");
+    return join(localApp, "Google", "Chrome", "User Data");
+  }
+  return join(HOME, ".config", "google-chrome");
 }
 
 ensureDir(BROWSER_ROOT);
@@ -157,13 +194,7 @@ if (await isDebugEndpointUp()) {
 ensureDir(userDataDir);
 
 if (useProfile) {
-  const sourceProfileDir = join(
-    HOME,
-    "Library",
-    "Application Support",
-    "Google",
-    "Chrome",
-  );
+  const sourceProfileDir = resolveSourceProfileDir();
 
   if (!existsSync(sourceProfileDir)) {
     console.error("✗ Could not find your local Chrome profile directory");
@@ -171,10 +202,21 @@ if (useProfile) {
     process.exit(1);
   }
 
-  execSync(
-    `rsync -a --delete --exclude 'Singleton*' --exclude 'DevToolsActivePort*' "${sourceProfileDir}/" "${userDataDir}/"`,
-    { stdio: "pipe" },
-  );
+  // Wipe destination for --delete semantics, then recursive copy.
+  // Skip Singleton*/DevToolsActivePort* lock files so we can launch cleanly.
+  rmSync(userDataDir, { recursive: true, force: true });
+  ensureDir(userDataDir);
+  cpSync(sourceProfileDir, userDataDir, {
+    recursive: true,
+    force: true,
+    errorOnExist: false,
+    filter: (src) => {
+      const base = src.split(/[\\/]/).pop();
+      if (base.startsWith("Singleton")) return false;
+      if (base.startsWith("DevToolsActivePort")) return false;
+      return true;
+    },
+  });
 }
 
 for (const staleFile of [
