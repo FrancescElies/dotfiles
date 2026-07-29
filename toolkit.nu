@@ -42,7 +42,7 @@ def ask_yes_no [question: string] {
     )
 }
 
-def "config nushell" [] {
+export def "config nushell" [] {
     print $"(ansi purple_bold)config nushell(ansi reset)"
     let nushell_dir = match $nu.os-info.name {
         "windows" => '~\AppData\Roaming\nushell' ,
@@ -63,7 +63,7 @@ def "config nushell" [] {
     symlink --force ~/src/dotfiles/config/nushell/config.nu ($nushell_dir | path join "config.nu")
 }
 
-def "config fd" [] {
+export def "config fd" [] {
     print $"(ansi purple_bold)config fd(ansi reset)"
     if $nu.os-info.family == 'windows' {
         symlink --force ~/src/dotfiles/config/fd ~/AppData/Roaming/fd
@@ -79,19 +79,19 @@ def "install glazewm" [] {
     symlink --force ~/src/dotfiles/config/glazewm/ $config_dir
 }
 
-def "config foot" [] {
+export def "config foot" [] {
     print $"(ansi purple_bold)config foot(ansi reset)"
     let config_dir = '~/.config/foot'
     symlink --force ~/src/dotfiles/config/foot/ $config_dir
 }
 
-def "config aba" [] {
+export def "config aba" [] {
     print $"(ansi purple_bold)config aba(ansi reset)"
     symlink --force ~/src/dotfiles/local/share/aba.toml ~/.local/share/aba.toml
 }
 
 
-def "config pi" [] {
+export def "config pi" [] {
     symlink --force ~/src/dotfiles/config/pi ~/.pi
 }
 
@@ -131,7 +131,7 @@ def "install zig" [] {
     try { mv $uncompressed ~/bin }
 }
 
-def "config flowlauncher" [] {
+export def "config flowlauncher" [] {
     print $"(ansi purple_bold)config flowlauncher(ansi reset)"
     let config_dir = '~\AppData\Roaming\FlowLauncher' | path expand
     let settings_file = $config_dir | path join Settings/Settings.json
@@ -165,7 +165,7 @@ def "install neovim" [] {
     }
 }
 
-def "config kanata" [] {
+export def "config kanata" [] {
     let config_dir = match $nu.os-info.name {
         "windows" => '~\AppData\Roaming\kanata' ,
         "macos" => '~/Library/Application Support/kanata' ,
@@ -174,7 +174,7 @@ def "config kanata" [] {
     symlink --force ~/src/dotfiles/config/kanata/ $config_dir
 }
 
-def "config pueue" [] {
+export def "config pueue" [] {
     let config_dir = match $nu.os-info.name {
         "windows" => '~\AppData\Roaming\pueue' ,
         "macos" => '~/Library/Application Support/pueue' ,
@@ -194,7 +194,7 @@ def "install fonts" [] {
     }
 }
 
-def "config python" [] {
+export def "config python" [] {
     print $"(ansi purple_bold)config python(ansi reset)"
     # uv
     if (which ^uv | is-empty ) {
@@ -219,7 +219,7 @@ def "config python" [] {
     " | save -f ~/.pip/pip.conf
 }
 
-def "config yt-dlp" [] {
+export def "config yt-dlp" [] {
     print $"(ansi purple_bold)config yt-dlp(ansi reset)"
     let yt_dlp = "~/bin/yt-dlp" | path expand
     if (not ($yt_dlp | path exists)) { http get https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp | save -f $yt_dlp }
@@ -318,7 +318,7 @@ def "rust dev-packages" [] {
     cargo binstall -y ...(open $packages_toml | get rust-dev-pkgs | transpose | get column0)
 }
 
-def "config himalaya" [] {
+export def "config himalaya" [] {
     let config_dir = match $nu.os-info.name {
         "windows" => '~\AppData\Roaming\himalaya' ,
         "macos" => "~/Library/Application Support/himalaya" ,
@@ -328,7 +328,7 @@ def "config himalaya" [] {
     symlink --force ~/src/dotfiles/config/himalaya $config_dir
 }
 
-def "config broot" [] {
+export def "config broot" [] {
     let broot_config_dir = match $nu.os-info.name {
         "windows" => '~\AppData\Roaming\dystroy\broot' ,
         _ => "~/.config/broot" ,
@@ -337,11 +337,11 @@ def "config broot" [] {
     symlink --force ~/src/dotfiles/config/broot $broot_config_dir
 }
 
-def "config psql" [] {
+export def "config psql" [] {
     symlink --force ~/src/dotfiles/config/.psqlrc ~/.psqlrc
 }
 
-def "config git" [] {
+export def "config git" [] {
   # https://www.youtube.com/watch?v=aolI_Rz0ZqY
   # Apply some useful defaults
   # ^gmy-defaults
@@ -419,11 +419,11 @@ def "config git" [] {
   # ^git config --global commit.template ~/src/dotfiles/config/git/commit-template
 }
 
-def "config bashrc" [] { symlink --force ~/src/dotfiles/config/.bashrc ~/.bashrc }
-def "config inputrc" [] { symlink --force ~/src/dotfiles/config/.inputrc ~/.inputrc }
-def "config radare2" [] { symlink --force ~/src/dotfiles/config/.radare2rc ~/.radare2rc }
+export def "config bashrc" [] { symlink --force ~/src/dotfiles/config/.bashrc ~/.bashrc }
+export def "config inputrc" [] { symlink --force ~/src/dotfiles/config/.inputrc ~/.inputrc }
+export def "config radare2" [] { symlink --force ~/src/dotfiles/config/.radare2rc ~/.radare2rc }
 
-def "config bacon" [] {
+export def "config bacon" [] {
     let bacon_config_dir = match $nu.os-info.name {
         "windows" => '~\AppData\Roaming\dystroy\bacon\config' ,
         "macos" => '~/Library/Application Support/org.dystroy.bacon' ,
@@ -433,7 +433,7 @@ def "config bacon" [] {
     symlink --force ~/src/dotfiles/config/bacon $bacon_config_dir
 }
 
-def "config meli" [] {
+export def "config meli" [] {
     let config_dir = match $nu.os-info.name {
         "windows" => 'TODO' ,
         "macos" => '~/.config/meli' ,
@@ -443,7 +443,7 @@ def "config meli" [] {
     symlink --force ~/src/dotfiles/config/meli $config_dir
 }
 
-def "config aerc" [] {
+export def "config aerc" [] {
     let config_dir = match $nu.os-info.name {
         "windows" => 'TODO' ,
         "macos" => '~/Library/Preferences/aerc/' ,
