@@ -1,0 +1,22 @@
+{
+  "name": "pi-sleep-prevention",
+  "version": "1.0.0",
+  "description": "Prevent system sleep while pi's agent is running",
+  "main": "index.ts",
+  "types": "index.d.ts",
+  "scripts": {
+    "build": "echo 'Build step not needed for this simple extension'",
+    "start": "node index.js"
+  },
+  "keywords": [
+    "pi",
+    "extension",
+    "sleep",
+    "prevention"
+  ],
+  "author": "pi",
+  "license": "MIT",
+  "dependencies": {
+    "node-ffi-napi": "^4.0.0"
+  }
+}
