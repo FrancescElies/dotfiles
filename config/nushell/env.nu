@@ -71,7 +71,7 @@ if (which fnm | is-not-empty) {
             code: {|| ^fnm use --install-if-missing --silent-if-unchanged}
         }
     )
-    fnm use v26
+    fnm use v25
 }
 
 $env.path = ( $env.path | uniq )
