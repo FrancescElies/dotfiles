@@ -15,6 +15,7 @@ agent/npm/
 agent/pi-hermes-memory/
 agent/projects-memory/
 agent/sessions
+agent/settings.json
 agent/trust.json
 context-mode/
 free-telemetry.json

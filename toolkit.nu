@@ -93,6 +93,12 @@ export def "config aba" [] {
 
 export def "config pi" [] {
     symlink --force ~/src/dotfiles/config/pi ~/.pi
+    cd ~/src/dotfiles/config/pi/agent
+    let settings_json = match $nu.os-info.name {
+        "windows" => 'settings-win32.json',
+        _ => 'settings-unix.json' ,
+    }
+    symlink --force $settings_json settings.json
 }
 
 def "install sway" [] {

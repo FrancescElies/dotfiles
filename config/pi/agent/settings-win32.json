@@ -1,0 +1,19 @@
+{
+  "lastChangelogVersion": "0.82.1",
+  "packages": [
+    "git:github.com/DietrichGebert/ponytail@v4.8.4",
+    "git:github.com/chandra447/pi-hermes-memory@v0.9.1",
+    "npm:@ff-labs/pi-fff@0.10.1"
+  ],
+  "theme": "dark",
+  "extensions": [
+    "-extensions/azure-devops-mcp/index.ts"
+  ],
+  "skills": [
+    "-skills/graphify/SKILL.md",
+    "-skills/zellij/SKILL.md"
+  ],
+  "enableInstallTelemetry": false,
+  "hideThinkingBlock": false,
+  "defaultThinkingLevel": "high"
+}
