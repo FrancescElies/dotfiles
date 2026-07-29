@@ -1,67 +1,21 @@
 {
   "lastChangelogVersion": "0.82.1",
-  "defaultProvider": "github-copilot",
   "packages": [
-    {
-      "source": "npm:@ff-labs/pi-fff",
-      "extensions": [
-        "+src/index.ts"
-      ]
-    },
-    {
-      "source": "npm:pi-web-access",
-      "extensions": [
-        "-index.ts"
-      ],
-      "skills": [
-        "-skills/librarian/SKILL.md"
-      ]
-    },
-    {
-      "source": "npm:pi-hermes-memory",
-      "extensions": [
-        "+src/index.ts"
-      ]
-    },
-    {
-      "source": "npm:pi-mcp-adapter",
-      "extensions": [
-        "+index.ts"
-      ]
-    },
-    {
-      "source": "npm:@dietrichgebert/ponytail",
-      "skills": [
-        "+skills/ponytail-audit/SKILL.md",
-        "+skills/ponytail-debt/SKILL.md",
-        "+skills/ponytail-gain/SKILL.md",
-        "+skills/ponytail-help/SKILL.md",
-        "+skills/ponytail-review/SKILL.md",
-        "+skills/ponytail/SKILL.md"
-      ],
-      "extensions": [
-        "+pi-extension/index.js"
-      ]
-    },
-    {
-      "source": "npm:pi-free",
-      "extensions": [
-        "-index.ts"
-      ]
-    }
+    "git:github.com/DietrichGebert/ponytail@v4.8.4",
+    "git:github.com/apmantza/pi-free@v2.2.10",
+    "git:github.com/chandra447/pi-hermes-memory@v0.9.1",
+    "npm:@ff-labs/pi-fff@0.10.1"
   ],
   "theme": "dark",
   "extensions": [
     "-extensions/azure-devops-mcp/index.ts"
   ],
   "skills": [
-    "+skills/summarize/SKILL.md",
-    "-skills/frontend-design/SKILL.md",
-    "-skills/ghidra/SKILL.md",
     "-skills/graphify/SKILL.md",
-    "-skills/web-browser/SKILL.md",
     "-skills/zellij/SKILL.md"
   ],
   "enableInstallTelemetry": false,
-  "hideThinkingBlock": false
+  "hideThinkingBlock": false,
+  "defaultModel": "cline-free/glm-5.2",
+  "defaultThinkingLevel": "high"
 }

@@ -4,6 +4,7 @@ agent/.pi-hermes-locks.*
 agent/auth.json
 agent/bin
 agent/fff/frecency.mdb/
+agent/git
 agent/mcp-cache.json
 agent/mcp-cache.json
 agent/mcp-npx-cache.json
