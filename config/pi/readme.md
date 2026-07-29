@@ -17,6 +17,9 @@ https://pi.dev/docs/latest/
 ## code search
     uv tool install semble
     semble install
+    uv tool upgrade semble   # upgrade
+    uv cache clean semble    # for MCP users (restart your MCP client after)
+
     uv tool install graphifyy
     graphify install --platform pi
 
