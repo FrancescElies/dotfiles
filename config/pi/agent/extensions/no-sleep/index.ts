@@ -8,9 +8,8 @@ const WINDOWS = process.platform === "win32";
 type Scope = "agent" | "session";
 type Level = "info" | "warning" | "error";
 
-// Lazily loaded on Windows only (via dynamic import, ESM-safe), so a
-// missing/broken native module never breaks extension load on macOS
-// or any other platform.
+// Lazily loaded on Windows only, so a missing/broken native module
+// never breaks extension load on macOS or any other platform.
 type Kernel32 = {
   SetThreadExecutionState: (flags: number) => number;
 };
@@ -25,11 +24,12 @@ async function getKernel32(): Promise<Kernel32 | undefined> {
     return kernel32;
   }
   try {
-    const ffiModule = await import("node-ffi-napi");
-    const ffi = (ffiModule as any).default ?? ffiModule;
-    kernel32 = ffi.Library("kernel32", {
-      SetThreadExecutionState: ["uint32", ["uint32"]],
-    }) as Kernel32;
+    const koffiModule = await import("koffi");
+    const koffi = (koffiModule as any).default ?? koffiModule;
+    const lib = koffi.load("kernel32.dll");
+    kernel32 = {
+      SetThreadExecutionState: lib.func("uint32 SetThreadExecutionState(uint32 flags)"),
+    };
     return kernel32;
   } catch (error) {
     kernel32LoadFailed = true;
@@ -110,7 +110,7 @@ async function start(ctx?: ExtensionContext): Promise<void> {
   } else if (WINDOWS) {
     const lib = await getKernel32();
     if (!lib) {
-      notify(ctx, `No Sleep: failed to start sleep prevention: ${lastError ?? "node-ffi-napi unavailable"}`, "error");
+      notify(ctx, `No Sleep: failed to start sleep prevention: ${lastError ?? "koffi unavailable"}`, "error");
       return;
     }
 

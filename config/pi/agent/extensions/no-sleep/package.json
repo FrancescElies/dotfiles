@@ -17,6 +17,6 @@
   "author": "pi",
   "license": "MIT",
   "dependencies": {
-    "node-ffi-napi": "^4.0.0"
+    "koffi": "^3.1.2"
   }
 }
