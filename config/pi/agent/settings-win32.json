@@ -15,5 +15,7 @@
   ],
   "enableInstallTelemetry": false,
   "hideThinkingBlock": false,
-  "defaultThinkingLevel": "high"
+  "defaultThinkingLevel": "medium",
+  "defaultProvider": "github-copilot",
+  "defaultModel": "claude-sonnet-4.6"
 }

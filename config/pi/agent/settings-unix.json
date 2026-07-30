@@ -15,5 +15,5 @@
   ],
   "enableInstallTelemetry": false,
   "hideThinkingBlock": false,
-  "defaultThinkingLevel": "high"
+  "defaultThinkingLevel": "medium"
 }
