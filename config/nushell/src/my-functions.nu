@@ -471,6 +471,15 @@ export def --wrapped pi [...args] {
             fnm exec --using v25 -- pi ...$args
         }
     }
-
-
 }
+
+export def --env pidocs [] {
+    let root = match $nu.os-info.name {
+        "windows" => (fnm exec --using v25 -- npm.cmd root -g)
+        _ => (fnm exec --using v25 -- npm root -g)
+    }
+    let docs = $root | str trim | path join "@earendil-works/pi-coding-agent/docs"
+    nvim -c $'cd ($docs)' -c 'e index.md'
+}
+
+
