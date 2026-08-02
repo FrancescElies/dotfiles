@@ -4,7 +4,13 @@
     "git:github.com/DietrichGebert/ponytail@v4.8.4",
     "git:github.com/chandra447/pi-hermes-memory@v0.9.1",
     "npm:@ff-labs/pi-fff@0.10.1",
-    "npm:pi-web-access@0.15.0"
+    "npm:pi-web-access@0.15.0",
+    {
+      "source": "git:github.com/apmantza/pi-free@2.4.0",
+      "extensions": [
+        "-dist/index.js"
+      ]
+    }
   ],
   "theme": "dark",
   "extensions": [
