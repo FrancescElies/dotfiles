@@ -91,16 +91,6 @@ export def "config aba" [] {
 }
 
 
-export def "config pi" [] {
-    symlink --force ~/src/dotfiles/config/pi ~/.pi
-    cd ~/src/dotfiles/config/pi/agent
-    let settings_json = match $nu.os-info.name {
-        "windows" => 'settings-win32.json',
-        _ => 'settings-unix.json' ,
-    }
-    symlink --force $settings_json settings.json
-}
-
 def "install sway" [] {
     print $"(ansi purple_bold)install sway(ansi reset)"
     if not ('/usr/bin/sway' | path exists) {
@@ -480,7 +470,6 @@ export def bootstrap [] {
     config himalaya
     config pueue
     config kanata
-    config pi
     config python
 
     match $nu.os-info.name {
