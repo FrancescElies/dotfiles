@@ -473,6 +473,8 @@ export def --wrapped pi [...args] {
     }
 }
 
+export def --env pienv [] { fnm use v25 }
+
 export def --env pidocs [] {
     let root = match $nu.os-info.name {
         "windows" => (fnm exec --using v25 -- npm.cmd root -g)
