@@ -15,6 +15,7 @@ match $nu.os-info.name {
             ('/Program Files/Neovim/bin' | path expand)
             ('/Program Files/Git/usr/bin' | path expand)
             ('/Program Files (x86)/Gow/bin' | path expand)
+            ('/Program Files (x86)/Dr. Memory/bin64' | path expand)
             ('/Program Files/WIBU-SYSTEMS/AxProtector/Devkit/bin' | path expand)
             ('/Program Files/CodeMeter/DevKit/bin' | path expand)
             ('/Program Files/LLVM/bin' | path expand)
@@ -71,7 +72,6 @@ if (which fnm | is-not-empty) {
             code: {|| ^fnm use --install-if-missing --silent-if-unchanged}
         }
     )
-    fnm use v25
 }
 
 $env.path = ( $env.path | uniq )
