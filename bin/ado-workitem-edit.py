@@ -15,7 +15,7 @@ import os
 import re
 import subprocess
 import sys
-import tempfile
+from pathlib import Path
 
 import requests
 
@@ -205,14 +205,10 @@ def parse(text):
 
 def edit(text):
     editor = os.environ.get("EDITOR", "nvim")
-    with tempfile.NamedTemporaryFile(
-        "w+", suffix=".md", delete=False, encoding="utf-8"
-    ) as f:
-        f.write(text)
-        path = f.name
+    path = Path("ADO-WORK-ITEM-EDIT.md")
+    path.write_text(text)
     subprocess.call([editor, path])
-    with open(path, encoding="utf-8") as f:
-        return f.read(), path
+    return path.read_text(), path
 
 
 def main():
