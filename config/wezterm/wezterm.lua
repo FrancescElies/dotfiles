@@ -286,10 +286,10 @@ config.keys = {
   { key = '>', mods = mods, action = act.SwitchWorkspaceRelative(1) },
 
   -- adjust panes
-  { key = 'h', mods = mods2, action = act.AdjustPaneSize { 'Left', 3 } },
-  { key = 'j', mods = mods2, action = act.AdjustPaneSize { 'Down', 3 } },
-  { key = 'k', mods = mods2, action = act.AdjustPaneSize { 'Up', 3 } },
-  { key = 'l', mods = mods2, action = act.AdjustPaneSize { 'Right', 3 } },
+  { key = 'h', mods = mods2, action = act.AdjustPaneSize { 'Left', 10 } },
+  { key = 'j', mods = mods2, action = act.AdjustPaneSize { 'Down', 10 } },
+  { key = 'k', mods = mods2, action = act.AdjustPaneSize { 'Up', 10 } },
+  { key = 'l', mods = mods2, action = act.AdjustPaneSize { 'Right', 10 } },
 
   { key = 'h', mods = mods, action = act.ActivatePaneDirection 'Left' },
   { key = 'j', mods = mods, action = act.ActivatePaneDirection 'Down' },
