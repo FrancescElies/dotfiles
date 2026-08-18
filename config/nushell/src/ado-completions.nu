@@ -112,7 +112,8 @@ export module ado {
     ] {
         git push
         let main_or_master = git rev-parse --abbrev-ref origin/HEAD
-        let description = mktemp
+
+        let description = "PR_DESCRIPTION.md"
         (git log --format=%B $"(git merge-base HEAD $main_or_master)..HEAD") | save -f $description
         let title = if ($title | is-empty) { ( git log --format=%B -n 1 HEAD ) | lines | first } else { $title }
 
@@ -319,21 +320,21 @@ export module ado {
 
     def "nu-complete pr-id" [] { (ls prs mine) | rename -c {id: value,  title: description} }
 
-    export def "pr update description" [ pr_id?: number@"nu-complete pr-id" ] {
+    # edit pr description
+    export def "pr edit" [ pr_id?: number@"nu-complete pr-id" ] {
         let pr_id = if ($pr_id | is-empty) {
             az repos pr list --source-branch $"(git branch --show-current)" --status active | from json | input list --fuzzy --display title | get pullRequestId
         } else {
             $pr_id
         }
-        let tmp = (mktemp --suffix .md)
+        let description = "PR_DESCRIPTION.md"
         let desc = az repos pr show --id $pr_id | from json | get description
-        $desc | save -f $tmp
-        nvim $tmp
-        let desc = ((open --raw $tmp | lines))
+        $desc | save -f $description
+        nvim $description
+        let desc = ((open --raw $description | lines))
         let repo = az repos pr update --id $pr_id --description ...$desc | from json | get repository.webUrl
         let pr_url = $"($repo)/pullrequest/($pr_id)"
         print $"PR: (ansi pb)($pr_url)(ansi reset) 👈"
-        rm $tmp
     }
 
     export def "pr rejected-or-expired-policies" [ pr_id: number@"nu-complete pr-id" ] {
