@@ -113,7 +113,7 @@ export module ado {
         git push
         let main_or_master = git rev-parse --abbrev-ref origin/HEAD
 
-        let description = "PR_DESCRIPTION.md"
+        let description = "ADO-PR-DESCRIPTION.md"
         (git log --format=%B $"(git merge-base HEAD $main_or_master)..HEAD") | save -f $description
         let title = if ($title | is-empty) { ( git log --format=%B -n 1 HEAD ) | lines | first } else { $title }
 
@@ -327,7 +327,7 @@ export module ado {
         } else {
             $pr_id
         }
-        let description = "PR_DESCRIPTION.md"
+        let description = "ADO-PR-DESCRIPTION.md"
         let desc = az repos pr show --id $pr_id | from json | get description
         $desc | save -f $description
         nvim $description
