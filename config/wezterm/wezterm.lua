@@ -19,7 +19,7 @@ local platform = {
   is_mac = string.find(wezterm.target_triple, 'apple') ~= nil,
 }
 
-local sys = require('widgets')
+local sys = require 'widgets'
 
 sys.apply_to_config(config, {
   right = {
@@ -29,7 +29,7 @@ sys.apply_to_config(config, {
     sys.network.download.widget(),
     sys.network.upload.widget(),
   },
-  separator = { text = "|", color = "#3b4261" },
+  separator = { text = '|', color = '#3b4261' },
 })
 
 -- Troubleshooting
@@ -323,5 +323,25 @@ config.hyperlink_rules = {
   -- implicit mailto link
   { regex = '\\b\\w+@[\\w-]+(\\.[\\w-]+)+\\b', format = 'mailto:$0', highlight = 1 },
 }
+
+-- https://wezterm.org/config/lua/window-events/format-window-title.html
+wezterm.on('format-window-title', function(tab, pane, tabs, panes, config)
+  local zoomed = ''
+  if tab.active_pane.is_zoomed then
+    zoomed = '[Z] '
+  end
+
+  local index = ''
+  if #tabs > 1 then
+    index = string.format('T[%d/%d] ', tab.tab_index + 1, #tabs)
+  end
+
+  local title = ''
+  title = title .. '[' .. wezterm.mux.get_active_workspace() .. ']' .. ' '
+  title = title .. wezterm.mux.get_domain():name() .. ' '
+  title = title .. zoomed .. index .. ' '
+
+  return title
+end)
 
 return config
