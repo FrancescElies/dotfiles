@@ -120,19 +120,16 @@ export module ado {
         nvim $description
 
         let current_branch = (git rev-parse --abbrev-ref HEAD)
-        let work_items = $description | parse --regex '#(?<num>\d+)' | get num
+        let work_items = (open $description --raw) | parse --regex '#(?<num>\d+)' | get num | uniq
 
         mut args = []
         if ($work_items | is-not-empty) { $args = ($args | append [--work-items ...($work_items)]) }
         if $draft { $args = ($args | append '--draft') }
         ( ^az repos pr create --open --delete-source-branch
-            --description ...($description | open | lines)
+            --description ...(open $description --raw | lines)
             --auto-complete -t $target_branch
             --title $title
-            ...$args
-            -o json
-        )
-        | from json
+            ...$args )
     }
 
     export def "pr status" [
