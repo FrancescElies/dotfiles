@@ -244,13 +244,6 @@ export def "Max ls loaded-mxe64" [] {
         | where ($it.name | str ends-with mxe64))
 }
 
-export def "Max ls loaded-mxe64" [] {
-    (frida -p (ps | where name =~ Max | get 0.pid)
-        --eval 'Process.enumerateModules()' -q
-        | from json
-        | where ($it.name | str ends-with mxe64))
-}
-
 export def "Max ls available-objects" [] {
     let alias = (
         ls `~/Documents/Max 9/Packages/*/init/*txt` | get name | each { |file|
