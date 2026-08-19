@@ -28,7 +28,7 @@ export def "nu-complete semmantic-message" [] {
 
 export module ado {
 
-    export alias "pr reply" = python ~/src/dotfiles/bin/ado-pr-reply.py
+    export alias "pr reply" = python ~/src/dotfiles/bin/pr-reply.py --platform ado
 
     export alias "workitem edit" = python ~/src/dotfiles/bin/ado-workitem-edit.py
 
