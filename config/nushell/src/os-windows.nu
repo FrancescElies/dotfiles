@@ -205,7 +205,19 @@ export module win {
         }
     }
 
-    export def "open last dump" [] { start (ls ('/dumps' | path expand) | sort-by modified | last | get name) }
+    export def "dump get-last" [] { ls ('/dumps' | path expand) | sort-by modified | last | get name }
+
+    def "nu-complete dumps" [] {  ls ('/dumps' | path expand) | sort-by modified | get name  }
+    export def "dump analyze" [dmp: path@'nu-complete dumps'] {
+       # !analyze -v:  verbose crash summary
+       # .ecxr      :  switch to exception context
+       # kv         :  verbose stack for crashing thread
+       # ~*         :  verbose stack for crashing thread
+       # !peb       :  process command line/env/loader info
+       # lm         :  loaded modules
+       # qd         :  quit
+      `C:/Program Files (x86)/Windows Kits/10/Debuggers/x64/cdb.exe` -z $dmp -c '!analyze -v; .ecxr; kv; ~* k; !peb; lm; qd' | nvim
+    }
 
     # https://lldb.llvm.org/use/tutorial.html, `br set -n myfunction` , wa set var ret
     export def "lldb attach-to-process" [process_name: string = "", processid: int = 0] {
