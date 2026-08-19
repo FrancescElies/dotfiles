@@ -9,15 +9,16 @@ Usage:
 """
 
 import argparse
+import base64
 import html
 import json
 import os
 import re
 import subprocess
 import sys
+import urllib.request
+import urllib.error
 from pathlib import Path
-
-import requests
 
 API = "7.2-preview.3"  # work item get/update: Markdown field support
 COMMENTS_API = "7.2-preview.4"  # comments get: Markdown + format field
@@ -30,32 +31,64 @@ def wi_url(org, project, wid):
     return f"https://dev.azure.com/{org}/{project}/_apis/wit/workitems/{wid}"
 
 
-def auth_kwargs(token):
-    bearer = os.environ.get("ADO_BEARER")
+def make_request(url, method="GET", headers=None, token=None, bearer=None, data=None):
+    """Make an HTTP request with proper auth headers.
+    
+    Args:
+        url: Request URL
+        method: HTTP method (GET, PATCH, etc.)
+        headers: Dict of additional headers
+        token: ADO PAT token (uses basic auth with empty user)
+        bearer: ADO Bearer token (AAD token)
+        data: Request body (will be JSON-encoded if dict)
+        
+    Returns:
+        Parsed JSON response
+    """
+    if headers is None:
+        headers = {}
+    else:
+        headers = dict(headers)
+    
+    # Add authentication
     if bearer:
-        return {"headers": {"Authorization": f"Bearer {bearer}"}}
-    return {"auth": ("", token)}  # ADO PAT = basic auth with empty user
+        headers["Authorization"] = f"Bearer {bearer}"
+    elif token:
+        auth_str = base64.b64encode(f":{token}".encode()).decode()
+        headers["Authorization"] = f"Basic {auth_str}"
+    
+    # Prepare body
+    body = None
+    if data is not None:
+        if isinstance(data, dict):
+            body = json.dumps(data).encode()
+            headers["Content-Type"] = "application/json"
+        else:
+            body = data
+    
+    # Make request
+    req = urllib.request.Request(url, data=body, headers=headers, method=method)
+    
+    try:
+        with urllib.request.urlopen(req) as response:
+            return json.loads(response.read().decode())
+    except urllib.error.HTTPError as e:
+        error_body = e.read().decode()
+        raise RuntimeError(f"HTTP {e.code}: {error_body}") from e
 
 
 def get_workitem(org, project, wid, token):
-    r = requests.get(
-        wi_url(org, project, wid),
-        params={"api-version": API, "$expand": "fields"},
-        **auth_kwargs(token),
-    )
-    r.raise_for_status()
-    return r.json()
+    bearer = os.environ.get("ADO_BEARER")
+    url = f"{wi_url(org, project, wid)}?api-version={API}&$expand=fields"
+    return make_request(url, token=token, bearer=bearer)
 
 
 def get_comments(org, project, wid, token):
-    r = requests.get(
-        f"{wi_url(org, project, wid)}/comments",
-        params={"api-version": COMMENTS_API},
-        **auth_kwargs(token),
-    )
-    r.raise_for_status()
+    bearer = os.environ.get("ADO_BEARER")
+    url = f"{wi_url(org, project, wid)}/comments?api-version={COMMENTS_API}"
+    result = make_request(url, token=token, bearer=bearer)
     # API returns newest-first; show oldest-first for reading
-    return sorted(r.json().get("comments", []), key=lambda c: c.get("createdDate", ""))
+    return sorted(result.get("comments", []), key=lambda c: c.get("createdDate", ""))
 
 
 def post_comment(org, project, wid, token, text):
@@ -84,18 +117,18 @@ def patch_fields(org, project, wid, token, fields):
         ops.append(
             {"op": "add", "path": f"/multilineFieldsFormat/{k}", "value": "markdown"}
         )
-    kw = auth_kwargs(token)
-    headers = dict(kw.pop("headers", {}))
-    headers["Content-Type"] = "application/json-patch+json"
-    r = requests.patch(
-        wi_url(org, project, wid),
-        params={"api-version": API},
-        json=ops,
+    
+    bearer = os.environ.get("ADO_BEARER")
+    headers = {"Content-Type": "application/json-patch+json"}
+    
+    return make_request(
+        f"{wi_url(org, project, wid)}?api-version={API}",
+        method="PATCH",
         headers=headers,
-        **kw,
+        token=token,
+        bearer=bearer,
+        data=ops,
     )
-    r.raise_for_status()
-    return r.json()
 
 
 # --- legacy HTML -> text (for content not yet stored as Markdown) ----------
