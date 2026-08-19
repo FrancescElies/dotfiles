@@ -205,7 +205,7 @@ export module win {
         }
     }
 
-    export def "dump get-last" [] { ls ('/dumps' | path expand) | sort-by modified | last | get name }
+    export def "dump get-last" [] { ls `/dumps/*.dmp`  | sort-by modified | last | get name }
 
     def "nu-complete dumps" [] {  ls ('/dumps' | path expand) | sort-by modified | get name  }
     export def "dump analyze" [dmp: path@'nu-complete dumps'] {
@@ -216,7 +216,7 @@ export module win {
        # !peb       :  process command line/env/loader info
        # lm         :  loaded modules
        # qd         :  quit
-      `C:/Program Files (x86)/Windows Kits/10/Debuggers/x64/cdb.exe` -z $dmp -c '!analyze -v; .ecxr; kv; ~* k; !peb; lm; qd' | nvim
+      `C:/Program Files (x86)/Windows Kits/10/Debuggers/x64/cdb.exe` -z $dmp -c '!analyze; .ecxr; kv; ~* k; !peb; lm; qd' | nvim
     }
 
     # https://lldb.llvm.org/use/tutorial.html, `br set -n myfunction` , wa set var ret
