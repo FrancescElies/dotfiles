@@ -172,9 +172,9 @@ export def --env "goto-max packages" [] { cd "~/Documents/Max 9/Packages"; lsg }
 export def --env "goto-max sdk-examples" [] { cd "~/src/oss/max-sdk/source"; lsg }
 
 # goto  crash dumps are stored
-export def --env "Max list dumps" [] { ls `~/AppData/Roaming/Cycling '74/Logs/` | sort-by modified | get name }
+export def --env "Max ls dumps" [] { ls `~/AppData/Roaming/Cycling '74/Logs/` | sort-by modified | get name }
 # goto where logsk are stored
-export def --env "Max list logs" [] { ls `~/AppData/Roaming/Cycling '74/Max 9/Logs/` | sort-by modified | get name }
+export def --env "Max ls logs" [] { ls `~/AppData/Roaming/Cycling '74/Max 9/Logs/` | sort-by modified | get name }
 
 # opens Max's api
 export def "Max goto header-files" [] {
@@ -231,14 +231,27 @@ export def "Max rg" [pattern: string] {
 # ripgrep Max stuff
 export alias "rg-max" = rg --type-add 'max:*.{maxhelp,maxpat,json}' -t max
 
-export def "Max list loaded-mxe64" [] {
+export def "Max ls loaded-dlls" [] {
+    (frida -p (ps | where name =~ Max | get 0.pid)
+        --eval 'Process.enumerateModules()' -q
+        | from json)
+}
+
+export def "Max ls loaded-mxe64" [] {
     (frida -p (ps | where name =~ Max | get 0.pid)
         --eval 'Process.enumerateModules()' -q
         | from json
         | where ($it.name | str ends-with mxe64))
 }
 
-export def "Max list available-objects" [] {
+export def "Max ls loaded-mxe64" [] {
+    (frida -p (ps | where name =~ Max | get 0.pid)
+        --eval 'Process.enumerateModules()' -q
+        | from json
+        | where ($it.name | str ends-with mxe64))
+}
+
+export def "Max ls available-objects" [] {
     let alias = (
         ls `~/Documents/Max 9/Packages/*/init/*txt` | get name | each { |file|
             ( open $file | parse "max objectfile {name} {obj};"
@@ -254,6 +267,6 @@ export def "Max list available-objects" [] {
     $alias | select name description | append $objects_without_alias
 }
 
-export def "Max list node-procs" [] {
+export def "Max ls node-procs" [] {
     ps --long | where name =~ node | where command =~ Max | select pid name cwd command
 }
