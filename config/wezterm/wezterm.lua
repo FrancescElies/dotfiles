@@ -280,10 +280,10 @@ config.keys = {
   { key = 'o', mods = mods, action = act.ShowLauncherArgs { flags = 'FUZZY|WORKSPACES|DOMAINS|TABS' } }, -- [o]pen
   { key = 'p', mods = mods, action = open_project },
 
-  { key = '{', mods = mods, action = act.ActivateTabRelative(-1) },
-  { key = '}', mods = mods, action = act.ActivateTabRelative(1) },
-  { key = '<', mods = mods, action = act.SwitchWorkspaceRelative(-1) },
-  { key = '>', mods = mods, action = act.SwitchWorkspaceRelative(1) },
+  { key = '<', mods = mods, action = act.ActivateTabRelative(-1) },
+  { key = '>', mods = mods, action = act.ActivateTabRelative(1) },
+  { key = '<', mods = mods2, action = act.SwitchWorkspaceRelative(-1) },
+  { key = '>', mods = mods2, action = act.SwitchWorkspaceRelative(1) },
 
   -- adjust panes
   { key = 'h', mods = mods2, action = act.AdjustPaneSize { 'Left', 5 } },
