@@ -16,8 +16,8 @@ import os
 import re
 import subprocess
 import sys
-import urllib.request
 import urllib.error
+import urllib.request
 from pathlib import Path
 
 API = "7.2-preview.3"  # work item get/update: Markdown field support
@@ -33,7 +33,7 @@ def wi_url(org, project, wid):
 
 def make_request(url, method="GET", headers=None, token=None, bearer=None, data=None):
     """Make an HTTP request with proper auth headers.
-    
+
     Args:
         url: Request URL
         method: HTTP method (GET, PATCH, etc.)
@@ -41,7 +41,7 @@ def make_request(url, method="GET", headers=None, token=None, bearer=None, data=
         token: ADO PAT token (uses basic auth with empty user)
         bearer: ADO Bearer token (AAD token)
         data: Request body (will be JSON-encoded if dict)
-        
+
     Returns:
         Parsed JSON response
     """
@@ -49,14 +49,14 @@ def make_request(url, method="GET", headers=None, token=None, bearer=None, data=
         headers = {}
     else:
         headers = dict(headers)
-    
+
     # Add authentication
     if bearer:
         headers["Authorization"] = f"Bearer {bearer}"
     elif token:
         auth_str = base64.b64encode(f":{token}".encode()).decode()
         headers["Authorization"] = f"Basic {auth_str}"
-    
+
     # Prepare body
     body = None
     if data is not None:
@@ -65,10 +65,10 @@ def make_request(url, method="GET", headers=None, token=None, bearer=None, data=
             headers["Content-Type"] = "application/json"
         else:
             body = data
-    
+
     # Make request
     req = urllib.request.Request(url, data=body, headers=headers, method=method)
-    
+
     try:
         with urllib.request.urlopen(req) as response:
             return json.loads(response.read().decode())
@@ -117,10 +117,10 @@ def patch_fields(org, project, wid, token, fields):
         ops.append(
             {"op": "add", "path": f"/multilineFieldsFormat/{k}", "value": "markdown"}
         )
-    
+
     bearer = os.environ.get("ADO_BEARER")
     headers = {"Content-Type": "application/json-patch+json"}
-    
+
     return make_request(
         f"{wi_url(org, project, wid)}?api-version={API}",
         method="PATCH",
