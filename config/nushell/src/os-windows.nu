@@ -117,7 +117,7 @@ export module win {
     #   Uninstall ProcDump as the (AeDebug) postmortem debugger:
     #   procdump -u
     export extern "procdump" [ ...args: any ]
-    export def "procdump postmortem-debugger install" [] { ^procdump -accepteula -ma -i c:\dumps }
+    export def "procdump postmortem-debugger install" [] { ^procdump -accepteula -k -ma -i c:\dumps }
     export def "procdump postmortem-debugger uninstall" [] { ^procdump -u }
 
     def "nu-complete list-process-names" [] { ps | get name | sort | uniq }
