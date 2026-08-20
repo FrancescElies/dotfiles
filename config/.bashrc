@@ -157,7 +157,7 @@ alias v='nvim'
 alias ve='nvim -u ~/src/kickstart.nvim/minimal-vimrc.vim'
 alias vis='nvim "+set si"'
 alias vmd='nvim -c ":set ft=markdown"'
-alias vmin='nvim -u NONE -i NONE --no-plugins'
+alias vbare='nvim -u NONE -i NONE --no-plugins'
 
 
 # alias chmod commands
