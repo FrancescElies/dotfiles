@@ -216,12 +216,12 @@ export module win {
         # (!peb)         process command line/env/loader info
         # (lm)           loaded modules
         # (qd)           quit
-        let md_file = $"($dmp).analysis.md"
-        if ( $md_file | path exists ) {
+        let outfile = $"($dmp).analysis.txt"
+        if ( $outfile | path exists ) {
             return
         }
         (`C:/Program Files (x86)/Windows Kits/10/Debuggers/x64/cdb.exe` -z $dmp
-            -c '!analyze; .ecxr; kv; ~* k; !peb; lm; qd' | save $md_file )
+            -c '!analyze; .ecxr; kv; ~* k; !peb; lm; qd' | save $outfile )
     }
 
     # https://lldb.llvm.org/use/tutorial.html, `br set -n myfunction` , wa set var ret
