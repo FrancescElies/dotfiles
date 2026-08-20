@@ -212,6 +212,11 @@ def "my compiler-flags" [] {
     print "-Werror -Wall -Wextra -fsanitize=address,undefined,float-divide-by-zero,unsigned-integer-overflow,implicit-conversion,local-bounds,nullability"
 }
 
+# update dotfiles and friends
+def "my update" [] {
+    [~/src/config.pi ~/src/kickstart.nvim ~/src/dotfiles] | par-each { try { cd $in; git pull | complete } }
+}
+
 # backup by-year
 export def "my backup by-year" [serverip: string = "intel-pc"] {
     restic --repo sftp:($serverip):by-year.restic backup ~/by-year
