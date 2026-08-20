@@ -17,6 +17,7 @@ img2pdf = "lossless conversion of rater images to pdf"
 honcho = "Foreman clone, manage Procfile apps"
 ipdb = "better pdb"
 chardet = "character encoding detector"
+toolong = "textualize: terminal application to view, tail, merge, and search log files (plus JSONL)."
 # https://github.com/MaartenGr/KeyBERT  heavy installation
 # pip install keybert[flair]
 # pip install keybert[gensim]
