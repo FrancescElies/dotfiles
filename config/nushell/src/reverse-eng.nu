@@ -21,24 +21,23 @@ export alias r2-docs = r2 -Qc'?*~...' --
 
 # retrieves basic binary info (imports, strings, libraries, relocs, entry-point, symbols) https://book.rada.re/tools/rabin2
 export def "rabin2 everything" [bin: path, ] {
-    let folder = ($bin | path basename)
-    mkdir $folder
-    cd $folder
+    let dst = ($bin | path basename)
+    mkdir $dst
     let bin = ($bin | path expand)
 
-    rabin2 -g  $bin | save -f 01-all-info.txt
-    rabin2 -I  $bin | save -f file-type.txt
-    rabin2 -i  $bin | save -f imports.txt
-    rabin2 -E  $bin | save -f exports.txt
-    rabin2 -s  $bin | save -f symbols.txt
-    rabin2 -l  $bin | save -f libraries.txt
-    rabin2 -S  $bin | save -f sections.txt
-    rabin2 -z $bin | save -f strings-data-section.txt
-    rabin2 -zzz $bin | save -f strings-raw.txt
-    rabin2 -R  $bin | save -f relocs.txt
-    rabin2 -e  $bin | save -f entry_point.txt
+    rabin2 -g  $bin | save -f ( $dst | path join 01-all-info.txt)
+    rabin2 -I  $bin | save -f ( $dst | path join file-type.txt)
+    rabin2 -i  $bin | save -f ( $dst | path join imports.txt)
+    rabin2 -E  $bin | save -f ( $dst | path join exports.txt)
+    rabin2 -s  $bin | save -f ( $dst | path join symbols.txt)
+    rabin2 -l  $bin | save -f ( $dst | path join libraries.txt)
+    rabin2 -S  $bin | save -f ( $dst | path join sections.txt)
+    rabin2 -z $bin | save -f ( $dst | path join strings-data-section.txt)
+    rabin2 -zzz $bin | save -f ( $dst | path join strings-raw.txt)
+    rabin2 -R  $bin | save -f ( $dst | path join relocs.txt)
+    rabin2 -e  $bin | save -f ( $dst | path join entry_point.txt)
 
-    print $"see files in ($folder)"
+    print $"see files in ($dst)"
 }
 
 # https://github.com/DynamoRIO/drmemory
@@ -68,3 +67,10 @@ export def "rabin2 everything" [bin: path, ] {
 export def "frida list modules-and-exports" [pid: number] {
     (frida -p $pid --eval 'Process.enumerateModules()' -q | from json)
 }
+
+export def "frida project-init" [] {
+    frida-create -t agent
+    # fixes nvim not auto adding @types from node_modules
+    open tsconfig.json | update compilerOptions.types ["frida-gum", "node"] | save -f tsconfig.json
+}
+
