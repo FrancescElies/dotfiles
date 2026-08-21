@@ -217,6 +217,7 @@ export module win {
         # (lm)           loaded modules
         # (qd)           quit
         let outfile = $"($dmp).analysis.txt"
+        print $"(ansi purple_bold)($outfile)(ansi reset)"
         if ( $outfile | path exists ) {
             return
         }
