@@ -8,6 +8,8 @@
 
 # export alias sudo = ^gsudo
 
+export alias "activate" = overlay use .venv/Scripts/activate.nu
+
 export alias watchexec = watchexec --shell none  # workaround for https://github.com/watchexec/watchexec/issues/1050
 
 export alias ls-pipes = ls '\\.\pipe\'
