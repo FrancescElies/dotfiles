@@ -53,14 +53,14 @@ config.colors = {
 config.font_size = 10
 
 config.disable_default_key_bindings = true
-config.hide_tab_bar_if_only_one_tab = true
+config.hide_tab_bar_if_only_one_tab = false
 -- https://wezfurlong.org/wezterm/config/lua/config/debug_key_events.html
 config.debug_key_events = false
 
 config.hide_mouse_cursor_when_typing = true
 config.pane_focus_follows_mouse = false
 
-config.switch_to_last_active_tab_when_closing_tab = false
+config.switch_to_last_active_tab_when_closing_tab = true
 config.adjust_window_size_when_changing_font_size = false
 
 -- https://wezfurlong.org/wezterm/faq.html?h=path#im-on-macos-and-wezterm-cannot-find-things-in-my-path
