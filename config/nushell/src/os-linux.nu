@@ -8,6 +8,7 @@ export def --env "ssh-agent start" [] {
         | load-env
 }
 
+export alias "activate" = overlay use .venv/bin/activate.nu
 export def "my rqbit" [] { start http://intel-pc:3030/web }
 export def "my prowlarr" [] { start http://intel-pc:9696/ }
 export def "my jellyfin" [] { start http://intel-pc:8096 }
