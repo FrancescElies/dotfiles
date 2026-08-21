@@ -1,3 +1,5 @@
+export alias "activate" = overlay use .venv/bin/activate.nu
+
 # https://github.com/geerlingguy/dotfiles/blob/master/.osx
 
 # Mac OS X configuration
