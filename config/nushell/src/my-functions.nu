@@ -244,6 +244,8 @@ export alias vmarkdown = nvim -c ":set ft=markdown"
 export alias vjson = nvim -c ":set ft=json"
 export alias vbare = nvim -u NONE -i NONE --no-plugins
 
+export alias "activate" = overlay use .venv/Scripts/activate.nu
+
 export def "nvim-clean-shada" [] {
     match $nu.os-info.name {
         "windows" => { rm -rf ~/AppData/Local/nvim-data/shada },
