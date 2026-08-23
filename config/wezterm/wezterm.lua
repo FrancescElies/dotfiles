@@ -1,9 +1,20 @@
--- https://wezfurlong.org/wezterm/config/lua/keyassignment/
--- https://wezfurlong.org/wezterm/config/default-keys.html
--- https://github.com/yutkat/dotfiles/tree/main/.config/wezterm
--- https://github.com/KevinSilvester/wezterm-config
--- https://github.com/mrjones2014/smart-splits.nvim#wezterm
--- https://github.com/wez/wezterm/discussions/2329
+-- Links
+do
+  -- https://wezfurlong.org/wezterm/config/lua/keyassignment/
+  -- https://wezfurlong.org/wezterm/config/default-keys.html
+  -- https://github.com/yutkat/dotfiles/tree/main/.config/wezterm
+  -- https://github.com/KevinSilvester/wezterm-config
+  -- https://github.com/mrjones2014/smart-splits.nvim#wezterm
+  -- https://github.com/wez/wezterm/discussions/2329
+
+  -- fonts
+  -- https://wezfurlong.org/wezterm/config/fonts.html
+  -- https://www.jetbrains.com/lp/mono/
+  -- https://github.com/microsoft/cascadia-code
+  -- https://github.com/tonsky/FiraCode
+  -- https://github.com/adobe-fonts/source-code-pro
+  -- https://fonts.google.com/specimen/IBM+Plex+Sans
+end
 
 -- NOTE: environment variable WEZTERM_CONFIG_DIR should point to this file
 local wezterm = require 'wezterm'
@@ -39,25 +50,21 @@ config.colors = {
   split = '#449999', -- split lines between panes color
 }
 
--- https://wezfurlong.org/wezterm/config/fonts.html
--- https://www.jetbrains.com/lp/mono/
--- https://github.com/microsoft/cascadia-code
--- https://github.com/tonsky/FiraCode
--- https://github.com/adobe-fonts/source-code-pro
--- https://fonts.google.com/specimen/IBM+Plex+Sans
+-- config
+do
+  config.font_size = 10
 
-config.font_size = 10
+  config.disable_default_key_bindings = true
+  config.hide_tab_bar_if_only_one_tab = false
+  -- https://wezfurlong.org/wezterm/config/lua/config/debug_key_events.html
+  config.debug_key_events = false
 
-config.disable_default_key_bindings = true
-config.hide_tab_bar_if_only_one_tab = false
--- https://wezfurlong.org/wezterm/config/lua/config/debug_key_events.html
-config.debug_key_events = false
+  config.hide_mouse_cursor_when_typing = true
+  config.pane_focus_follows_mouse = false
 
-config.hide_mouse_cursor_when_typing = true
-config.pane_focus_follows_mouse = false
-
-config.switch_to_last_active_tab_when_closing_tab = true
-config.adjust_window_size_when_changing_font_size = false
+  config.switch_to_last_active_tab_when_closing_tab = true
+  config.adjust_window_size_when_changing_font_size = false
+end
 
 -- https://wezfurlong.org/wezterm/faq.html?h=path#im-on-macos-and-wezterm-cannot-find-things-in-my-path
 if platform.is_mac then
@@ -97,32 +104,33 @@ else
 end
 
 -- Shell Profiles
-local nushell = wezterm.home_dir .. '/.cargo/bin/nu'
-local launch_menu = {}
+do
+  local nushell = wezterm.home_dir .. '/.cargo/bin/nu'
+  local launch_menu = {}
 
-if platform.is_win then
-  -- wezterm.log_info 'on windows'
-  config.default_prog = { nushell }
-  launch_menu = {
-    { label = 'PowerShell Core', args = { 'pwsh' } },
-    { label = 'PowerShell Desktop', args = { 'powershell' } },
-    { label = 'Command Prompt', args = { 'cmd' } },
-    {
-      label = 'Visual Studio Prompt',
-      args = { 'cmd', ' /k', '"c:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\Common7\\Tools\\VsDevCmd.bat"' },
-    },
-    { label = 'Nushell', args = { nushell } },
-  }
-else
-  -- wezterm.log_info 'on mac or linux'
-  config.default_prog = { 'nu' }
-  launch_menu = {
-    { label = 'Bash', args = { 'bash' } },
-    { label = 'Nushell', args = { 'nu' } },
-    { label = 'Zsh', args = { 'zsh' } },
-  }
+  if platform.is_win then
+    -- wezterm.log_info 'on windows'
+    config.default_prog = { nushell }
+    launch_menu = {
+      { label = 'PowerShell Core', args = { 'pwsh' } },
+      { label = 'PowerShell Desktop', args = { 'powershell' } },
+      { label = 'Command Prompt', args = { 'cmd' } },
+      {
+        label = 'Visual Studio Prompt',
+        args = { 'cmd', ' /k', '"c:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\Common7\\Tools\\VsDevCmd.bat"' },
+      },
+      { label = 'Nushell', args = { nushell } },
+    }
+  else
+    -- wezterm.log_info 'on mac or linux'
+    config.default_prog = { 'nu' }
+    launch_menu = {
+      { label = 'Bash', args = { 'bash' } },
+      { label = 'Nushell', args = { 'nu' } },
+      { label = 'Zsh', args = { 'zsh' } },
+    }
+  end
 end
-
 config.launch_menu = launch_menu
 
 -- Styling Inactive Panes
@@ -161,6 +169,7 @@ config.mouse_bindings = {
 local mods = 'CTRL|SHIFT'
 local mods2 = 'CTRL|SHIFT|ALT'
 
+-- Custom callback actions
 local edit_pane_in_nvim = wezterm.action_callback(function(window, pane)
   -- Retrieve the text from the pane
   local text = pane:get_lines_as_text(pane:get_dimensions().scrollback_rows)
@@ -319,47 +328,49 @@ config.hyperlink_rules = {
   { regex = '\\b\\w+@[\\w-]+(\\.[\\w-]+)+\\b', format = 'mailto:$0', highlight = 1 },
 }
 
-wezterm.on('format-window-title', function(tab, pane, tabs, panes, config)
-  -- https://wezterm.org/config/lua/window-events/format-window-title.html
-  local zoomed = ''
-  if tab.active_pane.is_zoomed then
-    zoomed = '[Z] '
-  end
+-- wezterm events
+do
+  wezterm.on('format-window-title', function(tab, pane, tabs, panes, config)
+    -- https://wezterm.org/config/lua/window-events/format-window-title.html
+    local zoomed = ''
+    if tab.active_pane.is_zoomed then
+      zoomed = '[Z] '
+    end
 
-  local index = ''
-  if #tabs > 1 then
-    index = string.format('T[%d/%d] ', tab.tab_index + 1, #tabs)
-  end
+    local index = ''
+    if #tabs > 1 then
+      index = string.format('T[%d/%d] ', tab.tab_index + 1, #tabs)
+    end
 
-  local title = ''
-  title = title .. '[' .. wezterm.mux.get_active_workspace() .. ']' .. ' '
-  title = title .. wezterm.mux.get_domain():name() .. ' '
-  title = title .. zoomed .. index .. ' '
+    local title = ''
+    title = title .. '[' .. wezterm.mux.get_active_workspace() .. ']' .. ' '
+    title = title .. wezterm.mux.get_domain():name() .. ' '
+    title = title .. zoomed .. index .. ' '
 
-  return title
-end)
+    return title
+  end)
 
-wezterm.on('gui-startup', function(cmd)
-  -- https://wezterm.org/config/lua/gui-events/gui-startup.html
-  local tab, pane, window = mux.spawn_window(cmd or {})
-  window:gui_window():maximize()
+  wezterm.on('gui-startup', function(cmd)
+    -- https://wezterm.org/config/lua/gui-events/gui-startup.html
+    local tab, pane, window = mux.spawn_window(cmd or {})
+    window:gui_window():maximize()
 
-  -- allow `wezterm start -- something` to affect what we spawn in our initial window
-  local args = {}
-  if cmd then
-    args = cmd.args
-  end
+    -- allow `wezterm start -- something` to affect what we spawn in our initial window
+    local args = {}
+    if cmd then
+      args = cmd.args
+    end
 
-  -- dotfiles workspace
-  local project_dir = wezterm.home_dir .. 'src/dotfiles'
-  local tab, pane, window = mux.spawn_window {
-    workspace = 'dotfiles',
-    cwd = project_dir,
-    args = args,
-  }
-  pane:send_text 'nvim\n'
+    -- dotfiles workspace
+    local project_dir = wezterm.home_dir .. 'src/dotfiles'
+    local tab, pane, window = mux.spawn_window {
+      workspace = 'dotfiles',
+      cwd = project_dir,
+      args = args,
+    }
+    pane:send_text 'nvim\n'
 
-  mux.set_active_workspace 'dotfiles'
-end)
-
+    mux.set_active_workspace 'dotfiles'
+  end)
+end
 return config
