@@ -7,11 +7,12 @@
 
 -- NOTE: environment variable WEZTERM_CONFIG_DIR should point to this file
 local wezterm = require 'wezterm'
-
 local act = wezterm.action
--- local mux = wezterm.mux
+local mux = wezterm.mux
+
 local io = require 'io'
 local os = require 'os'
+local widgets = require 'widgets'
 
 local platform = {
   is_win = string.find(wezterm.target_triple, 'windows') ~= nil,
@@ -19,23 +20,17 @@ local platform = {
   is_mac = string.find(wezterm.target_triple, 'apple') ~= nil,
 }
 
-local sys = require 'widgets'
-
-sys.apply_to_config(config, {
+widgets.apply_to_config(config, {
   right = {
-    sys.battery.charge.widget(),
-    sys.cpu.utilization.widget(),
-    sys.ram.utilization.widget(),
-    sys.network.download.widget(),
-    sys.network.upload.widget(),
+    widgets.battery.charge.widget(),
+    widgets.cpu.utilization.widget(),
+    widgets.ram.utilization.widget(),
+    widgets.network.download.widget(),
+    widgets.network.upload.widget(),
   },
   separator = { text = '|', color = '#3b4261' },
 })
 
--- Troubleshooting
--- https://wezfurlong.org/wezterm/troubleshooting.html
-
--- Allow working with both the current release and the nightly
 local config = {}
 if wezterm.config_builder then
   config = wezterm.config_builder()
@@ -43,6 +38,7 @@ end
 config.colors = {
   split = '#449999', -- split lines between panes color
 }
+
 -- https://wezfurlong.org/wezterm/config/fonts.html
 -- https://www.jetbrains.com/lp/mono/
 -- https://github.com/microsoft/cascadia-code
@@ -83,9 +79,8 @@ local function normalize_path(path)
 end
 
 local home = normalize_path(wezterm.home_dir)
---
+
 -- Common Folder Paths
---
 local folders_to_search = {}
 if platform.is_win then
   folders_to_search = {
@@ -101,11 +96,10 @@ else
   }
 end
 
---
 -- Shell Profiles
---
 local nushell = wezterm.home_dir .. '/.cargo/bin/nu'
 local launch_menu = {}
+
 if platform.is_win then
   -- wezterm.log_info 'on windows'
   config.default_prog = { nushell }
@@ -128,6 +122,7 @@ else
     { label = 'Zsh', args = { 'zsh' } },
   }
 end
+
 config.launch_menu = launch_menu
 
 -- Styling Inactive Panes
@@ -324,8 +319,8 @@ config.hyperlink_rules = {
   { regex = '\\b\\w+@[\\w-]+(\\.[\\w-]+)+\\b', format = 'mailto:$0', highlight = 1 },
 }
 
--- https://wezterm.org/config/lua/window-events/format-window-title.html
 wezterm.on('format-window-title', function(tab, pane, tabs, panes, config)
+  -- https://wezterm.org/config/lua/window-events/format-window-title.html
   local zoomed = ''
   if tab.active_pane.is_zoomed then
     zoomed = '[Z] '
@@ -342,6 +337,30 @@ wezterm.on('format-window-title', function(tab, pane, tabs, panes, config)
   title = title .. zoomed .. index .. ' '
 
   return title
+end)
+
+wezterm.on('gui-startup', function(cmd)
+  -- https://wezterm.org/config/lua/gui-events/gui-startup.html
+  local tab, pane, window = mux.spawn_window(cmd or {})
+  window:gui_window():maximize()
+
+  -- allow `wezterm start -- something` to affect what we spawn in our initial window
+  local args = {}
+  if cmd then
+    args = cmd.args
+  end
+
+  -- dotfiles workspace
+  local project_dir = wezterm.home_dir .. 'src/dotfiles'
+  local tab, free_pane, window = mux.spawn_window {
+    workspace = 'dotfiles',
+    cwd = project_dir,
+    args = args,
+  }
+  local editor_pane = free_pane:split { direction = 'Top', size = 0.8, cwd = project_dir, domain = 'CurrentPaneDomain' }
+  editor_pane:send_text 'nvim\n'
+
+  mux.set_active_workspace 'dotfiles'
 end)
 
 return config
