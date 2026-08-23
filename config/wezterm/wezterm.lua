@@ -352,13 +352,12 @@ wezterm.on('gui-startup', function(cmd)
 
   -- dotfiles workspace
   local project_dir = wezterm.home_dir .. 'src/dotfiles'
-  local tab, free_pane, window = mux.spawn_window {
+  local tab, pane, window = mux.spawn_window {
     workspace = 'dotfiles',
     cwd = project_dir,
     args = args,
   }
-  local editor_pane = free_pane:split { direction = 'Top', size = 0.8, cwd = project_dir, domain = 'CurrentPaneDomain' }
-  editor_pane:send_text 'nvim\n'
+  pane:send_text 'nvim\n'
 
   mux.set_active_workspace 'dotfiles'
 end)
