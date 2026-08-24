@@ -275,6 +275,8 @@ config.keys = {
   { key = '|', mods = mods, action = act { SplitHorizontal = { domain = 'CurrentPaneDomain' } } },
   { key = 'n', mods = mods, action = new_pane }, -- poor man's zellij New split pane
 
+  { key = ' ', mods = mods, action = act.QuickSelect },
+
   { key = 'a', mods = mods, action = act.ActivateCommandPalette }, -- [c]ommands
   { key = 'd', mods = mods, action = act.ShowDebugOverlay },
   { key = 'f', mods = mods, action = act.Search { CaseInSensitiveString = '' } }, -- [f]ind
@@ -329,6 +331,33 @@ config.hyperlink_rules = {
   { regex = '\\b\\w+@[\\w-]+(\\.[\\w-]+)+\\b', format = 'mailto:$0', highlight = 1 },
 }
 
+config.quick_select_patterns = {
+  -- Email addresses
+  '[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}',
+
+  -- File paths (absolute and relative)
+  '(?:/|\\./)[\\w./~-]+',
+  '/[\\w/.-]+',
+  './[\\w/.-]+',
+
+  -- IP addresses
+  '\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}',
+
+  -- Port numbers (e.g., localhost:3000)
+  'localhost:\\d+',
+  ':\\d{4,5}',
+
+  -- UUID
+  '[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}',
+
+  -- Tickets
+  '[A-Z]+-\\d+',
+
+  -- Version numbers (e.g., 1.2.3)
+  '\\d+\\.\\d+(?:\\.\\d+)?', '../[\\w/.-]+',
+
+}
+
 -- wezterm events
 do
   wezterm.on('format-window-title', function(tab, pane, tabs, panes, config)
@@ -374,4 +403,5 @@ do
     mux.set_active_workspace 'dotfiles'
   end)
 end
+
 return config
