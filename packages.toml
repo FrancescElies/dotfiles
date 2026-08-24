@@ -83,6 +83,7 @@ xh = "http requests"
 # py-spy = "python sample profiler"
 # amp
 flamegraph = "cargo flamegraph, flamegraph -- /path/to/binary"
+hotpath = "Profile CPU, memory, async execution, SQL and HTTP calls, I/O streams, lock contention and channels from a single tool"
 amber = "replace things in files (sed like tool)"
 ast-grep = "Search and Rewrite code at large scale using precise AST pattern"
 bacon = "watches your rust project and runs jobs in background"
