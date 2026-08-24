@@ -1,0 +1,116 @@
+# NeoMutt Hooks Examples
+# Uncomment and customize as needed
+
+# ============================================================================
+# FOLDER HOOKS - Run commands when entering/leaving folders
+# ============================================================================
+
+# Sort threads by date in INBOX
+# folder-hook INBOX 'set sort=threads sort_aux=reverse-last-date-received'
+
+# Sort by date in Sent folder
+# folder-hook Sent 'set sort=reverse-date'
+
+# Ignore all HTML in spam folder (just read as text)
+# folder-hook Spam 'unset display_filter'
+
+# ============================================================================
+# SEND HOOKS - Auto-configure based on recipient
+# ============================================================================
+
+# Auto-set signature based on recipient
+# send-hook '~t ^work@company\.com$' 'set signature = "~/.signatures/work"'
+# send-hook '~t ^personal@friend\.com$' 'set signature = "~/.signatures/personal"'
+
+# Auto-reply address based on recipient domain
+# send-hook '~t @company\.com$' 'set from = "me@company.com"'
+# send-hook '~t @gmail\.com$' 'set from = "me@gmail.com"'
+
+# Don't record personal emails to Sent folder
+# send-hook '~t ^personal@' 'unset record'
+
+# Auto-add CC for certain recipients
+# send-hook '~t ^boss@company\.com$' 'set cc = "team@company.com"'
+
+# ============================================================================
+# REPLY HOOKS - Customize replies
+# ============================================================================
+
+# Add custom attribution for work emails
+# reply-hook '~t @company\.com$' 'set attribution = "On %d, %n from company wrote:"'
+
+# Quote differently for mailing lists
+# reply-hook '~l' 'set include; set indent_str = "> "'
+
+# ============================================================================
+# TIMEOUT/ACCOUNT HOOKS - Switch accounts
+# ============================================================================
+
+# When viewing work IMAP folder, use work account
+# folder-hook 'imaps://work@company.com' ' \
+#   set from = "work@company.com" \
+#   sendmail = "msmtp -a work"'
+
+# When replying to work emails, use work account
+# reply-hook '~t @company\.com$' ' \
+#   set from = "work@company.com" \
+#   sendmail = "msmtp -a work"'
+
+# ============================================================================
+# SAVE HOOKS - Auto-file messages to folders
+# ============================================================================
+
+# Auto-save newsletters to Archive
+# save-hook '~f newsletter@' =Archive
+
+# Auto-save mailing lists
+# save-hook '~l' =Lists
+
+# Auto-save promotions (if supported by your mail provider)
+# save-hook '~x "Promotions"' =Promotions
+
+# ============================================================================
+# CLOSE HOOKS - Run on folder exit (if using NeoMutt 2.0+)
+# ============================================================================
+
+# Sync folder when leaving
+# close-hook INBOX 'exec sync-mailbox'
+
+# ============================================================================
+# STARTUP HOOKS - Run on launch
+# ============================================================================
+
+# Uncomment in muttrc: set my_startup_done = 0
+# Then use: if 0 == $my_startup_done; ...; set my_startup_done = 1; endif
+
+# ============================================================================
+# USAGE NOTES
+# ============================================================================
+
+# Pattern Reference:
+# ~t      - Recipients (To, Cc, Bcc)
+# ~f      - From/sender
+# ~s      - Subject
+# ~c      - Cc field
+# ~b      - Bcc field
+# ~l      - Mailing lists
+# ~h      - Headers contain
+# ~d      - Date range
+# ~N      - Unread messages
+# ~F      - Flagged messages
+# ~*      - Tagged messages
+# ~D      - Deleted messages
+#
+# Combine with & (and), | (or), ! (not):
+# ~t @company\.com$ & ~N       - Unread from company
+# ~l | ~f newsletter@          - Mailing lists OR newsletters
+# ! ~f spam@                   - Everything except from spam@
+
+# ============================================================================
+# TO USE THIS FILE
+# ============================================================================
+
+# 1. Uncomment the hooks you want
+# 2. Customize patterns and commands
+# 3. In muttrc, add: source ~/.config/neomutt/hooks.muttrc
+# 4. Test by entering relevant folders or composing messages

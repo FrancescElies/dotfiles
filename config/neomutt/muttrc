@@ -1,0 +1,139 @@
+# NeoMutt Kickstart Configuration
+# A minimal, well-structured starting point for NeoMutt
+# Designed to be easy to understand and extend
+
+# ============================================================================
+# BASIC SETTINGS
+# ============================================================================
+
+# Set your name and email
+set realname = "Your Name"
+set from = "your.email@example.com"
+
+# Use msmtp or similar for sending (install separately)
+set sendmail = "/usr/bin/msmtp -a default"
+
+# Mailbox type and paths
+set mbox_type = Maildir
+set folder = ~/Mail
+set spoolfile = "+INBOX"
+set record = "+Sent"
+set postponed = "+Drafts"
+set trash = "+Trash"
+
+# Create mailbox folders if they don't exist
+mailboxes =INBOX =Sent =Drafts =Trash =Archive
+
+# ============================================================================
+# IMAP SETTINGS (if using IMAP)
+# ============================================================================
+
+# Uncomment and configure for IMAP:
+# set imap_user = "your.email@example.com"
+# set imap_pass = "your-password"  # OR use: source "gpg2 -dq ~/.mutt/passwords.gpg |"
+# set imap_keepalive = 900
+# set mail_check = 60
+# set timeout = 15
+# set imap_check_subscribed
+# unset imap_passive
+
+# ============================================================================
+# DISPLAY & UI
+# ============================================================================
+
+# Default editor for composing messages
+set editor = "nvim"
+
+# Show mailbox list in sidebar
+set sidebar_visible = yes
+set sidebar_width = 25
+set sidebar_format = "%B%?F? [%F]?%* %?N?%N/?%S"
+
+# Index view format
+set date_format = "%y-%m-%d %H:%M"
+set index_format = "%4C %Z %d %-15.15L (%?l?%4l&%4c?) %s"
+
+# Pager settings
+set pager_index_lines = 10
+set pager_context = 3
+set pager_stop
+set tilde
+
+# Sort order
+set sort = threads
+set sort_aux = reverse-last-date-received
+set strict_threads
+
+# Status line
+set status_format = "-%r-NeoMutt: %f [Msgs:%?M?%M/?%m Keys:%?b?%b/?0 New:%?n?%n/?0]-%>-(%P)---"
+
+# ============================================================================
+# APPEARANCE & COLORS
+# ============================================================================
+
+# Use a color scheme (see included colors file)
+source ~/.config/neomutt/colors
+
+# Or use monochrome for minimal setup:
+# set force_name
+# unset colors
+
+# ============================================================================
+# FEATURES
+# ============================================================================
+
+# Handling attachments
+set mailcap_path = ~/.config/neomutt/mailcap
+auto_view text/html
+alternative_order text/plain text/enriched text/html
+
+# Threading
+set collapse_unread = no
+unset collapse_all
+
+# Search
+set thorough_search
+
+# Compose options
+set edit_headers
+set include
+set attribution = "On %d, %n wrote:"
+set forward_format = "Fwd: %s"
+set reply_to
+
+# Don't mark messages as read when viewing in pager
+set pager_read_delay = 0
+
+# Ask before quitting
+set quit = ask-yes
+
+# ============================================================================
+# KEYBINDINGS (Essential bindings)
+# ============================================================================
+
+# Source keybindings file
+source ~/.config/neomutt/bindings
+
+# ============================================================================
+# ACCOUNT SWITCHING (Multi-account setup)
+# ============================================================================
+
+# Uncomment to set up multiple accounts (see accounts.muttrc.example)
+# source ~/.config/neomutt/accounts.muttrc
+
+# ============================================================================
+# OPTIONAL: Additional customizations
+# ============================================================================
+
+# Notmuch integration (if using notmuch for search)
+# source ~/.config/neomutt/notmuch.muttrc
+
+# Hooks for specific behaviors per mailbox
+# folder-hook . 'set sort=threads sort_aux=reverse-last-date-received'
+
+# Auto-cc/bcc rules
+# send-hook '~t ^recipient@example\.com$' 'set cc="myself@example.com"'
+
+# Auto-reply / vacation mode
+# send-hook . 'unset record'
+# send-hook '~C me@example.com' 'set record=+Sent'

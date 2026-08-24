@@ -1,0 +1,144 @@
+# NeoMutt Keybindings
+# Vim-inspired defaults with essential bindings
+
+# ============================================================================
+# GENERIC BINDINGS (work in most views)
+# ============================================================================
+
+bind generic        q           quit
+bind generic        j           next-entry
+bind generic        k           previous-entry
+bind generic        g           first-entry
+bind generic        G           last-entry
+bind generic        /           search
+bind generic        n           search-next
+bind generic        N           search-opposite
+bind generic        ?           search-reverse
+bind index          <pagedown>  page-down
+bind index          <pageup>    page-up
+
+# ============================================================================
+# INDEX VIEW (message list)
+# ============================================================================
+
+bind index          l           display-message
+bind index          <return>    display-message
+bind index          e           edit-label
+bind index          s           save-message
+bind index          d           delete-message
+bind index          u           undelete-message
+bind index          D           purge-message
+bind index          a           tag-thread
+bind index          A           tag-subthread
+bind index          T           tag-pattern
+bind index          <space>     toggle-new
+bind index          r           reply
+bind index          R           group-reply
+bind index          L           list-reply
+bind index          f           forward-message
+bind index          m           compose-to-sender
+bind index          c           change-folder
+bind index          y           copy-message
+bind index          x           sync-mailbox
+bind index          $           sync-mailbox
+bind index          v           collapse-thread
+bind index          V           collapse-all
+bind index          <tab>       next-unread
+bind index          <backtab>   previous-unread
+bind index          +           limit
+bind index          !           flag-message
+bind index          w           set-flag
+bind index          W           clear-flag
+
+# Sidebar navigation
+bind index          \CP         sidebar-prev
+bind index          \CN         sidebar-next
+bind index          \CI         sidebar-open
+
+# ============================================================================
+# PAGER VIEW (reading messages)
+# ============================================================================
+
+bind pager          j           next-line
+bind pager          k           previous-line
+bind pager          g           top
+bind pager          G           bottom
+bind pager          l           view-attachments
+bind pager          r           reply
+bind pager          R           group-reply
+bind pager          L           list-reply
+bind pager          f           forward-message
+bind pager          e           edit-label
+bind pager          s           save-message
+bind pager          d           delete-message
+bind pager          u           undelete-message
+bind pager          D           purge-message
+bind pager          c           change-folder
+bind pager          y           copy-message
+bind pager          m           compose-to-sender
+bind pager          <pagedown>  next-page
+bind pager          <pageup>    previous-page
+bind pager          +           limit
+bind pager          !           flag-message
+bind pager          w           set-flag
+bind pager          W           clear-flag
+
+# Sidebar navigation
+bind pager          \CP         sidebar-prev
+bind pager          \CN         sidebar-next
+bind pager          \CI         sidebar-open
+
+# ============================================================================
+# COMPOSE VIEW (writing messages)
+# ============================================================================
+
+bind compose        p           postpone-message
+bind compose        a           attach-file
+bind compose        A           attach-key
+bind compose        d           detach-file
+bind compose        t           edit-to
+bind compose        c           edit-cc
+bind compose        b           edit-bcc
+bind compose        s           edit-subject
+bind compose        f           edit-from
+bind compose        r           edit-reply-to
+bind compose        e           edit-message
+bind compose        y           send-message
+bind compose        w           write-fcc
+
+# ============================================================================
+# ATTACHMENT VIEW
+# ============================================================================
+
+bind attach         l           view-attach
+bind attach         <return>    view-attach
+bind attach         s           save-entry
+bind attach         O           open-entry
+bind attach         o           open-entry
+bind attach         |           pipe-entry
+bind attach         d           delete-entry
+bind attach         t           tag-entry
+bind attach         T           tag-pattern
+
+# ============================================================================
+# FOLDER BROWSER
+# ============================================================================
+
+bind browser        l           select-entry
+bind browser        <return>    select-entry
+bind browser        c           create-mailbox
+bind browser        d           delete-mailbox
+bind browser        r           rename-mailbox
+bind browser        m           make-mailbox
+bind browser        q           quit
+
+# ============================================================================
+# QUERY VIEW (address book)
+# ============================================================================
+
+bind query          l           select-entry
+bind query          <return>    select-entry
+bind query          a           create-alias
+bind query          t           tag-entry
+bind query          T           tag-pattern
+bind query          q           quit
