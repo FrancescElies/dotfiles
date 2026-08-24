@@ -1,0 +1,113 @@
+# NeoMutt Multi-Account Setup
+# Copy this to ~/.config/neomutt/accounts.muttrc and customize
+
+# ============================================================================
+# GMAIL EXAMPLE
+# ============================================================================
+
+# account-hook 'imaps://user@gmail.com/' "set imap_user = 'user@gmail.com' \
+#   imap_pass = 'your-app-password'"
+
+# folder-hook 'imaps://user@gmail.com' ' \
+#   set from = "user@gmail.com" \
+#   realname = "Your Name" \
+#   folder = imaps://imap.gmail.com/ \
+#   spoolfile = imaps://imap.gmail.com/INBOX \
+#   record = "+[Gmail]/Sent\ Mail" \
+#   postponed = "+[Gmail]/Drafts" \
+#   trash = "+[Gmail]/Trash" \
+#   sendmail = "msmtp -a gmail"'
+
+# Named mailboxes for Gmail
+# mailboxes "+[Gmail]/All\ Mail" "+[Gmail]/Drafts" "+[Gmail]/Sent\ Mail" "+[Gmail]/Spam" "+[Gmail]/Trash"
+
+# ============================================================================
+# PROTONMAIL EXAMPLE (via ProtonMail Bridge)
+# ============================================================================
+
+# account-hook 'imap://user@protonmail.com/' "set imap_user = 'user@protonmail.com' \
+#   imap_pass = 'bridge-password'"
+
+# folder-hook 'imap://127.0.0.1:1143' ' \
+#   set from = "user@protonmail.com" \
+#   realname = "Your Name" \
+#   folder = imap://127.0.0.1:1143/ \
+#   spoolfile = imap://127.0.0.1:1143/INBOX \
+#   record = "imap://127.0.0.1:1143/Sent" \
+#   postponed = "imap://127.0.0.1:1143/Drafts" \
+#   trash = "imap://127.0.0.1:1143/Trash" \
+#   sendmail = "msmtp -a protonmail"'
+
+# ============================================================================
+# OUTLOOK / MICROSOFT 365 EXAMPLE
+# ============================================================================
+
+# account-hook 'imaps://user@outlook.com/' "set imap_user = 'user@outlook.com' \
+#   imap_pass = 'your-password'"
+
+# folder-hook 'imaps://imap.outlook.com' ' \
+#   set from = "user@outlook.com" \
+#   realname = "Your Name" \
+#   folder = imaps://imap.outlook.com/ \
+#   spoolfile = imaps://imap.outlook.com/INBOX \
+#   record = "imaps://imap.outlook.com/Sent Items" \
+#   postponed = "imaps://imap.outlook.com/Drafts" \
+#   trash = "imaps://imap.outlook.com/Deleted Items" \
+#   sendmail = "msmtp -a outlook"'
+
+# ============================================================================
+# CUSTOM EMAIL PROVIDER EXAMPLE
+# ============================================================================
+
+# account-hook 'imaps://user@example.com/' "set imap_user = 'user@example.com' \
+#   imap_pass = 'your-password'"
+
+# folder-hook 'imaps://imap.example.com' ' \
+#   set from = "user@example.com" \
+#   realname = "Your Name" \
+#   folder = imaps://imap.example.com/ \
+#   spoolfile = imaps://imap.example.com/INBOX \
+#   record = "imaps://imap.example.com/Sent" \
+#   postponed = "imaps://imap.example.com/Drafts" \
+#   trash = "imaps://imap.example.com/Trash" \
+#   sendmail = "msmtp -a custom"'
+
+# ============================================================================
+# INSTRUCTIONS
+# ============================================================================
+#
+# 1. Create ~/.config/neomutt/msmtp/config for sending emails:
+#
+#    defaults
+#    auth on
+#    tls on
+#    
+#    account gmail
+#    host smtp.gmail.com
+#    port 587
+#    from user@gmail.com
+#    user user@gmail.com
+#    password app-specific-password
+#    
+#    account outlook
+#    host smtp-mail.outlook.com
+#    port 587
+#    from user@outlook.com
+#    user user@outlook.com
+#    password your-password
+#    
+#    account default : gmail
+#
+# 2. Set permissions: chmod 600 ~/.config/neomutt/msmtp/config
+#
+# 3. Update sendmail in main muttrc: set sendmail = "/usr/bin/msmtp"
+#
+# 4. For Gmail specifically:
+#    - Enable 2FA
+#    - Generate app-specific password
+#    - Use that instead of your regular password
+#
+# 5. For ProtonMail:
+#    - Install ProtonMail Bridge
+#    - Set it to listen on localhost:1143 (IMAP) and localhost:1025 (SMTP)
+#

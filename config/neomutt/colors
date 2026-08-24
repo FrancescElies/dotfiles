@@ -1,0 +1,91 @@
+# NeoMutt Color Scheme
+# Minimal, clean theme that works with most terminals
+
+# ============================================================================
+# BASIC UI COLORS
+# ============================================================================
+
+# Default
+color normal        default     default
+
+# Status bar
+color status        white       blue
+
+# Messages in index
+color index         default     default '.*'
+color index_author  cyan        default '.*'
+color index_date    green       default '.*'
+color index_flags   red         default '.*'
+
+# Sidebar
+color sidebar_new   green       default
+color sidebar_flagged red       default
+color sidebar_ordinary white    default
+
+# ============================================================================
+# MESSAGE BODY COLORS
+# ============================================================================
+
+# Headers in compose/view
+color header        cyan        default '^From:'
+color header        cyan        default '^To:'
+color header        cyan        default '^Cc:'
+color header        cyan        default '^Bcc:'
+color header        cyan        default '^Subject:'
+color header        cyan        default '^Date:'
+
+# Quoted text
+color quoted        green       default
+color quoted1       yellow      default
+color quoted2       magenta     default
+color quoted3       cyan        default
+
+# Signature
+color signature     green       default
+
+# ============================================================================
+# SPECIAL ELEMENTS
+# ============================================================================
+
+# Search results
+color search        white       green
+
+# Error messages
+color error         white       red
+
+# Tilde (empty lines in pager)
+color tilde         blue        default
+
+# Attachment headers
+color attachment    magenta     default
+
+# Markers
+color markers       red         default
+
+# ============================================================================
+# THREAD TREE COLORS
+# ============================================================================
+
+color tree          magenta     default '.*'
+
+# ============================================================================
+# COMPOSE COLORS
+# ============================================================================
+
+color compose       default     default
+color compose_header cyan       default
+
+# ============================================================================
+# INDICATOR (currently selected line)
+# ============================================================================
+
+# Index view selection
+color indicator     black       yellow
+
+# ============================================================================
+# URL/PATTERNS IN BODY TEXT (if using URL regex)
+# ============================================================================
+
+# Color URLs in message body
+color body          blue        default '(https?|ftp)://[^ >]*'
+color body          blue        default '[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}'

@@ -90,7 +90,6 @@ export def "config aba" [] {
     symlink --force ~/src/dotfiles/local/share/aba.toml ~/.local/share/aba.toml
 }
 
-
 def "install sway" [] {
     print $"(ansi purple_bold)install sway(ansi reset)"
     if not ('/usr/bin/sway' | path exists) {
@@ -451,6 +450,16 @@ export def "config aerc" [] {
     symlink --force ~/src/dotfiles/config/aerc $config_dir
 }
 
+export def "config neomutt" [] {
+    let config_dir = match $nu.os-info.name {
+        "windows" => 'TODO' ,
+        _ => "~/.config/neomutt" ,
+    }
+    if not ($config_dir | path exists) { mkdir $config_dir }
+    symlink --force ~/src/dotfiles/config/neomutt $config_dir
+}
+
+
 export def bootstrap [] {
     mkdir ~/bin
     mkdir ~/src/work
@@ -465,6 +474,7 @@ export def bootstrap [] {
     config yt-dlp
     config bacon
     config aerc
+    config neomutt
     config meli
     config radare2
     config psql
