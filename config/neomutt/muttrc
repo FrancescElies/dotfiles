@@ -7,8 +7,8 @@
 # ============================================================================
 
 # Set your name and email
-set realname = "Your Name"
-set from = "your.email@example.com"
+set realname = "Francesc Elies"
+set from = "elies@posteo.net"
 
 # Use msmtp or similar for sending (install separately)
 set sendmail = "/usr/bin/msmtp -a default"
@@ -29,11 +29,11 @@ mailboxes =INBOX =Sent =Drafts =Trash =Archive
 # ============================================================================
 
 # Uncomment and configure for IMAP:
-# set imap_user = "your.email@example.com"
-# set imap_pass = "your-password"  # OR use: source "gpg2 -dq ~/.mutt/passwords.gpg |"
-# set imap_keepalive = 900
-# set mail_check = 60
-# set timeout = 15
+set imap_user = "elies@posteo.net"
+set imap_pass = "`~/.venv/bin/keyring get posteo elies`"
+set imap_keepalive = 900
+set mail_check = 60
+set timeout = 15
 # set imap_check_subscribed
 # unset imap_passive
 
