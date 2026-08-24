@@ -1,0 +1,32 @@
+# NeoMutt Mailcap Configuration
+# Defines how to handle various file types
+
+# HTML emails - use lynx to render as text
+text/html; lynx -dump -force_html %s; nametemplate=%s.html; copiousoutput
+
+# Alternative: use w3m if lynx not available
+# text/html; w3m -dump -T text/html %s; nametemplate=%s.html; copiousoutput
+
+# Plain text
+text/plain; cat %s; copiousoutput
+
+# PDF viewer
+application/pdf; open %s &
+
+# Images - open in default viewer
+image/jpeg; open %s &
+image/png; open %s &
+image/gif; open %s &
+image/webp; open %s &
+
+# Documents
+application/msword; open %s &
+application/vnd.openxmlformats-officedocument.wordprocessingml.document; open %s &
+application/vnd.ms-excel; open %s &
+application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; open %s &
+
+# ZIP archives - list contents
+application/zip; unzip -l %s; copiousoutput
+
+# Fallback for everything else
+application/*; open %s &
