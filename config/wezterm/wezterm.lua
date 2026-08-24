@@ -286,8 +286,9 @@ config.keys = {
 
   { key = '<', mods = mods, action = act.ActivateTabRelative(-1) },
   { key = '>', mods = mods, action = act.ActivateTabRelative(1) },
-  { key = '<', mods = mods2, action = act.SwitchWorkspaceRelative(-1) },
-  { key = '>', mods = mods2, action = act.SwitchWorkspaceRelative(1) },
+
+  { key = '{', mods = mods, action = act.SwitchWorkspaceRelative(-1) },
+  { key = '}', mods = mods, action = act.SwitchWorkspaceRelative(1) },
 
   -- adjust panes
   { key = 'h', mods = mods2, action = act.AdjustPaneSize { 'Left', 5 } },
