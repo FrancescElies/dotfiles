@@ -286,8 +286,10 @@ config.keys = {
   { key = 'o', mods = mods, action = act.ShowLauncherArgs { flags = 'FUZZY|WORKSPACES|DOMAINS|TABS' } }, -- [o]pen
   { key = 'p', mods = mods, action = open_project },
 
-  { key = '(', mods = mods, action = act.ActivateTabRelative(-1) },
-  { key = ')', mods = mods, action = act.ActivateTabRelative(1) },
+  -- { key = '(', mods = mods, action = act.ActivateTabRelative(-1) },
+  -- { key = ')', mods = mods, action = act.ActivateTabRelative(1) }, -- NOTE: not working on Windows, release event missing for <ctl-shift-0>/<ctl-)>
+  { key = '{', mods = mods, action = act.ActivateTabRelative(-1) },
+  { key = '}', mods = mods, action = act.ActivateTabRelative(1) },
 
   { key = '<', mods = mods, action = act.SwitchWorkspaceRelative(-1) },
   { key = '>', mods = mods, action = act.SwitchWorkspaceRelative(1) },
@@ -354,8 +356,8 @@ config.quick_select_patterns = {
   '[A-Z]+-\\d+',
 
   -- Version numbers (e.g., 1.2.3)
-  '\\d+\\.\\d+(?:\\.\\d+)?', '../[\\w/.-]+',
-
+  '\\d+\\.\\d+(?:\\.\\d+)?',
+  '../[\\w/.-]+',
 }
 
 -- wezterm events
