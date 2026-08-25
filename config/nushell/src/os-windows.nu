@@ -331,5 +331,7 @@ export module win {
     # sudo apt install pinentry-tty; sudo update-alternatives --config pinentry
     export def debian [] { run-external C:/WINDOWS/system32/wsl.exe '-d' Debian }
     export def ubuntu [] { run-external C:/WINDOWS/system32/wsl.exe '-d' Ubuntu }
+
+    export alias close-by-click = python ~/src/dotfiles/bin/windows-os/close-by-click.py
 }
 
