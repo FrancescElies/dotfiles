@@ -26,28 +26,6 @@ sudo dnf install neomutt msmtp
 sudo pacman -S neomutt msmtp
 ```
 
-### 2. Clone or Copy
-
-```bash
-# Clone (if on GitHub)
-git clone https://github.com/yourusername/neomutt-kickstart ~/.config/neomutt
-
-# Or manually copy files:
-mkdir -p ~/.config/neomutt
-cp muttrc ~/.config/neomutt/
-cp bindings ~/.config/neomutt/
-cp colors ~/.config/neomutt/
-```
-
-### 3. Configure Your Email
-
-Edit `~/.config/neomutt/muttrc` and update:
-
-```muttrc
-set realname = "Your Name"
-set from = "your.email@example.com"
-```
-
 ### 4. Set Up IMAP/SMTP
 
 #### Option A: Simple IMAP (Recommended for beginners)
