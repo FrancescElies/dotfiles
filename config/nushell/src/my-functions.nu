@@ -96,6 +96,10 @@ export def --env "goto" [path?: path@"nu-complete projects"] {
 
 export alias pipx = python ~/bin/pipx.pyz
 
+export def "my pull-push" [] {
+    [~/src/config.pi ~/src/kickstart.nvim ~/src/dotfiles ~/src/config.frida] | par-each { cd $in; git pull; git push | complete }
+}
+
 # list open listening ports
 export def "my open-ports" [] {
   match $nu.os-info.name {
