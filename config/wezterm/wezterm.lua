@@ -135,7 +135,7 @@ config.launch_menu = launch_menu
 
 -- Styling Inactive Panes
 config.inactive_pane_hsb = {
-  saturation = 0.5, -- smaller values can make it appear more washed out
+  saturation = 0.7, -- smaller values can make it appear more washed out
   brightness = 1., -- dims or increases the perceived amount of light
 }
 
@@ -208,7 +208,7 @@ local new_pane = wezterm.action_callback(function(window, pane)
   end
 end)
 
-local open_project = wezterm.action_callback(function(window, pane)
+local any_project_open = wezterm.action_callback(function(window, pane)
   local projects = {}
 
   for _, folder in ipairs(folders_to_search) do
@@ -271,20 +271,20 @@ config.keys = {
   { key = 'F10', mods = 'NONE', action = wezterm.action.ToggleAlwaysOnTop },
   { key = 'F11', mods = 'NONE', action = act.ToggleFullScreen },
 
-  { key = 's', mods = mods, action = act { SplitVertical = { domain = 'CurrentPaneDomain' } } },
+  { key = ':', mods = mods, action = act { SplitVertical = { domain = 'CurrentPaneDomain' } } },
   { key = '|', mods = mods, action = act { SplitHorizontal = { domain = 'CurrentPaneDomain' } } },
   { key = 'n', mods = mods, action = new_pane }, -- poor man's zellij New split pane
 
   { key = ' ', mods = mods, action = act.QuickSelect },
 
-  { key = 'a', mods = mods, action = act.ActivateCommandPalette }, -- [c]ommands
+  { key = 'p', mods = mods, action = act.ActivateCommandPalette }, -- [c]ommands
   { key = 'd', mods = mods, action = act.ShowDebugOverlay },
   { key = 'f', mods = mods, action = act.Search { CaseInSensitiveString = '' } }, -- [f]ind
   { key = 'r', mods = mods, action = act.RotatePanes 'Clockwise' }, -- [r]otate panes
   { key = 'u', mods = mods, action = act.CharSelect }, -- insert [u]nicode character, e.g. emoji
 
-  { key = 'o', mods = mods, action = act.ShowLauncherArgs { flags = 'FUZZY|WORKSPACES|DOMAINS|TABS' } }, -- [o]pen
-  { key = 'p', mods = mods, action = open_project },
+  { key = 'o', mods = mods, action = act.ShowLauncherArgs { flags = 'FUZZY|WORKSPACES|TABS' } }, -- [o]pen, DOMAINS|FUZZY|WORKSPACES|TABS
+  { key = 'a', mods = mods, action = any_project_open },
 
   -- { key = '(', mods = mods, action = act.ActivateTabRelative(-1) },
   -- { key = ')', mods = mods, action = act.ActivateTabRelative(1) }, -- NOTE: not working on Windows, release event missing for <ctl-shift-0>/<ctl-)>
@@ -294,7 +294,8 @@ config.keys = {
   { key = '<', mods = mods, action = act.SwitchWorkspaceRelative(-1) },
   { key = '>', mods = mods, action = act.SwitchWorkspaceRelative(1) },
 
-  -- adjust panes
+  -- Panes
+  { key = "s", mods = mods, action = act.PaneSelect },
   { key = 'h', mods = mods2, action = act.AdjustPaneSize { 'Left', 5 } },
   { key = 'j', mods = mods2, action = act.AdjustPaneSize { 'Down', 5 } },
   { key = 'k', mods = mods2, action = act.AdjustPaneSize { 'Up', 5 } },
