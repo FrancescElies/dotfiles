@@ -96,8 +96,11 @@ export def --env "goto" [path?: path@"nu-complete projects"] {
 
 export alias pipx = python ~/bin/pipx.pyz
 
-export def "my pull-push" [] {
-    [~/src/config.pi ~/src/kickstart.nvim ~/src/dotfiles ~/src/config.frida] | par-each { cd $in; git pull; git push | complete }
+export def "config pull-push" [] {
+    [~/src/config.pi ~/src/kickstart.nvim ~/src/dotfiles ~/src/config.frida] | each {
+      print $"(ansi pb)($in)(ansi reset)"
+      cd $in; git stash; git pull; git push; git stash pop | ignore; git status
+  }
 }
 
 # list open listening ports
