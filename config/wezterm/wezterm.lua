@@ -266,54 +266,46 @@ config.keys = {
 
   -- { key = '^',   mods = "NONE", action = act.SendKey { key = '6', mods = mods.shift_ctrl } },
 
-  -- Main bidings
-  { key = 'F9', mods = 'NONE', action = wezterm.action.ToggleAlwaysOnBottom },
-  { key = 'F10', mods = 'NONE', action = wezterm.action.ToggleAlwaysOnTop },
-  { key = 'F11', mods = 'NONE', action = act.ToggleFullScreen },
-
-  { key = ':', mods = mods, action = act { SplitVertical = { domain = 'CurrentPaneDomain' } } },
-  { key = '|', mods = mods, action = act { SplitHorizontal = { domain = 'CurrentPaneDomain' } } },
-  { key = 'n', mods = mods, action = new_pane }, -- poor man's zellij New split pane
-
-  { key = ' ', mods = mods, action = act.QuickSelect },
-
-  { key = 'p', mods = mods, action = act.ActivateCommandPalette }, -- [c]ommands
+  -- QWERT
+  { key = 'q', mods = mods, action = act.CloseCurrentPane { confirm = false } },
+  { key = 'e', mods = mods, action = edit_pane_in_nvim },
+  { key = 'r', mods = mods, action = act.RotatePanes 'Clockwise' }, -- [r]otate panes
+  -- ASDFG
+  { key = 's', mods = mods, action = act.PaneSelect },
   { key = 'd', mods = mods, action = act.ShowDebugOverlay },
   { key = 'f', mods = mods, action = act.Search { CaseInSensitiveString = '' } }, -- [f]ind
-  { key = 'r', mods = mods, action = act.RotatePanes 'Clockwise' }, -- [r]otate panes
+  -- ZXCVB
+  { key = 'v', mods = mods, action = act.PasteFrom 'Clipboard' },
+  { key = 'c', mods = mods, action = act.CopyTo 'ClipboardAndPrimarySelection' },
+  { key = 'b', mods = mods, action = break_to_new_tab },
+  -- POIUY
+  { key = 'p', mods = mods, action = act.ActivateCommandPalette },
+  { key = 'o', mods = mods, action = any_project_open },
+  -- { key = 'o', mods = mods, action = act.ShowLauncherArgs { flags = 'FUZZY|WORKSPACES|TABS' } }, 
   { key = 'u', mods = mods, action = act.CharSelect }, -- insert [u]nicode character, e.g. emoji
-
-  { key = 'o', mods = mods, action = act.ShowLauncherArgs { flags = 'FUZZY|WORKSPACES|TABS' } }, -- [o]pen, DOMAINS|FUZZY|WORKSPACES|TABS
-  { key = 'a', mods = mods, action = any_project_open },
-
-  -- { key = '(', mods = mods, action = act.ActivateTabRelative(-1) },
-  -- { key = ')', mods = mods, action = act.ActivateTabRelative(1) }, -- NOTE: not working on Windows, release event missing for <ctl-shift-0>/<ctl-)>
-  { key = '{', mods = mods, action = act.ActivateTabRelative(-1) },
-  { key = '}', mods = mods, action = act.ActivateTabRelative(1) },
-
-  { key = '<', mods = mods, action = act.SwitchWorkspaceRelative(-1) },
-  { key = '>', mods = mods, action = act.SwitchWorkspaceRelative(1) },
-
-  -- Panes
-  { key = "s", mods = mods, action = act.PaneSelect },
+  -- :LKJH
+  { key = ':', mods = mods, action = act { SplitVertical = { domain = 'CurrentPaneDomain' } } },
+  { key = '|', mods = mods, action = act { SplitHorizontal = { domain = 'CurrentPaneDomain' } } },
   { key = 'h', mods = mods2, action = act.AdjustPaneSize { 'Left', 5 } },
   { key = 'j', mods = mods2, action = act.AdjustPaneSize { 'Down', 5 } },
   { key = 'k', mods = mods2, action = act.AdjustPaneSize { 'Up', 5 } },
   { key = 'l', mods = mods2, action = act.AdjustPaneSize { 'Right', 5 } },
-
   { key = 'h', mods = mods, action = act.ActivatePaneDirection 'Left' },
   { key = 'j', mods = mods, action = act.ActivatePaneDirection 'Down' },
   { key = 'k', mods = mods, action = act.ActivatePaneDirection 'Up' },
   { key = 'l', mods = mods, action = act.ActivatePaneDirection 'Right' },
+  -- ?><MN
+  { key = 'n', mods = mods, action = new_pane }, -- poor man's zellij New split pane
+  -- other
+  { key = ' ', mods = mods, action = act.QuickSelect },
+  { key = 'F10', mods = 'NONE', action = wezterm.action.ToggleAlwaysOnTop },
+  { key = 'F11', mods = 'NONE', action = act.ToggleFullScreen },
+  { key = 'F9', mods = 'NONE', action = wezterm.action.ToggleAlwaysOnBottom },
+  { key = '<', mods = mods, action = act.SwitchWorkspaceRelative(-1) },
+  { key = '>', mods = mods, action = act.SwitchWorkspaceRelative(1) },
+  { key = '{', mods = mods, action = act.ActivateTabRelative(-1) },
+  { key = '}', mods = mods, action = act.ActivateTabRelative(1) },
 
-  { key = 'q', mods = mods, action = act.CloseCurrentPane { confirm = false } },
-
-  { key = 'b', mods = mods, action = break_to_new_tab },
-
-  { key = 'e', mods = mods, action = edit_pane_in_nvim },
-
-  { key = 'c', mods = mods, action = act.CopyTo 'ClipboardAndPrimarySelection' },
-  { key = 'v', mods = mods, action = act.PasteFrom 'Clipboard' },
 }
 
 config.switch_to_last_active_tab_when_closing_tab = true
