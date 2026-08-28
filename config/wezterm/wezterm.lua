@@ -281,7 +281,7 @@ config.keys = {
   -- POIUY
   { key = 'p', mods = mods, action = act.ActivateCommandPalette },
   { key = 'o', mods = mods, action = any_project_open },
-  -- { key = 'o', mods = mods, action = act.ShowLauncherArgs { flags = 'FUZZY|WORKSPACES|TABS' } }, 
+  -- { key = 'o', mods = mods, action = act.ShowLauncherArgs { flags = 'FUZZY|WORKSPACES|TABS' } },
   { key = 'u', mods = mods, action = act.CharSelect }, -- insert [u]nicode character, e.g. emoji
   -- :LKJH
   { key = ':', mods = mods, action = act { SplitVertical = { domain = 'CurrentPaneDomain' } } },
@@ -305,7 +305,6 @@ config.keys = {
   { key = '>', mods = mods, action = act.SwitchWorkspaceRelative(1) },
   { key = '{', mods = mods, action = act.ActivateTabRelative(-1) },
   { key = '}', mods = mods, action = act.ActivateTabRelative(1) },
-
 }
 
 config.switch_to_last_active_tab_when_closing_tab = true
