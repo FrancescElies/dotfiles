@@ -159,7 +159,7 @@ def "nu-complete git switch" [] {
   }
 }
 
-def "nu-complete git checkout" [context: string, position?:int] {
+export def "nu-complete git checkout" [context: string, position?:int] {
   use git-completion-utils *
   let preceding = $context | str substring ..$position
   # See what user typed before, like 'git checkout a-branch a-path'.
