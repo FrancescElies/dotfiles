@@ -1,13 +1,13 @@
 # https://github.com/nushell/nu_scripts/blob/main/modules/system/mod.nu
 
 # print a command name as dimmed and italic
-export def pretty-command [] {
+def pretty-command [] {
     let command = $in
     return $"(ansi default_dimmed)(ansi default_italic)($command)(ansi reset)"
 }
 
 # give a hint error when the clip command is not available on the system
-export def check-clipboard [
+def check-clipboard [
     clipboard: string  # the clipboard command name
     --system: string  # some information about the system running, for better error
 ] {
@@ -21,7 +21,42 @@ export def check-clipboard [
     }
 }
 
-# put the end of a pipe into the system clipboard to copy contents
+# put the end of a pipe into the system clipboard.
+#
+# Dependencies:
+#   - xclip on linux x11
+#   - wl-copy on linux wayland
+#   - clip.exe on windows
+#   - termux-api on termux
+#
+# Examples:
+#     put a simple string to the clipboard, will be stripped to remove ANSI sequences
+#     >_ "my wonderful string" | clip
+#     my wonderful string
+#     saved to clipboard (stripped)
+#
+#     put a whole table to the clipboard
+#     >_ ls *.toml | clip
+#     ╭───┬─────────────────────┬──────┬────────┬───────────────╮
+#     │ # │        name         │ type │  size  │   modified    │
+#     ├───┼─────────────────────┼──────┼────────┼───────────────┤
+#     │ 0 │ Cargo.toml          │ file │ 5.0 KB │ 3 minutes ago │
+#     │ 1 │ Cross.toml          │ file │  363 B │ 2 weeks ago   │
+#     │ 2 │ rust-toolchain.toml │ file │ 1.1 KB │ 2 weeks ago   │
+#     ╰───┴─────────────────────┴──────┴────────┴───────────────╯
+#
+#     saved to clipboard
+#
+#     put huge structured data in the clipboard, but silently
+#     >_ open Cargo.toml --raw | from toml | clip --silent
+#
+#     when the clipboard system command is not installed
+#     >_ "mm this is fishy..." | clip
+#     Error:
+#       × clipboard_not_found:
+#       │     you are using xorg on linux
+#       │     but
+#       │     the xclip clipboard command was not found on your system.
 export def clip [
     --silent # do not print the content of the clipboard to the standard output
     --no-notify  # do not throw a notification (only on linux)
@@ -80,3 +115,4 @@ export def clip [
         notify-send "std clip" "saved to clipboard"
     }
 }
+
