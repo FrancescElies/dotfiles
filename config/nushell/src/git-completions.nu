@@ -98,11 +98,13 @@ module git-completion-utils {
 }
 
 def "nu-complete git available upstream" [] {
-  ^git branch --no-color -a | lines | each { |line| $line | str replace '* ' "" | str trim }
+  ^git for-each-ref --format '%(refname:short)' refs/heads refs/remotes | lines
 }
 
 def "nu-complete git remotes" [] {
-  ^git remote | lines | each { |line| $line | str trim }
+  ^git remote --verbose
+  | parse --regex '(?<value>\S+)\s+(?<description>\S+)'
+  | uniq-by value # Deduplicate where fetch and push remotes are the same
 }
 
 def "nu-complete git log" [] {
@@ -122,12 +124,12 @@ def "nu-complete git commits current branch" [] {
 
 # Yield local branches like `main`, `feature/typo_fix`
 def "nu-complete git local branches" [] {
-  ^git branch --no-color | lines | each { |line| $line | str replace '* ' "" | str replace '+ ' ""  | str trim }
+  ^git for-each-ref --format '%(refname:short)' refs/heads | lines
 }
 
 # Yield remote branches like `origin/main`, `upstream/feature-a`
 def "nu-complete git remote branches with prefix" [] {
-  ^git branch --no-color -r | lines | parse -r '^\*?(\s*|\s*\S* -> )(?P<branch>\S*$)' | get branch | uniq
+  ^git for-each-ref --format='%(refname:lstrip=2)' refs/remotes | lines
 }
 
 # Yield local and remote branch names which can be passed to `git merge`
@@ -157,7 +159,7 @@ def "nu-complete git switch" [] {
   }
 }
 
-export def "nu-complete git checkout" [context: string, position?:int] {
+def "nu-complete git checkout" [context: string, position?:int] {
   use git-completion-utils *
   let preceding = $context | str substring ..$position
   # See what user typed before, like 'git checkout a-branch a-path'.
@@ -176,7 +178,10 @@ export def "nu-complete git checkout" [context: string, position?:int] {
   }
   # Already typed first argument.
   if ($prev_tokens | length) > 2 and $preceding ends-with ' ' {
-    return (get-checkoutable-files)
+    # If we are creating a new branch, we may want to specify a start point
+    if ("-b" not-in $prev_tokens) and ("-B" not-in $prev_tokens) and ("--orphan" not-in $prev_tokens) {
+      return (get-checkoutable-files)
+    }
   }
   # The first argument can be local branches, remote branches, files and commits
   # Get local and remote branches
@@ -226,17 +231,18 @@ const short_status_descriptions = {
   "UU": "Both modified (in merge conflict)"
 }
 
-def "nu-complete git files" [] {
+def "nu-complete git files" [path?: string] {
   let relevant_statuses = ["?",".M", "MM", "MD", ".D", "UU"]
-  ^git status -uall --porcelain=2
+  ^git status -uall --porcelain=2 (if ($path | describe) == 'string' and ($path | str length) != 0 { $"($path)" } else { "." } )
   | lines
+  | first 300             # limit the number of data for performance
   | each { |$it|
     if $it starts-with "1 " {
-      $it | parse --regex "1 (?P<short_status>\\S+) (?:\\S+\\s?){6} (?P<value>\\S+)"
+      $it | parse --regex "1 (?P<short_status>\\S+) (?:\\S+\\s?){6} (?P<value>.+)"
     } else if $it starts-with "2 " {
-      $it | parse --regex "2 (?P<short_status>\\S+) (?:\\S+\\s?){6} (?P<value>\\S+)"
+      $it | parse --regex "2 (?P<short_status>\\S+) (?:\\S+\\s?){6} (?P<value>.+)"
     } else if $it starts-with "u " {
-      $it | parse --regex "u (?P<short_status>\\S+) (?:\\S+\\s?){8} (?P<value>\\S+)"
+      $it | parse --regex "u (?P<short_status>\\S+) (?:\\S+\\s?){8} (?P<value>.+)"
     } else if $it starts-with "? " {
       $it | parse --regex "(?P<short_status>.{1}) (?P<value>.+)"
     } else {
@@ -245,6 +251,7 @@ def "nu-complete git files" [] {
   }
   | flatten
   | where $it.short_status in $relevant_statuses
+  | update value { |row| if ($row.value | str contains " ") { $"`($row.value)`" } else { $row.value } }
   | insert "description" { |e| $short_status_descriptions | get $e.short_status}
 }
 
@@ -256,21 +263,34 @@ def "nu-complete git refs" [] {
   nu-complete git local branches
   | parse "{value}"
   | insert description Branch
+  | append (nu-complete git remotes | parse '{value}' | insert description 'Remote branch')
   | append (nu-complete git tags | parse "{value}" | insert description Tag)
   | append (nu-complete git built-in-refs)
 }
 
 def "nu-complete git files-or-refs" [] {
-  nu-complete git local branches
-  | parse "{value}"
-  | insert description Branch
-  | append (nu-complete git files | where description == "Modified" | select value)
-  | append (nu-complete git tags | parse "{value}" | insert description Tag)
-  | append (nu-complete git built-in-refs)
+  {
+    options: { sort: false },
+    completions: (
+      nu-complete git files | where description == "Modified" | select value description
+      | append (nu-complete git local branches | parse '{value}' | insert description 'Local branch')
+      | append (nu-complete git built-in-refs | parse '{value}' | insert description 'Built-in Refs')
+      | append (nu-complete git tags | parse '{value}' | insert description Tag)
+      | append (nu-complete git remotes | get 'value' | parse '{value}' | insert description 'Remote branch')
+    )
+  }
+}
+
+def "nu-complete git aliases" [] {
+  ^git config --get-regexp ^alias\.
+  | lines
+  | parse "alias.{value} {description}"
 }
 
 def "nu-complete git subcommands" [] {
   ^git help -a | lines | where $it starts-with "   " | parse -r '\s*(?P<value>[^ ]+) \s*(?P<description>\w.*)'
+  | append (nu-complete git aliases)
+  | uniq-by value
 }
 
 def "nu-complete git add" [] {
@@ -380,29 +400,43 @@ export extern "git fetch" [
   -6                                            # Use IPv6 addresses, ignore IPv4 addresses
 ]
 
-def "nu-complete git show format" [] { [oneline short medium full fuller reference email raw] }
+# Yield local branches and (if remote is specified) remote branches with colon prefix
+def "nu-complete git push" [context: string, position: int] {
+  use git-completion-utils *
+  let preceding = $context | str substring ..$position
+  let tokens = $preceding | str trim | args-split | where ($it not-in $GIT_SKIPABLE_FLAGS)
 
-# show various type of objects
-export extern "git show" [
-    commit?: string@"nu-complete git commits all" # The commit ID to be cherry-picked
-    --pretty: string
-    --format:string@"nu-complete git show format" # one of oneline, short, medium, full, fuller, reference, email, raw, format:<string> and tformat:<string>.
-    --abbrev-commit                               # show a prefix that names the object uniquely. shorter than the full 40-byte hexadecimal commit object name,
-    --no-abbrev-commit                            # show the full 40-byte hexadecimal commit object name.
-    --oneline                                     # shorthand for "--pretty=oneline --abbrev-commit"
-    --encoding: string                            # re-code the commit log message in the preferred encoding
-    --expand-tabs: int = 4                        # perform a tab expansion (replace each tab with enough spaces to fill to the next display column)
-    --no-expand-tabs
-    --notes: string                               # show the notes (see git-notes(1))
-    --no-notes
-    --show-notes-by-default                       # show the default notes unless options for displaying specific notes are given.
-    --show-signature                              # check the validity of a signed commit object
-]
+  # Check if we have a remote argument (2nd token, 1st is 'git', 2nd is 'push', 3rd is remote)
+  # BUT, args-split might be different depending on how it's called.
+  # "git push origin" -> ["git", "push", "origin"]
+  # If we have at least 3 tokens, the 3rd one IS likely the remote.
+  # We should double check if the 3rd token is actually a remote.
+
+  mut remote = ""
+  if ($tokens | length) >= 3 {
+    $remote = $tokens.2
+  }
+
+  let local_branches = (nu-complete git local branches)
+
+  if ($remote | is-empty) {
+    return $local_branches
+  }
+
+  # If we have a remote, find branches for that remote
+  # Use plumbing command to get remote branches, excluding HEAD
+  let remote_branches = (^git for-each-ref --format='%(refname:lstrip=3)' $'refs/remotes/($remote)' | lines | where $it != 'HEAD')
+
+  # Prefix them with :
+  let deletion_candidates = ($remote_branches | each { |it| $":($it)" })
+
+  $local_branches | append $deletion_candidates
+}
 
 # Push changes
 export extern "git push" [
   remote?: string@"nu-complete git remotes",         # the name of the remote
-  ...refs: string@"nu-complete git local branches"   # the branch / refspec
+  ...refs: string@"nu-complete git push"             # the branch / refspec
   --all                                              # push all refs
   --atomic                                           # request atomic transaction on remote side
   --delete(-d)                                       # delete refs
@@ -486,6 +520,7 @@ export extern "git pull" [
 # Switch between branches and commits
 export extern "git switch" [
   switch?: string@"nu-complete git switch"        # name of branch to switch to
+  start_point?: string@"nu-complete git rebase"   # name of the start point
   --create(-c)                                    # create a new branch
   --detach(-d): string@"nu-complete git log"      # switch to a commit in a detached state
   --force-create(-C): string                      # forces creation of new branch, if it exists then the existing branch will be reset to starting point
@@ -502,6 +537,14 @@ export extern "git switch" [
   --quiet(-q)                                     # suppress feedback messages
   --recurse-submodules                            # update the contents of sub-modules
   --track(-t)                                     # set "upstream" configuration
+]
+
+# Find commits yet to be applied to upstream
+export extern "git cherry" [
+  upstream?: string@"nu-complete git mergable sources"  # Upstream branch to search for equivalent commits. Defaults to the upstream branch of HEAD.
+  head?: string@"nu-complete git mergable sources"      # Working branch; defaults to HEAD.
+  limit?: string                                        # Do not report commits up to (and including) limit.
+  --verbose(-v)                                         # Show the commit subjects next to the SHA1s.
 ]
 
 # Apply the change introduced by an existing commit
@@ -537,7 +580,6 @@ export extern "git merge" [
   --no-commit(-n)                                            # Apply changes without making any commit
   --signoff                                                  # Add Signed-off-by line to the commit message
   --ff                                                       # Fast-forward if possible
-  --squash
   --continue                                                 # Continue after resolving a conflict
   --abort                                                    # Abort resolving conflict and go back to original state
   --quit                                                     # Forget about the current merge in progress
@@ -549,27 +591,56 @@ export extern "git merge" [
 
 # List or change branches
 export extern "git branch" [
-  branch?: string@"nu-complete git local branches"               # name of branch to operate on
+  ...branch: string@"nu-complete git local branches"             # name of branch (or branches) to operate on
   --abbrev                                                       # use short commit hash prefixes
   --edit-description                                             # open editor to edit branch description
   --merged                                                       # list reachable branches
   --no-merged                                                    # list unreachable branches
   --set-upstream-to: string@"nu-complete git available upstream" # set upstream for branch
   --unset-upstream                                               # remote upstream for branch
-  --all                                                          # list both remote and local branches
-  --copy                                                         # copy branch together with config and reflog
+  --all(-a)                                                      # list both remote and local branches
+  --copy(-c)                                                     # copy branch together with config and reflog
   --format                                                       # specify format for listing branches
-  --move                                                         # rename branch
+  --move(-m)                                                     # rename branch
   --points-at                                                    # list branches that point at an object
   --show-current                                                 # print the name of the current branch
-  --verbose                                                      # show commit and upstream for each branch
+  --verbose(-v)                                                  # show commit and upstream for each branch
   --color                                                        # use color in output
-  --quiet                                                        # suppress messages except errors
+  --quiet(-q)                                                    # suppress messages except errors
   --delete(-d)                                                   # delete branch
-  --list                                                         # list branches
+  -D                                                             # force delete branch
+  --list(-l)                                                     # list branches
   --contains: string@"nu-complete git commits all"               # show only branches that contain the specified commit
   --no-contains                                                  # show only branches that don't contain specified commit
   --track(-t)                                                    # when creating a branch, set upstream
+]
+
+# List all variables set in config file, along with their values.
+export extern "git config list" [
+]
+
+# Emits the value of the specified key.
+export extern "git config get" [
+]
+
+# Set value for one or more config options.
+export extern "git config set" [
+]
+
+# Unset value for one or more config options.
+export extern "git config unset" [
+]
+
+# Rename the given section to a new name.
+export extern "git config rename-section" [
+]
+
+# Remove the given section from the configuration file.
+export extern "git config remove-section" [
+]
+
+# Opens an editor to modify the specified config file
+export extern "git config edit" [
 ]
 
 # List or change tracked repositories
@@ -777,7 +848,7 @@ export extern "git worktree" [
 # create a new working tree
 export extern "git worktree add" [
   path: path            # directory to clone the branch
-  branch: string@"nu-complete git available upstream" # Branch to clone
+  branch?: string@"nu-complete git available upstream" # Branch to clone
   --help(-h)            # display the help message for this command
   --force(-f)           # checkout <branch> even if already checked out in other worktree
   -b                    # create a new branch
