@@ -1,0 +1,18 @@
+[theme]
+name = "catppuccin-latte"
+
+[keys]
+prefix = "ctrl+a"
+# cycle between agent sessions
+next_agent = "ctrl+alt+n"
+previous_agent = "ctrl+alt+p"
+# prefix+up/down switch workspaces
+previous_workspace = "prefix+up"
+next_workspace = "prefix+down"
+# line-by-line scrollback / copy mode
+copy_mode = "prefix+["
+
+mouse_capture = false
+
+[ui.sound]
+enabled = false

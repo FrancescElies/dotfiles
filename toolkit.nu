@@ -455,10 +455,13 @@ export def "config neomutt" [] {
         "windows" => 'TODO' ,
         _ => "~/.config/neomutt" ,
     }
-    if not ($config_dir | path exists) { mkdir $config_dir }
     symlink --force ~/src/dotfiles/config/neomutt $config_dir
 }
 
+export def "config herdr" [] {
+    let config_dir = "~/.config/herdr"
+    symlink --force ~/src/dotfiles/config/herdr $config_dir
+}
 
 export def bootstrap [] {
     mkdir ~/bin
@@ -475,6 +478,7 @@ export def bootstrap [] {
     config bacon
     config aerc
     config neomutt
+    config herdr
     config meli
     config radare2
     config psql
