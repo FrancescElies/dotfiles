@@ -351,6 +351,19 @@ config.quick_select_patterns = {
   -- Version numbers (e.g., 1.2.3)
   '\\d+\\.\\d+(?:\\.\\d+)?',
   '../[\\w/.-]+',
+
+   -- Hex values, 0x followed by hex digits
+   "0[xX]%x+",
+
+   -- Git hash, min 7
+   -- "%f[%w]%x%x%x%x%x%x%x+%f[%W]"
+   "[0-9a-fA-F]{7,40}",
+
+  -- kebab-words, e.g. my-new-branch
+  "[a-zA-Z0-9]+(?:-[a-zA-Z0-9]+)+",
+
+  -- shell parameters, e.g --disk-usage
+  "--[\\w/.-]+",
 }
 
 -- wezterm events
