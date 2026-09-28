@@ -373,29 +373,6 @@ do
 
     return title
   end)
-
-  wezterm.on('gui-startup', function(cmd)
-    -- https://wezterm.org/config/lua/gui-events/gui-startup.html
-    local tab, pane, window = mux.spawn_window(cmd or {})
-    window:gui_window():maximize()
-
-    -- allow `wezterm start -- something` to affect what we spawn in our initial window
-    local args = {}
-    if cmd then
-      args = cmd.args
-    end
-
-    -- dotfiles workspace
-    local project_dir = wezterm.home_dir .. 'src/dotfiles'
-    local tab, pane, window = mux.spawn_window {
-      workspace = 'dotfiles',
-      cwd = project_dir,
-      args = args,
-    }
-    pane:send_text 'nvim\n'
-
-    mux.set_active_workspace 'dotfiles'
-  end)
 end
 
 return config
