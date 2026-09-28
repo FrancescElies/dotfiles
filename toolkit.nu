@@ -359,6 +359,7 @@ export def "config git" [] {
   # ^git maintenance start
 
   # https://jvns.ca/blog/2024/02/16/popular-git-config-options/#help-autocorrect-10
+  ^git config --global tag.sort -version:refname
   ^git config --global branch.sort -committerdate
   ^git config --global diff.algorithm histogram
   ^git config --global fetch.prune true
