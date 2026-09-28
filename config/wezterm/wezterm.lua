@@ -297,6 +297,7 @@ config.keys = {
   -- ?><MN
   { key = 'n', mods = mods, action = new_pane }, -- poor man's zellij New split pane
   -- other
+  { key = 'x', mods = mods, action = act.ClearScrollback 'ScrollbackOnly' },
   { key = ' ', mods = mods, action = act.QuickSelect },
   { key = 'y', mods = mods, action = act.ActivateCopyMode }, -- yank/copy mode
   { key = 'F10', mods = 'NONE', action = wezterm.action.ToggleAlwaysOnTop },
