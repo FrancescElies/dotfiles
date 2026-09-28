@@ -298,6 +298,7 @@ config.keys = {
   { key = 'n', mods = mods, action = new_pane }, -- poor man's zellij New split pane
   -- other
   { key = ' ', mods = mods, action = act.QuickSelect },
+  { key = 'y', mods = mods, action = act.ActivateCopyMode }, -- yank/copy mode
   { key = 'F10', mods = 'NONE', action = wezterm.action.ToggleAlwaysOnTop },
   { key = 'F11', mods = 'NONE', action = act.ToggleFullScreen },
   { key = 'F9', mods = 'NONE', action = wezterm.action.ToggleAlwaysOnBottom },
