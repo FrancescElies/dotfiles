@@ -1,0 +1,16 @@
+# podman build -t r2 .
+# podman run --rm -it r2
+# podman images
+# podman ps -a
+# podman search debian
+
+FROM debian:stable-slim
+
+RUN apt-get update && \
+apt-get install -y --no-install-recommends git bash fd-find ripgrep bat fzf build-essential ca-certificates && \
+rm -rf /var/lib/apt/lists/*
+
+RUN git clone --depth 1 https://github.com/radareorg/radare2 /tmp/radare2 && \
+/tmp/radare2/sys/install.sh
+
+# CMD ["r2", "-v"]

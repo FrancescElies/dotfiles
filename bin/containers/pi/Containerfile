@@ -1,0 +1,36 @@
+# NOTE: build this file
+#
+# >  podman build -t pi-sandbox .
+
+# Running it
+#
+
+# The -v "$PWD:/workspace" mounts your current directory into the container at
+# /workspace such that reads and writes in /workspace inside the sandbox directly
+# affect your host files
+
+# Use a named volume for /root/.pi/agent if you want container-local settings
+# and sessions.
+# > podman run --rm -it -e ANTHROPIC_API_KEY -v "$PWD:/workspace" -v pi-agent-home:/root/.pi/agent pi-sandbox
+#
+# Mounting your host ~/.pi/agent exposes host auth and session files to the container.
+# > podman run --rm -it -v "$PWD:/workspace" -v ~/.pi/agent:/root/.pi/agent pi-sandbox
+# > podman run --rm -it -v $"(pwd):/workspace" -v $"('~/.pi/agent' | path expand):/root/.pi/agent" pi-sandbox
+
+FROM rust:slim AS build
+RUN cargo install --git https://github.com/rtk-ai/rtk --tag v0.50.0 \
+  && rtk init -g --agent pi
+
+FROM node:24-bookworm-slim
+
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends bash ca-certificates git fd-find bat fzf ripgrep \
+  && rm -rf /var/lib/apt/lists/*
+
+COPY --from=build /usr/local/cargo/bin/ /usr/local/bin/
+
+RUN npm install -g --ignore-scripts @earendil-works/pi-coding-agent
+
+WORKDIR /workspace
+ENTRYPOINT ["pi"]
+
