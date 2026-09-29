@@ -13,4 +13,5 @@ rm -rf /var/lib/apt/lists/*
 RUN git clone --depth 1 https://github.com/radareorg/radare2 /tmp/radare2 && \
 /tmp/radare2/sys/install.sh
 
+WORKDIR /workspace
 # CMD ["r2", "-v"]

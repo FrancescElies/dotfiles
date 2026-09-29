@@ -435,6 +435,10 @@ export def --wrapped pi-sandbox [...args] {
     podman run --rm -it -v $"(pwd):/workspace" -v $"('~/.pi/agent' | path expand):/root/.pi/agent" ...$args pi-sandbox
 }
 
+export def --wrapped r2-sandbox [...args] {
+    podman run --rm -it -v $"(pwd):/workspace" -v $"('~/src/dotfiles/config/.radare2rc' | path expand):/root/.radare2rc" ...$args r2
+}
+
 export def nato-alphabet [] {
     let letters = [
       [char code-word ];
@@ -503,6 +507,8 @@ export def --env pidocs [] {
     nvim -c $'cd ($docs)' -c 'e index.md'
 }
 
+export def podman-rebuild-r2 [] { cd bin\containers\r2-sandox; podman build -t r2-sandbox . }
+export def podman-rebuild-pi [] { cd bin\containers\pi-sandox; podman build -t pi-sandbox . }
 
 export alias ado-pr-reply = python ~/src/dotfiles/bin/ado-pr-reply.py
 export alias compile-commands = python ~/src/dotfiles/bin/compile-commands.py
