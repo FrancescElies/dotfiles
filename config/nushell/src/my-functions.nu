@@ -431,8 +431,8 @@ export module "my" {
 
 }
 
-export def pi-docker [] {
-    docker run --rm -it -v $"(pwd):/workspace" -v $"('~/.pi/agent' | path expand):/root/.pi/agent" pi-sandbox
+export def --wrapped pi-sandbox [...args] {
+    podman run --rm -it -v $"(pwd):/workspace" -v $"('~/.pi/agent' | path expand):/root/.pi/agent" ...$args pi-sandbox
 }
 
 export def nato-alphabet [] {
