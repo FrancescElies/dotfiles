@@ -303,10 +303,10 @@ config.keys = {
   { key = 'F10', mods = 'NONE', action = wezterm.action.ToggleAlwaysOnTop },
   { key = 'F11', mods = 'NONE', action = act.ToggleFullScreen },
   { key = 'F9', mods = 'NONE', action = wezterm.action.ToggleAlwaysOnBottom },
-  { key = '<', mods = mods, action = act.SwitchWorkspaceRelative(-1) },
-  { key = '>', mods = mods, action = act.SwitchWorkspaceRelative(1) },
-  { key = '{', mods = mods, action = act.ActivateTabRelative(-1) },
-  { key = '}', mods = mods, action = act.ActivateTabRelative(1) },
+  { key = '<', mods = mods, action = act.ActivateTabRelative(-1) },
+  { key = '>', mods = mods, action = act.ActivateTabRelative(1) },
+  { key = '<', mods = mods2, action = act.SwitchWorkspaceRelative(-1) },
+  { key = '>', mods = mods2, action = act.SwitchWorkspaceRelative(1) },
 }
 
 config.switch_to_last_active_tab_when_closing_tab = true
