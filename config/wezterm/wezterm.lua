@@ -268,6 +268,7 @@ config.keys = {
 
   -- QWERT
   { key = 'q', mods = mods, action = act.CloseCurrentPane { confirm = false } },
+  { key = 'w', mods = mods, action = act.ShowLauncherArgs { flags = 'FUZZY|WORKSPACES|TABS' } },
   { key = 'r', mods = mods, action = act.RotatePanes 'Clockwise' }, -- [r]otate panes
   -- ASDFG
   { key = 's', mods = mods, action = act.PaneSelect }, -- [s]witch to pane
@@ -281,7 +282,6 @@ config.keys = {
   -- POIUY
   { key = 'p', mods = mods, action = act.ActivateCommandPalette },
   { key = 'o', mods = mods, action = any_project_open },
-  -- { key = 'o', mods = mods, action = act.ShowLauncherArgs { flags = 'FUZZY|WORKSPACES|TABS' } },
   { key = 'u', mods = mods, action = act.CharSelect }, -- insert [u]nicode character, e.g. emoji
   -- :LKJH
   { key = ':', mods = mods, action = act { SplitVertical = { domain = 'CurrentPaneDomain' } } },
