@@ -268,12 +268,12 @@ config.keys = {
 
   -- QWERT
   { key = 'q', mods = mods, action = act.CloseCurrentPane { confirm = false } },
-  { key = 'e', mods = mods, action = edit_pane_in_nvim },
   { key = 'r', mods = mods, action = act.RotatePanes 'Clockwise' }, -- [r]otate panes
   -- ASDFG
   { key = 's', mods = mods, action = act.PaneSelect }, -- [s]witch to pane
   { key = 'd', mods = mods, action = act.ShowDebugOverlay },
   { key = 'f', mods = mods, action = act.Search { CaseInSensitiveString = '' } }, -- [f]ind
+  { key = 'g', mods = mods, action = edit_pane_in_nvim }, -- <c-g> pi has same `go to vim` keybind
   -- ZXCVB
   { key = 'v', mods = mods, action = act.PasteFrom 'Clipboard' },
   { key = 'c', mods = mods, action = act.CopyTo 'ClipboardAndPrimarySelection' },
