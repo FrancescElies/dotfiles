@@ -93,6 +93,7 @@ if platform.is_win then
   folders_to_search = {
     home .. '/src',
     home .. '/src/oss',
+    '/s/',
     '/s/eklang-wt/',
     '/s/customerprj/',
   }
