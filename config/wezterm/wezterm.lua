@@ -117,7 +117,7 @@ if platform.is_win then
     { label = 'Command Prompt', args = { 'cmd' } },
     {
       label = 'Visual Studio Prompt',
-      args = { 'cmd', ' /k', '"c:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\Common7\\Tools\\VsDevCmd.bat"' },
+      args = { 'cmd', ' /k', 'c:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\Common7\\Tools\\VsDevCmd.bat' },
     },
     { label = 'Nushell', args = { nushell } },
   }
