@@ -198,17 +198,6 @@ local edit_pane_in_nvim = wezterm.action_callback(function(window, pane)
   os.remove(name)
 end)
 
-local automatic_new_pane = wezterm.action_callback(function(window, pane)
-  wezterm.log_info { window, pane }
-  local tab = window:active_tab(window)
-  local num_panes = #tab:panes_with_info()
-  if num_panes == 1 then
-    pane:split { direction = 'Right' }
-  else
-    pane:split { direction = 'Bottom' }
-  end
-end)
-
 local any_project_open = wezterm.action_callback(function(window, pane)
   local projects = {}
 
@@ -301,7 +290,6 @@ config.keys = {
   { key = 'k', mods = mods, action = act.ActivatePaneDirection 'Up' },
   { key = 'l', mods = mods, action = act.ActivatePaneDirection 'Right' },
   -- ?><MN
-  { key = 'm', mods = mods, action = automatic_new_pane }, -- autoMatic poor man's zellij New split pane
   { key = 'n', mods = mods, action = act { SplitVertical = { domain = 'CurrentPaneDomain' } } },
   { key = 'n', mods = mods2, action = act { SplitHorizontal = { domain = 'CurrentPaneDomain' } } },
   -- other
