@@ -258,7 +258,8 @@ config.keys = {
   { key = 'q', mods = mods, action = act.CloseCurrentPane { confirm = false } },
   { key = 'r', mods = mods, action = act.RotatePanes 'Clockwise' }, -- [r]otate panes
   -- ASDFG
-  { key = 's', mods = mods, action = act.PaneSelect }, -- [s]witch to pane
+  { key = 's', mods = mods, action = act.PaneSelect { mode = 'SwapWithActive' } },
+  { key = 's', mods = mods2, action = act.PaneSelect { mode = 'SwapWithActiveKeepFocus' } },
   { key = 'd', mods = mods, action = act.ShowDebugOverlay },
   { key = 'f', mods = mods, action = act.Search { CaseInSensitiveString = '' } }, -- [f]ind
   { key = 'g', mods = mods, action = edit_pane_in_nvim }, -- <c-g> pi has same `go to vim` keybind
