@@ -198,7 +198,7 @@ local edit_pane_in_nvim = wezterm.action_callback(function(window, pane)
   os.remove(name)
 end)
 
-local new_pane = wezterm.action_callback(function(window, pane)
+local automatic_new_pane = wezterm.action_callback(function(window, pane)
   wezterm.log_info { window, pane }
   local tab = window:active_tab(window)
   local num_panes = #tab:panes_with_info()
@@ -285,8 +285,6 @@ config.keys = {
   { key = 'o', mods = mods, action = any_project_open },
   { key = 'u', mods = mods, action = act.CharSelect }, -- insert [u]nicode character, e.g. emoji
   -- :LKJH
-  { key = ':', mods = mods, action = act { SplitVertical = { domain = 'CurrentPaneDomain' } } },
-  { key = '|', mods = mods, action = act { SplitHorizontal = { domain = 'CurrentPaneDomain' } } },
   { key = 'h', mods = mods2, action = act.AdjustPaneSize { 'Left', 5 } },
   { key = 'j', mods = mods2, action = act.AdjustPaneSize { 'Down', 5 } },
   { key = 'k', mods = mods2, action = act.AdjustPaneSize { 'Up', 5 } },
@@ -296,7 +294,9 @@ config.keys = {
   { key = 'k', mods = mods, action = act.ActivatePaneDirection 'Up' },
   { key = 'l', mods = mods, action = act.ActivatePaneDirection 'Right' },
   -- ?><MN
-  { key = 'n', mods = mods, action = new_pane }, -- poor man's zellij New split pane
+  { key = 'm', mods = mods, action = automatic_new_pane }, -- autoMatic poor man's zellij New split pane
+  { key = 'n', mods = mods, action = act { SplitVertical = { domain = 'CurrentPaneDomain' } } },
+  { key = 'n', mods = mods2, action = act { SplitHorizontal = { domain = 'CurrentPaneDomain' } } },
   -- other
   { key = 'x', mods = mods, action = act.ClearScrollback 'ScrollbackOnly' },
   { key = ' ', mods = mods, action = act.QuickSelect },
