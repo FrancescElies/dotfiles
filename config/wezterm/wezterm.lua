@@ -269,7 +269,6 @@ config.keys = {
 
   -- QWERT
   { key = 'q', mods = mods, action = act.CloseCurrentPane { confirm = false } },
-  { key = 'w', mods = mods, action = act.ShowLauncherArgs { flags = 'FUZZY|WORKSPACES|TABS' } },
   { key = 'r', mods = mods, action = act.RotatePanes 'Clockwise' }, -- [r]otate panes
   -- ASDFG
   { key = 's', mods = mods, action = act.PaneSelect }, -- [s]witch to pane
@@ -281,8 +280,16 @@ config.keys = {
   { key = 'c', mods = mods, action = act.CopyTo 'ClipboardAndPrimarySelection' },
   { key = 'b', mods = mods, action = break_to_new_tab },
   -- POIUY
-  { key = 'p', mods = mods, action = act.ActivateCommandPalette },
-  { key = 'o', mods = mods, action = any_project_open },
+  { key = ':', mods = mods, action = act.ActivateCommandPalette }, -- mnemonic vim's `:` for command-line mode
+  { key = 'o', mods = mods, action = act.ShowLauncherArgs { flags = 'FUZZY|WORKSPACES|TABS|DOMAINS|LAUNCH_MENU_ITEMS' } },
+  -- [o] Open ShowLauncherArgs:
+  -- "TABS" - include the list of tabs from the current window
+  -- "LAUNCH_MENU_ITEMS" - include the launch_menu items
+  -- "DOMAINS" - include multiplexing domains
+  -- "KEY_ASSIGNMENTS" - include items taken from your key assignments
+  -- "WORKSPACES" - include workspaces
+  -- "COMMANDS" - include a number of default commands
+  { key = 'p', mods = mods, action = any_project_open },
   { key = 'u', mods = mods, action = act.CharSelect }, -- insert [u]nicode character, e.g. emoji
   -- :LKJH
   { key = 'h', mods = mods2, action = act.AdjustPaneSize { 'Left', 5 } },
@@ -354,18 +361,18 @@ config.quick_select_patterns = {
   '\\d+\\.\\d+(?:\\.\\d+)?',
   '../[\\w/.-]+',
 
-   -- Hex values, 0x followed by hex digits
-   "0[xX]%x+",
+  -- Hex values, 0x followed by hex digits
+  '0[xX]%x+',
 
-   -- Git hash, min 7
-   -- "%f[%w]%x%x%x%x%x%x%x+%f[%W]"
-   "[0-9a-fA-F]{7,40}",
+  -- Git hash, min 7
+  -- "%f[%w]%x%x%x%x%x%x%x+%f[%W]"
+  '[0-9a-fA-F]{7,40}',
 
   -- kebab-words, e.g. my-new-branch
-  "[a-zA-Z0-9]+(?:-[a-zA-Z0-9]+)+",
+  '[a-zA-Z0-9]+(?:-[a-zA-Z0-9]+)+',
 
   -- shell parameters, e.g --disk-usage
-  "--[\\w/.-]+",
+  '--[\\w/.-]+',
 }
 
 -- wezterm events
