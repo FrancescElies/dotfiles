@@ -305,7 +305,7 @@ config.keys = {
   { key = 'n', mods = mods, action = act { SplitVertical = { domain = 'CurrentPaneDomain' } } },
   { key = 'n', mods = mods2, action = act { SplitHorizontal = { domain = 'CurrentPaneDomain' } } },
   -- other
-  { key = 'x', mods = mods, action = act.ClearScrollback 'ScrollbackOnly' },
+  { key = 'c', mods = mods2, action = act.ClearScrollback 'ScrollbackOnly' },
   { key = ' ', mods = mods, action = act.QuickSelect },
   { key = 'y', mods = mods, action = act.ActivateCopyMode }, -- yank/copy mode
   { key = 'F10', mods = 'NONE', action = wezterm.action.ToggleAlwaysOnTop },
