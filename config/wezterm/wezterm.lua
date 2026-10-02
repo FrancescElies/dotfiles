@@ -105,32 +105,30 @@ else
 end
 
 -- Shell Profiles
-do
-  local nushell = wezterm.home_dir .. '/.cargo/bin/nu'
-  local launch_menu = {}
+local nushell = wezterm.home_dir .. '/.cargo/bin/nu'
+local launch_menu = {}
 
-  if platform.is_win then
-    -- wezterm.log_info 'on windows'
-    config.default_prog = { nushell }
-    launch_menu = {
-      { label = 'PowerShell Core', args = { 'pwsh' } },
-      { label = 'PowerShell Desktop', args = { 'powershell' } },
-      { label = 'Command Prompt', args = { 'cmd' } },
-      {
-        label = 'Visual Studio Prompt',
-        args = { 'cmd', ' /k', '"c:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\Common7\\Tools\\VsDevCmd.bat"' },
-      },
-      { label = 'Nushell', args = { nushell } },
-    }
-  else
-    -- wezterm.log_info 'on mac or linux'
-    config.default_prog = { 'nu' }
-    launch_menu = {
-      { label = 'Bash', args = { 'bash' } },
-      { label = 'Nushell', args = { 'nu' } },
-      { label = 'Zsh', args = { 'zsh' } },
-    }
-  end
+if platform.is_win then
+  -- wezterm.log_info 'on windows'
+  config.default_prog = { nushell }
+  launch_menu = {
+    { label = 'PowerShell Core', args = { 'pwsh' } },
+    { label = 'PowerShell Desktop', args = { 'powershell' } },
+    { label = 'Command Prompt', args = { 'cmd' } },
+    {
+      label = 'Visual Studio Prompt',
+      args = { 'cmd', ' /k', '"c:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\Common7\\Tools\\VsDevCmd.bat"' },
+    },
+    { label = 'Nushell', args = { nushell } },
+  }
+else
+  -- wezterm.log_info 'on mac or linux'
+  config.default_prog = { 'nu' }
+  launch_menu = {
+    { label = 'Bash', args = { 'bash' } },
+    { label = 'Nushell', args = { 'nu' } },
+    { label = 'Zsh', args = { 'zsh' } },
+  }
 end
 config.launch_menu = launch_menu
 
