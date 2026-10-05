@@ -15,6 +15,9 @@ Two problems drive most of Zig's design: **code that lies about what it runs**, 
 **Problem: I don't know whether to install a tagged release or a development build.**
 Tagged releases are the practical choice for projects with dependencies; development builds are for people contributing to Zig itself. Installs are self-contained archives, so multiple versions coexist, and you put them wherever and add that directory to `PATH`.
 
+> **Status: Disputed**
+> A critique of Zig's stability posture argues the opposite: "Every breaking release turns into paid hours spent repairing code that already worked, and no manager signs up for that when Rust and Go deliver the same class of software without the tax." See [Zig Stability and Trade-offs](zig-stability-and-tradeoffs.md#the-stability-question).
+
 **Problem: My editor only highlights Zig syntax.**
 Use `zigtools/zls` instead of a syntax-highlighting extension. The `tools` page's argument: consider a language server over a syntax-highlighting extension for a richer development experience. Highlighters exist for VS Code, Visual Studio, Sublime, Vim, Emacs, Kate, and the JetBrains family; the LSP is the one worth installing.
 
@@ -53,6 +56,8 @@ There is no `new`, and no language feature reaches a heap allocator — the arra
 What other languages do that Zig doesn't, per the docs: Go's `defer` allocates function-local stack memory (and can OOM inside a loop); C++ coroutines allocate heap memory to call a coroutine; a Go call can allocate because goroutine stacks get resized; the main Rust stdlib APIs panic on OOM and the allocator-accepting variants are "an afterthought."
 
 **Problem: I want to catch memory bugs.**
+Note the boundary: Zig's safe build modes check bounds and integer overflow — whether a pointer lands inside its object — not whether the object is still alive. No release mode prevents use-after-free or double-free; in production the debug allocator is not running either. See [Zig Stability and Trade-offs](zig-stability-and-tradeoffs.md#where-the-safety-story-stops).
+
 Three allocators cover most cases: a debug allocator that stays correct in the face of use-after-free and double-free and prints stack traces of leaks, an arena allocator that frees everything at once, and special-purpose allocators for a specific workload. In practice you wire `std.heap.DebugAllocator(.{}){}` up and assert on `deinit()`:
 
 ```zig
@@ -185,3 +190,8 @@ The build-system guide's own unit-testing example fails to compile against the c
 
 **Problem: The project is young.**
 Official line: Zig doesn't yet have the capacity to produce extensive documentation and learning materials for everything, so join one of the existing communities, check zig.guide and the Ziglings exercises, and note that nightly builds should use `master` docs while tagged releases have versioned docs.
+
+## See Also
+
+- [Writing Idiomatic Zig](writing-idiomatic-zig.md) — naming, error flow, `defer` beyond RAII, allocator discipline, and testing/benchmarking rules.
+- [Zig Stability and Trade-offs](zig-stability-and-tradeoffs.md) — what the migration tax and the safety boundary cost.
