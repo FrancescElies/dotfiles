@@ -1,11 +1,8 @@
+https://ziglang.org/learn/
 https://pwn.college/welcome/welcome/
 https://github.com/aemmitt-ns/radius2
 https://www.radare.org/advent/07.html
 https://github.com/b-2-r/anti-fool-radare2
-https://www.feynman.is/
-https://pi.dev/packages/@tmustier/pi-ralph-wiggum?name=Ralph
-https://github.com/robzolkos/pi-slopchop
-https://github.com/HazAT/glimpse
 https://claude.ai/share/ab384888-38c8-4d2e-8abd-6e239fffb1e5
 https://research.checkpoint.com/2023/rust-binary-analysis-feature-by-feature/
 https://beginners.re/
