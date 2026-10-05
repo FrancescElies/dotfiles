@@ -208,14 +208,14 @@ local any_project_open = wezterm.action_callback(function(window, pane)
   end
 
   window:perform_action(
-    wezterm.action.InputSelector {
+    act.InputSelector {
       action = wezterm.action_callback(function(win, _, id, label)
         if not id and not label then
           wezterm.log_info 'Select Project cancelled'
         else
           wezterm.log_info('Selected project: ' .. label)
           win:perform_action(
-            wezterm.action.SwitchToWorkspace {
+            act.SwitchToWorkspace {
               name = id,
               spawn = {
                 cwd = label,
@@ -238,8 +238,8 @@ local break_to_new_tab = wezterm.action_callback(function(_, pane) pane:move_to_
 
 config.keys = {
 
-  { key = '_', mods = mods, action = wezterm.action.DecreaseFontSize },
-  { key = '+', mods = mods, action = wezterm.action.IncreaseFontSize },
+  { key = '_', mods = mods, action = act.DecreaseFontSize },
+  { key = '+', mods = mods, action = act.IncreaseFontSize },
 
   { key = 'z', mods = mods, action = act.TogglePaneZoomState },
   -- { key = 'd',   mods = mods,        action = act.DisableDefaultAssignment },  -- don't remember why
@@ -295,9 +295,9 @@ config.keys = {
   { key = 'c', mods = mods2, action = act.ClearScrollback 'ScrollbackOnly' },
   { key = ' ', mods = mods, action = act.QuickSelect },
   { key = 'y', mods = mods, action = act.ActivateCopyMode }, -- yank/copy mode
-  { key = 'F10', mods = 'NONE', action = wezterm.action.ToggleAlwaysOnTop },
+  { key = 'F10', mods = 'NONE', action = act.ToggleAlwaysOnTop },
   { key = 'F11', mods = 'NONE', action = act.ToggleFullScreen },
-  { key = 'F9', mods = 'NONE', action = wezterm.action.ToggleAlwaysOnBottom },
+  { key = 'F9', mods = 'NONE', action = act.ToggleAlwaysOnBottom },
   { key = '<', mods = mods, action = act.ActivateTabRelative(-1) },
   { key = '>', mods = mods, action = act.ActivateTabRelative(1) },
   { key = '<', mods = mods2, action = act.SwitchWorkspaceRelative(-1) },
