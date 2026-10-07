@@ -38,6 +38,7 @@ widgets.apply_to_config(config, {
     widgets.ram.utilization.widget(),
     widgets.network.download.widget(),
     widgets.network.upload.widget(),
+    { get_formatted = function() return { { Foreground = { Color = '#bbccbb' } }, { Text = '   ' .. wezterm.strftime '%a %Y-%m-%d   %H:%M' .. ' ' } } end },
   },
   separator = { text = '|', color = '#3b4261' },
 })
