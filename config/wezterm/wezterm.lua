@@ -197,15 +197,52 @@ local edit_pane_in_nvim = wezterm.action_callback(function(window, pane)
   os.remove(name)
 end)
 
+-- Frecency store: { [path] = { count = n, last = epoch } }, zoxide-style scoring
+local frecency_file = wezterm.home_dir .. '/.wezterm-projects-frecency.json'
+
+local function frecency_load()
+  local f = io.open(frecency_file, 'r')
+  if not f then return {} end
+  local ok, data = pcall(wezterm.json_parse, f:read '*a')
+  f:close()
+  return ok and type(data) == 'table' and data or {}
+end
+
+local function frecency_bump(path)
+  local data = frecency_load()
+  local e = data[path] or { count = 0, last = 0 }
+  data[path] = { count = e.count + 1, last = os.time() }
+  local f = io.open(frecency_file, 'w')
+  if f then
+    f:write(wezterm.json_encode(data))
+    f:close()
+  end
+end
+
+local function frecency_score(e)
+  if not e then return 0 end
+  local age = os.time() - e.last
+  local w = age < 3600 and 4 or age < 86400 and 2 or age < 604800 and 0.5 or 0.25
+  return e.count * w
+end
+
 local any_project_open = wezterm.action_callback(function(window, pane)
   local projects = {}
+  local data = frecency_load()
 
   for _, folder in ipairs(folders_to_search) do
     wezterm.log_info(folder)
     for _, project in pairs(wezterm.glob(folder .. '/*')) do
       project = normalize_path(project)
-      table.insert(projects, { label = project, id = project })
+      table.insert(projects, { label = project, id = project, score = frecency_score(data[project]) })
     end
+  end
+  table.sort(projects, function(a, b)
+    if a.score ~= b.score then return a.score > b.score end
+    return a.label < b.label
+  end)
+  for _, p in ipairs(projects) do
+    p.score = nil
   end
 
   window:perform_action(
@@ -215,6 +252,7 @@ local any_project_open = wezterm.action_callback(function(window, pane)
           wezterm.log_info 'Select Project cancelled'
         else
           wezterm.log_info('Selected project: ' .. label)
+          frecency_bump(id)
           win:perform_action(
             act.SwitchToWorkspace {
               name = id,
