@@ -464,6 +464,14 @@ export def "config herdr" [] {
     symlink --force ~/src/dotfiles/config/herdr $config_dir
 }
 
+export def "config searxng" [] {
+    symlink --force ~/src/dotfiles/config/searxng ~/searxng
+    let conf = ("~/src/dotfiles/config/searxng" | path expand)
+    podman rm -f searxng
+    let secret = (random chars --length 64)
+    podman create --name searxng --restart unless-stopped -p 8888:8080 -e $"SEARXNG_SECRET=($secret)" -v $"($conf):/etc/searxng" docker.io/searxng/searxng
+}
+
 export def bootstrap [] {
     mkdir ~/bin
     mkdir ~/src/work

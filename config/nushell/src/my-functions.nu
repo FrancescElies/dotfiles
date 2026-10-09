@@ -439,6 +439,10 @@ export def --wrapped r2-sandbox [...args] {
     podman run --rm -it -v $"(pwd):/workspace" -v $"('~/src/dotfiles/config/.radare2rc' | path expand):/root/.radare2rc" ...$args r2
 }
 
+export def --wrapped searxng-sandbox [...args] {
+    podman start ...$args searxng
+}
+
 export def nato-alphabet [] {
     let letters = [
       [char code-word ];
