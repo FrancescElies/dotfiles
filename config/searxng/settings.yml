@@ -1,0 +1,6 @@
+# Secret comes from SEARXNG_SECRET env var (see toolkit.nu `config searxng`).
+use_default_settings: true
+server:
+  limiter: false
+search:
+  formats: [html, json]
