@@ -84,7 +84,7 @@ module completions {
         rm $tmp
     }
 
-    export def magic-exec [prompt: string] {
+    export def magic-exec [...prompt: string] {
        if ($prompt | is-empty) { error make {msg: "<prompt> missing"} }
        let sys = [
            "You translate requests into nushell."
@@ -95,7 +95,7 @@ module completions {
        # Only --system-prompt shapes the output: no tools, extensions, skills, templates or context files.
        let raw = (
            pi --system-prompt ($sys | str join " ") --no-tools --no-extensions --no-skills
-            --no-prompt-templates --no-context-files --no-session -p $prompt
+            --no-prompt-templates --no-context-files --no-session -p ($prompt | str join " ")
            | str trim
            | str replace -r '^```\w*\s*' '' | str replace -r '\s*```$' '' | str trim)
        let out = try { $raw | from json } catch { error make {msg: $"pi returned invalid JSON:\n($raw)"} }
