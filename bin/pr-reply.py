@@ -18,6 +18,7 @@ import os
 import re
 import subprocess
 import urllib.error
+import urllib.parse
 import urllib.request
 from pathlib import Path
 
@@ -132,6 +133,43 @@ def ado_post_reply(org, project, repo, pr, token, thread_id, parent_id, content)
     return ado_request("POST", url, token, data=data)
 
 
+def ado_get_file_lines(org, project, repo, pr, token):
+    """Return fn(path) -> list of lines at the PR's source commit (cached)."""
+    commit = ado_request(
+        "GET", f"{ado_base_url(org, project, repo, pr)}?api-version={API_ADO}", token
+    )["lastMergeSourceCommit"]["commitId"]
+    cache = {}
+
+    def get(path):
+        if path not in cache:
+            url = (
+                f"https://dev.azure.com/{org}/{project}/_apis/git/repositories/{repo}/items"
+                f"?path={urllib.parse.quote(path)}&versionDescriptor.version={commit}"
+                f"&versionDescriptor.versionType=commit&includeContent=true&$format=json&api-version={API_ADO}"
+            )
+            try:
+                cache[path] = ado_request("GET", url, token).get("content", "").splitlines()
+            except (RuntimeError, ValueError):
+                cache[path] = []  # deleted file / left-side only: no context
+        return cache[path]
+
+    return get
+
+
+def code_block(path, lines, start, end, before=8, after=3):
+    """Markdown fence with lines [start-before, end] (1-based), numbered."""
+    if not lines or not start:
+        return []
+    end = end or start
+    lo = max(1, start - before)
+    lang = Path(path).suffix.lstrip(".")
+    # repo-relative path:line so `gF` in nvim jumps there from the repo root
+    out = [f"Path: `{path.lstrip('/')}:{start}`", f"```{lang}"]
+    for n in range(lo, min(end + after, len(lines)) + 1):
+        out.append(f"{n:>5} {lines[n - 1]}")
+    return out + ["```"]
+
+
 def ado_set_status(org, project, repo, pr, token, thread_id, status):
     url = f"{ado_base_url(org, project, repo, pr)}/threads/{thread_id}?api-version={API_ADO}"
     data = {"status": status}
@@ -163,7 +201,7 @@ def ado_real_comments(thread):
     return out
 
 
-def render_ado(threads):
+def render_ado(threads, get_lines=None):
     """Build markdown scratch buffer for ADO threads."""
     lines = [
         "# PR review replies (Azure DevOps)",
@@ -181,15 +219,20 @@ def render_ado(threads):
             continue
         replyable.append(t)
         ctx = t.get("threadContext") or {}
-        loc = ""
+        loc, code = "", []
         if ctx.get("filePath"):
-            line = (ctx.get("rightFileStart") or ctx.get("leftFileStart") or {}).get(
-                "line"
-            )
-            loc = f"  ({ctx['filePath']}" + (f":{line}" if line else "") + ")"
+            path = ctx["filePath"].lstrip("/")
+            start = (ctx.get("rightFileStart") or {}).get("line")
+            end = (ctx.get("rightFileEnd") or {}).get("line")
+            if not start:
+                start = (ctx.get("leftFileStart") or {}).get("line")
+            loc = f"  ({path}" + (f":{start}" if start else "") + ")"
+            if get_lines and ctx.get("rightFileStart"):
+                code = code_block(path, get_lines(ctx["filePath"]), start, end)
         lines.append("=" * 70)
         lines.append(f"## Thread {t['id']} | status={t.get('status', '?')}{loc}")
         lines.append("=" * 70)
+        lines.extend(code)
         for c in comments:
             who = (c.get("author") or {}).get("displayName", "?")
             when = (c.get("publishedDate") or "")[:10]
@@ -227,10 +270,13 @@ def render_gh(comments):
         loc = ""
         if c.get("path"):
             line = c.get("line")
-            loc = f"  ({c['path']}" + (f":{line}" if line else "") + ")"
+            loc = f"  ({c['path'].lstrip('/')}" + (f":{line}" if line else "") + ")"
         lines.append("=" * 70)
         lines.append(f"## Comment {c['id']}{loc}")
         lines.append("=" * 70)
+        if c.get("diff_hunk"):
+            # GitHub's UI shows the hunk tail ending at the commented line
+            lines += ["```diff", *c["diff_hunk"].splitlines()[-6:], "```"]
         who = (c.get("user") or {}).get("login", "?")
         when = (c.get("created_at") or "")[:10]
         body = c["body"].strip().replace("\n", "\n    ")
@@ -342,7 +388,9 @@ def main():
             )
 
         threads = ado_get_threads(org, project, repo, pr, token)
-        text, replyable = render_ado(threads)
+        text, replyable = render_ado(
+            threads, ado_get_file_lines(org, project, repo, pr, token)
+        )
         if not replyable:
             print("No human comment threads found on this PR.")
             return
@@ -470,6 +518,16 @@ def _self_test():
         }
     ]
     body, replyable = render_ado(sample_ado)
+    ctx_thread = dict(
+        sample_ado[0],
+        threadContext={
+            "filePath": "/src/a.py",
+            "rightFileStart": {"line": 5},
+            "rightFileEnd": {"line": 6},
+        },
+    )
+    b2, _ = render_ado([ctx_thread], lambda p: [f"L{i}" for i in range(1, 11)])
+    assert "(src/a.py:5)" in b2 and "```py\n    2 L2" in b2 and "    6 L6\n```" in b2, b2
     assert len(replyable) == 1
     edited = body.replace("[REPLY 7]\n\n[/REPLY]", "[REPLY 7]\nok\n[/REPLY]").replace(
         "[STATUS 7 active]", "[STATUS 7 fixed]"
