@@ -297,6 +297,7 @@ config.keys = {
   { key = 'q', mods = mods, action = act.CloseCurrentPane { confirm = false } },
   { key = 'r', mods = mods, action = act.RotatePanes 'Clockwise' }, -- [r]otate panes
   -- ASDFG
+  -- NOTE: CapsLock-as-Ctrl + LShift + W/S/X may fail due to keyboard ghosting (hardware matrix limit), use RShift or an NKRO keyboard.
   { key = 's', mods = mods, action = act.PaneSelect { mode = 'SwapWithActive' } },
   { key = 's', mods = mods2, action = act.PaneSelect { mode = 'SwapWithActiveKeepFocus' } },
   { key = 'd', mods = mods, action = act.ShowDebugOverlay },
