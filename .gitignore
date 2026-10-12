@@ -6,4 +6,5 @@ samsung-uld-copy/
 src/linux/gnome-apps/Browser
 src/linux/gnome-apps/start-tor-browser.desktop
 src/os-this-machine.nu
+bin/__pycache__
 .DS_Store
