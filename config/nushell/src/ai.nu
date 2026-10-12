@@ -49,7 +49,7 @@ module completions {
         let tmp = (mktemp --suffix .md)
         $header | to text | save --append $tmp
         nvim '+' $tmp
-        pi --no-session --model claude-haiku-4.5 --tools read,grep,find,ls $"@($tmp)"
+        pi --no-session --model gpt-6-luna --tools read,grep,find,ls $"@($tmp)"
         rm $tmp
     }
 
@@ -63,7 +63,7 @@ module completions {
         let tmp = (mktemp --suffix .md)
         $header | to text | save --append $tmp
         nvim '+' $tmp
-        pi --no-session --model claude-haiku-4.5 --tools read,grep,find,ls $"@($tmp)"
+        pi --no-session --model gpt-6-luna --tools read,grep,find,ls $"@($tmp)"
         rm $tmp
     }
 
@@ -80,8 +80,24 @@ module completions {
         let tmp = (mktemp --suffix .md)
         $header | to text | save --append $tmp
         nvim '+' $tmp
-        pi --no-session --model claude-haiku-4.5 --tools read,grep,find,ls $"@($tmp)"
+        pi --no-session --model gpt-6-luna --tools read,grep,find,ls $"@($tmp)"
         rm $tmp
+    }
+
+    export def pi-commit-staged [] {
+        let prompt = "commit staged files"
+        let sys = [
+          "You just commit staged files"
+          "- be concise"
+          "- if in doubt guess message, dont ask"
+          "- use semantic commits"
+          "- if commit fails check previous commits structure and repeat"
+          ""
+        ]
+       (pi --system-prompt ($sys | str join " ") --tools read,git,grep,find,ls --no-extensions
+         -e ~/.pi/agent/extensions/git-tool.ts
+         --no-skills --model gpt-6-luna
+         --no-prompt-templates --no-context-files --no-session -p $prompt)
     }
 
     export def magic-exec [...prompt: string] {
