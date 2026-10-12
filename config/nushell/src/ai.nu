@@ -83,6 +83,38 @@ module completions {
         pi --no-session --model claude-haiku-4.5 --tools read,grep,find,ls $"@($tmp)"
         rm $tmp
     }
+
+    export def magic-exec [prompt: string] {
+       if ($prompt | is-empty) { error make {msg: "<prompt> missing"} }
+       let sys = [
+           "You translate requests into nushell."
+           "Output ONLY a raw JSON object, no markdown, no code fences, no explanation, with two string fields:"
+           "1. cmd: a single nu command that does the request with the concrete values given."
+           "2. def: a reusable `export def <kebab-name> [<typed params with sensible defaults>] { ... }` that generalizes the request, turning the concrete values into parameters. Pretty formated"
+       ]
+       # Only --system-prompt shapes the output: no tools, extensions, skills, templates or context files.
+       let raw = (
+           pi --system-prompt ($sys | str join " ") --no-tools --no-extensions --no-skills
+            --no-prompt-templates --no-context-files --no-session -p $prompt
+           | str trim
+           | str replace -r '^```\w*\s*' '' | str replace -r '\s*```$' '' | str trim)
+       let out = try { $raw | from json } catch { error make {msg: $"pi returned invalid JSON:\n($raw)"} }
+       let cmd = ($out.cmd? | default '' | str trim)
+       let def = ($out.def? | default '' | str trim)
+       if ($cmd | is-empty) { error make {msg: "pi returned no command"} }
+       if ($def | is-not-empty) {
+           print $"(ansi green)# reusable function, paste into your config or a module:(ansi reset)"
+           print $def
+           print ""
+       }
+       print $"(ansi cyan)($cmd)(ansi reset)"
+       if (input "Run it? [y/N] " | str lowercase) in [y yes] {
+           ^nu -c $cmd
+       } else {
+           print "aborted"
+       }
+    }
+
 }
 
 export use completions *
