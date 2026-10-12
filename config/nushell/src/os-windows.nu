@@ -292,6 +292,16 @@ export module win {
         print $'(ansi pb)For remap to take effect you need to reboot(ansi reset)'
     }
 
+   export def "remap caps-lock-ctrl" [] {
+       if not (is-admin) { error make {msg: $"(ansi rb)You need admin rights(ansi reset)" } }
+       let key = 'HKLM\System\CurrentControlSet\Control\Keyboard Layout\'
+       let data = ['00' '00' '00' '00' '00' '00' '00' '00' '02' '00' '00' '00' '1D' '00' '3A' '00' '00' '00' '00'
+ '00'] | str join ''
+       # [ '1D' '00' '3A' '00' ]: Caps Lock (0x3A) -> Left Ctrl (0x1D), little endian
+       reg add $key /v "Scancode Map" /t REG_BINARY /d $data /f
+       print $'(ansi pb)For remap to take effect you need to reboot(ansi reset)'
+   }
+
     # list logical disks somehing akin to unix's df command
     export def "disk free" [] {
         (wmic logicaldisk get deviceid,size,freespace,volumename,description | str trim
