@@ -99,6 +99,7 @@ module completions {
          --no-skills --model gpt-6-luna
          --no-prompt-templates --no-context-files --no-session -p $prompt)
     }
+    export alias magic-commit = pi-commit-staged
 
     export def magic-exec [...prompt: string] {
        if ($prompt | is-empty) { error make {msg: "<prompt> missing"} }
