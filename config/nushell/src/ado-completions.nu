@@ -187,10 +187,30 @@ export module ado {
 
 
     export def "queue build" [
-      branch: string@"nu-complete git remote branches"
-      definition_id: int@"nu-complete pipeline-definitions" = 42
+       definition_id: int@"nu-complete pipeline-definitions"
+       --branch (-b): string@"nu-complete git remote branches"
     ] {
-        az pipelines build queue --open --branch (git rev-parse --abbrev-ref HEAD) --definition-id $definition_id
+        let branch = ($branch | default (git rev-parse --abbrev-ref HEAD | str trim))
+        let build = (az pipelines build queue --open --branch $branch --definition-id $definition_id --output json | from json)
+        let url = ($build.url | str replace "/_apis/build/Builds/" "/_build/results?buildId=")
+
+        let pr = (az repos pr list --source-branch $branch --status active --output json | from json | get 0?)
+        if $pr == null {
+            print $"No open PR for ($branch)"
+            return $build
+        }
+
+        let body = {
+            comments: [{ parentCommentId: 0, content: $"Build queued: ($build.definition.name) [($build.buildNumber)]\(($url)\)", commentType: 1 }]
+            status: 1
+        }
+        let file = (mktemp --suffix .json)
+        $body | to json | save -f $file
+        (az devops invoke --area git --resource pullRequestThreads --http-method post --api-version 7.1 --in-file $file --route-parameters
+          $"project=($pr.repository.project.name)" $"repositoryId=($pr.repository.id)" $"pullRequestId=($pr.pullRequestId)" --output none)
+        rm $file
+
+        $build
     }
 
     export def "download artifact" [ build_id: int ] {
