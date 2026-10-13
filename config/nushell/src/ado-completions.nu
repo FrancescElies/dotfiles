@@ -328,8 +328,7 @@ export module ado {
         let desc = az repos pr show --id $pr_id | from json | get description
         $desc | save -f $description
         nvim $description
-        let desc = ((open --raw $description | lines))
-        let repo = az repos pr update --id $pr_id --description ...$desc | from json | get repository.webUrl
+        let repo = az repos pr update --id $pr_id --description $"@($description)" | from json | get repository.webUrl
         let pr_url = $"($repo)/pullrequest/($pr_id)"
         print $"PR: (ansi pb)($pr_url)(ansi reset) 👈"
     }
