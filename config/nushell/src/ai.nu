@@ -89,13 +89,13 @@ module completions {
         let sys = [
           "You just commit staged files"
           "- be concise"
+          "- run `git diff --staged` to derive a good commit message"
           "- if in doubt guess message, dont ask"
           "- use semantic commits"
           "- if commit fails check previous commits structure and repeat"
           ""
         ]
-       (pi --system-prompt ($sys | str join " ") --tools read,git,grep,find,ls --no-extensions
-         -e ~/.pi/agent/extensions/git-tool.ts
+       (pi --system-prompt ($sys | str join " ") --tools read,bash,grep,find,ls --no-extensions
          --no-skills --model gpt-6-luna
          --no-prompt-templates --no-context-files --no-session -p $prompt)
     }
