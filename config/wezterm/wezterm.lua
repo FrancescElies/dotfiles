@@ -202,7 +202,9 @@ local frecency_file = wezterm.home_dir .. '/.wezterm-projects-frecency.json'
 
 local function frecency_load()
   local f = io.open(frecency_file, 'r')
-  if not f then return {} end
+  if not f then
+    return {}
+  end
   local ok, data = pcall(wezterm.json_parse, f:read '*a')
   f:close()
   return ok and type(data) == 'table' and data or {}
@@ -220,7 +222,9 @@ local function frecency_bump(path)
 end
 
 local function frecency_score(e)
-  if not e then return 0 end
+  if not e then
+    return 0
+  end
   local age = os.time() - e.last
   local w = age < 3600 and 4 or age < 86400 and 2 or age < 604800 and 0.5 or 0.25
   return e.count * w
@@ -238,7 +242,9 @@ local any_project_open = wezterm.action_callback(function(window, pane)
     end
   end
   table.sort(projects, function(a, b)
-    if a.score ~= b.score then return a.score > b.score end
+    if a.score ~= b.score then
+      return a.score > b.score
+    end
     return a.label < b.label
   end)
   for _, p in ipairs(projects) do
@@ -424,5 +430,11 @@ do
     return title
   end)
 end
+
+wezterm.on('user-var-changed', function(window, pane, name, value)
+  if name == 'PI_STATE' and (value == 'idle' or value == 'waiting') and not window:is_focused() then
+    window:toast_notification('pi', value == 'waiting' and 'Needs approval' or 'Agent finished', nil, 4000)
+  end
+end)
 
 return config
