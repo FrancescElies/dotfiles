@@ -432,6 +432,11 @@ do
 end
 
 wezterm.on('user-var-changed', function(window, pane, name, value)
+  if name == 'JUMP_WORKSPACE' then -- value: "<workspace>|<cwd>", sent by `wt jump` in git-tools.nu
+    local ws, cwd = value:match('^(.-)|(.+)$')
+    window:perform_action(wezterm.action.SwitchToWorkspace { name = ws, spawn = { cwd = cwd } }, pane)
+    return
+  end
   if name == 'PI_STATE' and (value == 'idle' or value == 'waiting') and not window:is_focused() then
     window:toast_notification('pi', value == 'waiting' and 'Needs approval' or 'Agent finished', nil, 4000)
   end
