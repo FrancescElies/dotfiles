@@ -433,7 +433,7 @@ end
 
 wezterm.on('user-var-changed', function(window, pane, name, value)
   if name == 'JUMP_WORKSPACE' then -- value: "<workspace>|<cwd>", sent by `wt jump` in git-tools.nu
-    local ws, cwd = value:match('^(.-)|(.+)$')
+    local ws, cwd = value:match '^(.-)|(.+)$'
     window:perform_action(wezterm.action.SwitchToWorkspace { name = ws, spawn = { cwd = cwd } }, pane)
     return
   end
