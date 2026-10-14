@@ -35,6 +35,8 @@ module completions {
              ''
     ]
 
+    export alias pi-reviewer = fnm exec --using v25 -- node --experimental-strip-types ~/src/config.pi/durable/reviewer.ts
+
     export def pi-polite [] {
         let header = $ai_slop ++ [
              '- Remove repetition'
@@ -91,7 +93,7 @@ module completions {
           "- be concise"
           "- run `git diff --staged` to derive a good commit message"
           "- if in doubt guess message, dont ask"
-          "- use semantic commits"
+          "- use semantic commits format"
           "- if commit fails check previous commits structure and repeat"
           ""
         ]
