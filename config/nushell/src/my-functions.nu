@@ -489,28 +489,6 @@ export def nato-alphabet [] {
     print $digits
 }
 
-export def --wrapped pi [...args] {
-    match $nu.os-info.name {
-        "windows" => {
-            fnm exec --using v25 -- pi.cmd ...$args
-        },
-        _ => {
-            fnm exec --using v25 -- pi ...$args
-        }
-    }
-}
-
-export def --env pienv [] { fnm use v25 }
-
-export def --env pidocs [] {
-    let root = match $nu.os-info.name {
-        "windows" => (fnm exec --using v25 -- npm.cmd root -g)
-        _ => (fnm exec --using v25 -- npm root -g)
-    }
-    let docs = $root | str trim | path join "@earendil-works/pi-coding-agent/docs"
-    nvim -c $'cd ($docs)' -c 'e index.md'
-}
-
 export def podman-rebuild-r2 [] { cd bin\containers\r2-sandox; podman build -t r2-sandbox . }
 export def podman-rebuild-pi [] { cd bin\containers\pi-sandox; podman build -t pi-sandbox . }
 
