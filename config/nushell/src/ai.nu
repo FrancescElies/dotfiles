@@ -2,7 +2,8 @@ module completions {
     export def --wrapped pi [...args] {
         match $nu.os-info.name {
             "windows" => {
-                fnm exec --using v25 -- pi.cmd ...$args
+                # WARN: calling pi (pi.cmd) directly breaks scrolling
+                fnm exec --using v25 -- node ~\AppData\Roaming\npm\node_modules\@earendil-works\pi-coding-agent\dist\cli.js ...$args
             },
             _ => {
                 fnm exec --using v25 -- pi ...$args
@@ -133,6 +134,15 @@ module completions {
            print "aborted"
        }
     }
+
+  export def --env pidocs [] {
+      let root = match $nu.os-info.name {
+          "windows" => (fnm exec --using v25 -- npm.cmd root -g)
+          _ => (fnm exec --using v25 -- npm root -g)
+      }
+      let docs = $root | str trim | path join "@earendil-works/pi-coding-agent/docs"
+      nvim -c $'cd ($docs)' -c 'e index.md'
+  }
 
 }
 
