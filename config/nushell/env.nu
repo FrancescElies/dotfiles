@@ -65,6 +65,7 @@ try { $env.path ++= ( ls /usr/local/*/bin | get name ) }
 
 if (which fnm | is-not-empty) {
     ^fnm env --json | from json | load-env
+    ^fnm use v25
     $env.PATH = $env.PATH | prepend ($env.FNM_MULTISHELL_PATH | path join (if $nu.os-info.name == 'windows' {''} else {'bin'}))
     ^fnm use v25
     $env.config.hooks.env_change.PWD = (
