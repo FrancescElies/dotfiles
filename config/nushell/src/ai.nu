@@ -3,7 +3,8 @@ module completions {
         match $nu.os-info.name {
             "windows" => {
                 # WARN: calling pi (pi.cmd) directly breaks scrolling
-                fnm exec --using v25 -- node  ([(which node | get path.0 | path dirname) 'node_modules\@earendil-works\pi-coding-agent\dist\cli.js'] | path join) ...$args
+                let v25 = (ls ([ (^fnm env --json | from json | get FNM_DIR) node-versions ] | path join) | where name =~ "v25" | get name.0)
+                fnm exec --using v25 -- node  ([$v25 'installation\node_modules\@earendil-works\pi-coding-agent\dist\cli.js'] | path join) ...$args
             },
             _ => {
                 fnm exec --using v25 -- pi ...$args
