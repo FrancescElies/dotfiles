@@ -191,13 +191,14 @@ export module ado {
        --branch (-b): string@"nu-complete git remote branches"
     ] {
         let branch = ($branch | default (git rev-parse --abbrev-ref HEAD | str trim))
-        let build = (az pipelines build queue --open --branch $branch --definition-id $definition_id --output json | from json)
+        let build = (az pipelines build queue --branch $branch --definition-id $definition_id --output json | from json)
         let url = ($build.url | str replace "/_apis/build/Builds/" "/_build/results?buildId=")
 
         let pr = (az repos pr list --source-branch $branch --status active --output json | from json | get 0?)
         if $pr == null {
             print $"No open PR for ($branch)"
-            return $build
+            print ($url | ansi link --text $"🔗 Build ($build.buildNumber)")
+            return
         }
 
         let body = {
@@ -210,7 +211,7 @@ export module ado {
           $"project=($pr.repository.project.name)" $"repositoryId=($pr.repository.id)" $"pullRequestId=($pr.pullRequestId)" --output none)
         rm $file
 
-        $build
+        print ($url | ansi link --text $"🔗 Build ($build.buildNumber)")
     }
 
     export def "download artifact" [ build_id: int ] {
