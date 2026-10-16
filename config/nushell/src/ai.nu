@@ -4,8 +4,9 @@ module completions {
             "windows" => {
                 # WARN: calling pi (pi.cmd) directly breaks scrolling
                 let v25 = (ls ([ (^fnm env --json | from json | get FNM_DIR) node-versions ] | path join) | where name =~ "v25" | get name.0)
-                print 'running pi from v25'
-                fnm exec --using v25 -- node  ([$v25 'installation\node_modules\@earendil-works\pi-coding-agent\dist\cli.js'] | path join) ...$args
+                let cli_js = ([$v25 'installation\node_modules\@earendil-works\pi-coding-agent\dist\cli.js'] | path join)
+                print $'running `node ($cli_js)'
+                fnm exec --using v25 -- node  $cli_js ...$args
             },
             _ => {
                 fnm exec --using v25 -- pi ...$args
