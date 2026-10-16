@@ -281,6 +281,60 @@ end)
 
 local break_to_new_tab = wezterm.action_callback(function(_, pane) pane:move_to_new_tab() end)
 
+local function equalize(window, pane)
+  local tab = window:active_tab()
+  local active = window:active_pane()
+  for _, ax in ipairs { { 'left', 'width', 'Right', 'Left' }, { 'top', 'height', 'Down', 'Up' } } do
+    local pos, size, grow, shrink = ax[1], ax[2], ax[3], ax[4]
+    local infos = tab:panes_with_info()
+    local starts, lo, hi = {}, math.huge, 0
+    for _, i in ipairs(infos) do
+      starts[i[pos]] = true
+      lo = math.min(lo, i[pos])
+      hi = math.max(hi, i[pos] + i[size])
+    end
+    local list = {}
+    for k in pairs(starts) do
+      list[#list + 1] = k
+    end
+    table.sort(list)
+    local n = #list
+    for idx = 1, n - 1 do
+      -- re-read: earlier adjustments move edges
+      local cur = {}
+      for _, i in ipairs(tab:panes_with_info()) do
+        cur[#cur + 1] = i
+      end
+      local p
+      for _, i in ipairs(cur) do
+        if i[pos] == list[idx] then
+          p = i.pane
+        end
+      end
+      local nextleft
+      for _, i in ipairs(cur) do
+        if i[pos] > list[idx] and (nextleft == nil or i[pos] < nextleft) then
+          nextleft = i[pos]
+        end
+      end
+      local ideal = lo + math.floor((hi - lo + 1) * idx / n + 0.5)
+      local d = ideal - (nextleft or ideal)
+      if p and d ~= 0 then
+        p:activate()
+        window:perform_action(act.AdjustPaneSize { d > 0 and grow or shrink, math.abs(d) }, p)
+      end
+      list[idx + 1] = nextleft and (nextleft + d) or list[idx + 1]
+    end
+  end
+  active:activate()
+end
+
+local function split_equal(split)
+  return wezterm.action_callback(function(window, pane)
+    window:perform_action(act { [split] = { domain = 'CurrentPaneDomain' } }, pane)
+    wezterm.time.call_after(0.1, function() equalize(window, pane) end)
+  end)
+end
 config.keys = {
 
   { key = '_', mods = mods, action = act.DecreaseFontSize },
@@ -300,7 +354,20 @@ config.keys = {
   -- { key = '^',   mods = "NONE", action = act.SendKey { key = '6', mods = mods.shift_ctrl } },
 
   -- QWERT
-  { key = 'q', mods = mods, action = act.CloseCurrentPane { confirm = false } },
+  -- { key = 'q', mods = mods, action = act.CloseCurrentPane { confirm = false } },
+  {
+    key = 'q',
+    mods = mods,
+    action = wezterm.action_callback(function(window, pane)
+      local tab = window:active_tab()
+      window:perform_action(act.CloseCurrentPane { confirm = false }, pane)
+      wezterm.time.call_after(0.1, function()
+        if window:active_tab():tab_id() == tab:tab_id() then
+          equalize(window)
+        end
+      end)
+    end),
+  },
   { key = 'r', mods = mods, action = act.RotatePanes 'Clockwise' }, -- [r]otate panes
   -- ASDFG
   -- NOTE: CapsLock-as-Ctrl + LShift + W/S/X may fail due to keyboard ghosting (hardware matrix limit), use RShift or an NKRO keyboard.
@@ -335,8 +402,10 @@ config.keys = {
   { key = 'k', mods = mods, action = act.ActivatePaneDirection 'Up' },
   { key = 'l', mods = mods, action = act.ActivatePaneDirection 'Right' },
   -- ?><MN
-  { key = 'n', mods = mods, action = act { SplitVertical = { domain = 'CurrentPaneDomain' } } },
-  { key = 'n', mods = mods2, action = act { SplitHorizontal = { domain = 'CurrentPaneDomain' } } },
+  --  { key = 'n', mods = mods, action = act { SplitVertical = { domain = 'CurrentPaneDomain' } } },
+  --  { key = 'n', mods = mods2, action = act { SplitHorizontal = { domain = 'CurrentPaneDomain' } } },
+  { key = 'n', mods = mods, action = split_equal 'SplitVertical' },
+  { key = 'n', mods = mods2, action = split_equal 'SplitHorizontal' },
   -- other
   { key = 'c', mods = mods2, action = act.ClearScrollback 'ScrollbackOnly' },
   { key = ' ', mods = mods, action = act.QuickSelect },
