@@ -97,9 +97,13 @@ export def --env "goto" [path?: path@"nu-complete projects"] {
 export alias pipx = python ~/bin/pipx.pyz
 
 export def "config pull-push" [] {
-    [~/src/config.pi ~/src/kickstart.nvim ~/src/dotfiles ~/src/config.frida] | each {
-      print $"(ansi pb)($in)(ansi reset)"
-      cd $in; git stash; git pull; git push; git stash pop | ignore; git status
+  [ ~/src/config.pi
+    ~/src/config.frida
+    ~/src/kickstart.nvim
+    ~/src/dotfiles
+  ] | each {
+    print $"(ansi pb)($in)(ansi reset)"
+    cd $in; git stash; git pull; git push; git stash pop | ignore; git status
   }
 }
 
