@@ -59,6 +59,10 @@ module completions {
         rm $tmp
     }
 
+    export def pi-research [] {
+        pi --skill ~/.pi/agent/skills/feynman
+    }
+
     export def pi-translate [] {
         let header = [
              '- Translate to english, and make a very concise summary at the end'
