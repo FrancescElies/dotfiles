@@ -382,7 +382,7 @@ config.keys = {
   { key = 'b', mods = mods, action = break_to_new_tab },
   -- POIUY
   { key = ':', mods = mods, action = act.ActivateCommandPalette }, -- mnemonic vim's `:` for command-line mode
-  { key = 'o', mods = mods, action = act.ShowLauncherArgs { flags = 'FUZZY|WORKSPACES|TABS|DOMAINS|LAUNCH_MENU_ITEMS' } },
+  { key = 'o', mods = mods, action = act.ShowLauncherArgs { flags = 'FUZZY|WORKSPACES' } },
   -- [o] Open ShowLauncherArgs:
   -- "TABS" - include the list of tabs from the current window
   -- "LAUNCH_MENU_ITEMS" - include the launch_menu items
