@@ -94,7 +94,7 @@ module completions {
         rm $tmp
     }
 
-    export def pi-commit-staged [] {
+    export def pi-commit-staged [--push (-p)] {
         let prompt = "commit staged files"
         let sys = [
           "You just commit staged files"
@@ -108,6 +108,7 @@ module completions {
        (pi --system-prompt ($sys | str join " ") --tools read,bash,grep,find,ls --no-extensions
          --no-skills --model gpt-6-luna
          --no-prompt-templates --no-context-files --no-session -p $prompt)
+       if $push { git push }
     }
     export alias magic-commit = pi-commit-staged
 
