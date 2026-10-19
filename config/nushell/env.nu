@@ -90,6 +90,8 @@ $env.RIPGREP_CONFIG_PATH  = ("~/src/dotfiles/config/nushell/src/.ripgreprc" | pa
 $env.BR_INSTALL = "no"
 $env.BROOT_CONFIG_DIR = ("~/src/dotfiles/config/nushell/broot-config" | path expand)
 
+$env.PI_TELEMETRY=0
+
 $env.FZF_DEFAULT_COMMAND = "fd --type file --hidden"
 $env.SKIM_DEFAULT_COMMAND = "fd --type file --hidden"
 
