@@ -213,6 +213,12 @@ def render_ado(threads, get_lines=None):
         "",
     ]
     replyable = []
+    # newest activity first (ISO dates sort lexically)
+    threads = sorted(
+        threads,
+        key=lambda t: max((c.get("lastUpdatedDate") or c.get("publishedDate") or "" for c in ado_real_comments(t)), default=""),
+        reverse=True,
+    )
     for t in threads:
         comments = ado_real_comments(t)
         if not comments:
@@ -263,6 +269,7 @@ def render_gh(comments):
         "",
     ]
     replyable = []
+    comments = sorted(comments, key=lambda c: c.get("updated_at") or c.get("created_at") or "", reverse=True)
     for c in comments:
         if not (c.get("body") or "").strip():
             continue
