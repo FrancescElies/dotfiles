@@ -264,7 +264,7 @@ local any_project_open = wezterm.action_callback(function(window, pane)
               name = id,
               spawn = {
                 cwd = label,
-                args = { 'nu', '-e', 'nvim' },
+                args = { 'nu' },
               },
             },
             pane
