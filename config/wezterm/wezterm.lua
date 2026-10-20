@@ -402,8 +402,8 @@ config.keys = {
   { key = 'k', mods = mods, action = act.ActivatePaneDirection 'Up' },
   { key = 'l', mods = mods, action = act.ActivatePaneDirection 'Right' },
   -- ?><MN
-   { key = 'n', mods = mods, action = act { SplitVertical = { domain = 'CurrentPaneDomain' } } },
-   { key = 'n', mods = mods2, action = act { SplitHorizontal = { domain = 'CurrentPaneDomain' } } },
+  { key = 'n', mods = mods, action = act { SplitVertical = { domain = 'CurrentPaneDomain' } } },
+  { key = 'n', mods = mods2, action = act { SplitHorizontal = { domain = 'CurrentPaneDomain' } } },
   -- { key = 'n', mods = mods, action = split_equal 'SplitVertical' },
   -- { key = 'n', mods = mods2, action = split_equal 'SplitHorizontal' },
   -- other
