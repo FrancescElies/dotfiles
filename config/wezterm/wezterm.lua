@@ -159,11 +159,11 @@ config.mouse_bindings = {
   --     mods = 'CTRL',
   --     action = w.action.Nop,
   --   },
-  {
-    event = { Down = { streak = 3, button = 'Left' } },
-    action = wezterm.action.SelectTextAtMouseCursor 'SemanticZone',
-    mods = 'NONE',
-  },
+  -- {
+  --   event = { Down = { streak = 3, button = 'Left' } },
+  --   action = wezterm.action.SelectTextAtMouseCursor 'SemanticZone',
+  --   mods = 'NONE',
+  -- },
 }
 
 local mods = 'CTRL|SHIFT'
