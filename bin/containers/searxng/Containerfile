@@ -1,0 +1,29 @@
+# podman build -t searxng .
+# Localhost only:
+#   podman run --rm -it -p 127.0.0.1:8080:8080 searxng
+# Shared network (other containers reach it by name, no publish):
+#   podman network create searchnet
+#   podman run -d --name searxng --network searchnet searxng
+#   podman run --rm -it --network searchnet your-other-container
+# podman images
+# podman ps -a
+
+FROM python:3.12-slim
+
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends ca-certificates curl git \
+  && rm -rf /var/lib/apt/lists/*
+
+# Install SearXNG into an isolated venv.
+RUN python -m venv /opt/searxng \
+  && /opt/searxng/bin/pip install --no-cache-dir searxng==0.1.2 \
+  && ln -s /opt/searxng/bin/searxng-run /usr/local/bin/searxng-run
+
+ENV PATH="/opt/searxng/bin:${PATH}"
+ENV SEARXNG_SETTINGS_PATH=/etc/searxng/settings.yml
+
+RUN mkdir -p /etc/searxng
+COPY settings.yml /etc/searxng/settings.yml
+
+EXPOSE 8080
+CMD ["searxng-run", "-p", "8080", "-b", "0.0.0.0"]

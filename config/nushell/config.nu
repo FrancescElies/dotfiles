@@ -38,7 +38,6 @@ use ~/src/dotfiles/config/nushell/src/git-completions.nu *
 use ~/src/dotfiles/config/nushell/src/git-tools.nu *
 use ~/src/dotfiles/config/nushell/src/ouch-completions.nu *
 use ~/src/dotfiles/config/nushell/src/pueue-completions.nu *
-use ~/src/dotfiles/config/nushell/src/pytest-completions.nu *
 use ~/src/dotfiles/config/nushell/src/reverse-eng.nu *
 use ~/src/dotfiles/config/nushell/src/rg-completions.nu *
 use ~/src/dotfiles/config/nushell/src/rust.nu *
