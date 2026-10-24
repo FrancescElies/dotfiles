@@ -96,17 +96,6 @@ export def --env "goto" [path?: path@"nu-complete projects"] {
 
 export alias pipx = python ~/bin/pipx.pyz
 
-export def "config pull-push" [] {
-  [ ~/src/config.pi
-    ~/src/config.frida
-    ~/src/kickstart.nvim
-    ~/src/dotfiles
-  ] | each {
-    print $"(ansi pb)($in)(ansi reset)"
-    cd $in; git stash; git pull; git push; git stash pop | ignore; git status
-  }
-}
-
 # list open listening ports
 export def "my open-ports" [] {
   match $nu.os-info.name {
@@ -221,11 +210,6 @@ def "my compiler-flags" [] {
     print https://youtu.be/YXrb-DqsBNU?feature=shared&t=546
     print https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html#available-checks
     print "-Werror -Wall -Wextra -fsanitize=address,undefined,float-divide-by-zero,unsigned-integer-overflow,implicit-conversion,local-bounds,nullability"
-}
-
-# update dotfiles and friends
-def "my update" [] {
-    [~/src/config.pi ~/src/kickstart.nvim ~/src/dotfiles] | par-each { try { cd $in; git pull | complete } }
 }
 
 # backup by-year
@@ -407,30 +391,29 @@ export module "my" {
         }
     }
 
-    const repos = [~/src/dotfiles ~/src/kickstart.nvim]
+    const repos = [ ~/src/config.pi
+        ~/src/config.frida
+        ~/src/kickstart.nvim
+        ~/src/dotfiles
+    ]
+
+    export def "config pull-push" [] {
+       $repos | each {
+        print $"(ansi pb)($in)(ansi reset)"
+        cd $in; git stash; git pull; git push; git stash pop | ignore; git status
+      }
+    }
 
     export def "repos status" [] {
-        $repos | each {
-            cd $in
-            print $"(ansi pb)($in)(ansi reset)"
-            ^git status
-        }
+        $repos | each { cd $in; print $"(ansi pb)($in)(ansi reset)"; ^git status }
     }
 
     export def "repos push" [] {
-        $repos | each {
-            cd $in
-            print $"(ansi pb)($in)(ansi reset)"
-            ^git push --force-with-lease
-        }
+        $repos | each { cd $in; print $"(ansi pb)($in)(ansi reset)"; ^git push --force-with-lease }
     }
 
     export def "repos pull" [] {
-        $repos | each {
-            cd $in
-            print $"(ansi pb)($in)(ansi reset)"
-            ^git pull
-        }
+        $repos | each { cd $in; print $"(ansi pb)($in)(ansi reset)"; ^git pull }
     }
 
 }
