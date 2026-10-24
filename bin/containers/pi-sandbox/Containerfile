@@ -24,7 +24,7 @@ RUN cargo install --git https://github.com/rtk-ai/rtk --tag v0.50.0 \
 FROM node:24-bookworm-slim
 
 RUN apt-get update \
-  && apt-get install -y --no-install-recommends bash ca-certificates git fd-find bat fzf ripgrep python3 python3-pip python3-venv curl default-jdk-headless unzip wget build-essential binutils xxd file yara \
+  && apt-get install -y --no-install-recommends bash ca-certificates git fd-find bat fzf ripgrep python3 python3-pip python3-venv curl default-jdk-headless unzip wget build-essential binutils xxd file yara openssh-client \
   && rm -rf /var/lib/apt/lists/*
 
 # Install uv + uvx (Astral) via official image (no curl installer).
@@ -52,6 +52,14 @@ RUN wget -q https://github.com/NationalSecurityAgency/ghidra/releases/download/G
   && ln -s /opt/ghidra_12.2_PUBLIC/support/analyzeHeadless /usr/local/bin/analyzeHeadless
 
 RUN npm install -g --ignore-scripts @earendil-works/pi-coding-agent tsx
+
+# Post-run setup (do on host, not in image):
+#   1. Generate a dedicated SSH key: ssh-keygen -t ed25519 -f ~/.ssh/pi_container -N ''
+#   2. Add ~/.ssh/pi_container.pub to the target host/VM authorized_keys.
+#   3. Create ~/.ssh/config entry: Host winhost / HostName ... / User ... / IdentityFile ~/.ssh/pi_container
+# Run container with SSH access:
+#   podman run --rm -it -v "$PWD:/workspace" -v ~/.ssh:/root/.ssh:ro pi-sandbox
+# Then inside pi: ssh winhost 'cargo build'
 
 WORKDIR /workspace
 ENTRYPOINT ["pi"]
