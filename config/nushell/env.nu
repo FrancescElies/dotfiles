@@ -23,12 +23,20 @@ match $nu.os-info.name {
         ]
     },
     "macos" => {
-        $env.path ++= [
-            '~/.local/share/bob/nvim-bin'
-            '/opt/homebrew/bin'
-            '/usr/local/bin'
-            '~/Library/Python/3.12/bin'
-        ]
+       $env.PATH = ($env.PATH | prepend [
+           /opt/homebrew/opt/findutils/libexec/gnubin
+           /opt/homebrew/opt/gnu-getopt/bin
+           /opt/homebrew/opt/make/libexec/gnubin
+           /opt/homebrew/opt/util-linux/bin
+       ])
+       $env.path ++= [
+          '~/.local/share/bob/nvim-bin'
+          '/opt/homebrew/bin'
+          '/opt/podman/bin'
+          '/usr/local/bin'
+          '~/Library/Python/3.12/bin'
+
+       ]
     },
     "linux" => {
         $env.path ++= [

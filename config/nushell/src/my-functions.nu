@@ -436,7 +436,8 @@ export module "my" {
 }
 
 export def --wrapped pi-sandbox [...args] {
-    podman run --rm -it -v $"(pwd):/workspace" -v $"('~/.pi/agent' | path expand):/root/.pi/agent" ...$args pi-sandbox
+    # searxng must be running on searchnet as "searxng"
+    podman run --rm -it --network searchnet -e SEARXNG_BASE_URL=http://searxng:8080 -v $"(pwd):/workspace" -v $"('~/.pi/agent' | path expand):/root/.pi/agent" ...$args pi-sandbox
 }
 
 export def --wrapped r2-sandbox [...args] {
