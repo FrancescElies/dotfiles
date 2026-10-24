@@ -24,7 +24,7 @@ RUN cargo install --git https://github.com/rtk-ai/rtk --tag v0.50.0 \
 FROM node:24-bookworm-slim
 
 RUN apt-get update \
-  && apt-get install -y --no-install-recommends bash ca-certificates git fd-find bat fzf ripgrep python3 python3-pip python3-venv curl default-jdk-headless unzip wget build-essential binutils xxd file yara openssh-client \
+  && apt-get install -y --no-install-recommends bash ca-certificates git fd-find bat fzf ripgrep python3 python3-pip python3-venv curl default-jdk-headless unzip wget build-essential binutils xxd file yara openssh-client iputils-ping nmap \
   && rm -rf /var/lib/apt/lists/*
 
 # Install uv + uvx (Astral) via official image (no curl installer).
