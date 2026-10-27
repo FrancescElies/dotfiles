@@ -15,7 +15,7 @@ export def --env "Max use" [ version?: path@"nu-complete max-version" ] {
     } else if $nu.os-info.name == "macos" {
         "/Applications/Max.app/Contents/MacOS/Max"
     } else {
-        error make {msg: 'not implemented' }
+         'not implemented' 
     }
 }
 

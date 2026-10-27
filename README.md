@@ -47,6 +47,18 @@ toolkit bootstrap
 ```
 
 
+## GPG key backup
+
+```bash
+gpg --export-secret-keys --armor YOUR_KEY_ID > gpg-private.key
+gpg --export-ownertrust > gpg-ownertrust.txt
+```
+Store both files somewhere safe (encrypted USB, password manager). Restore:
+```bash
+gpg --import gpg-private.key
+gpg --import-ownertrust gpg-ownertrust.txt
+```
+
 ## Links
 - https://www.nushell.sh/blog/2023-08-23-happy-birthday-nushell-4.html
 - https://github.com/dandavison/dotfiles

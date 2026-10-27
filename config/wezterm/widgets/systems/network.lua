@@ -15,6 +15,10 @@ local function get_sample()
   return sample
 end
 
+local function is_flatpak()
+  return os.getenv("FLATPAK_ID") ~= nil or (io.open("/.flatpak-info", "r") ~= nil)
+end
+
 local function resolve_interface()
   local result
   if util.is_macos() then
@@ -33,7 +37,7 @@ end
 
 local function fetch_netstats()
   local iface = nil
-  if not util.is_windows() then
+  if not util.is_windows() and not is_flatpak() then
     iface = resolve_interface()
     if not iface then
       return nil

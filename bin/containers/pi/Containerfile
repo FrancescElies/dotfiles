@@ -1,6 +1,6 @@
 # NOTE: build this file
 #
-# >  podman build -t pi-sandbox .
+# >  podman build -t localhost/pi .
 
 # Running it
 #
@@ -11,15 +11,24 @@
 
 # Use a named volume for /root/.pi/agent if you want container-local settings
 # and sessions.
-# > podman run --rm -it -e ANTHROPIC_API_KEY -v "$PWD:/workspace" -v pi-agent-home:/root/.pi/agent pi-sandbox
+# > podman run --rm -it -e ANTHROPIC_API_KEY -v "$PWD:/workspace" -v pi-agent-home:/root/.pi/agent localhost/pi
 #
-# Mounting your host ~/.pi/agent exposes host auth and session files to the container.
-# > podman run --rm -it -v "$PWD:/workspace" -v ~/.pi/agent:/root/.pi/agent pi-sandbox
-# > podman run --rm -it -v $"(pwd):/workspace" -v $"('~/.pi/agent' | path expand):/root/.pi/agent" pi-sandbox
+# Mounting your host ~/.pi.agent exposes host auth and session files to the container.
+# > podman run --rm -it -v "$PWD:/workspace" -v ~/.pi.agent:/root/.pi/agent localhost/pi
+# > podman run --rm -it -v "(pwd):/workspace" -v "('~/.pi.agent' | path expand):/root/.pi.agent" localhost/pi
 
-FROM rust:slim AS build
-RUN cargo install --git https://github.com/rtk-ai/rtk --tag v0.50.0 \
-  && rtk init -g --agent pi
+FROM rust:slim
+
+RUN apt-get update \
+  && apt-get install -y wget \
+  && wget -q https://github.com/rtk-ai/rtk/releases/download/v1.1.0/rtk-v1.1.0.tar.gz -O /tmp/rtk.tar.gz \
+  && echo '0019dfc4b32d63c1392aa264aed2253c1e0c2fb09216f8e2cc269bbfb8bb49b5  /tmp/rtk.tar.gz' | sha256sum -c - \
+  && tar -xzf /tmp/rtk.tar.gz -C /tmp/rtk \
+  && cd /tmp/rtk/rtk-1.1.0 && cargo install --path . \
+  && apt-get purge -y wget \
+  && rm -rf /tmp/rtk.tar.gz /tmp/rtk
+
+RUN rtk init -g --agent localhost/pi
 
 FROM node:24-bookworm-slim
 
@@ -28,15 +37,15 @@ RUN apt-get update \
   && rm -rf /var/lib/apt/lists/*
 
 # Install uv + uvx (Astral) via official image (no curl installer).
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /usr/local/bin/
-RUN echo '13a1f11b0b6fd0bb18b5798fe10043e5933d77a8e0e761a9926d7f3b2394b35a  /usr/local/bin/uv' | sha256sum -c - \
-  && echo 'f363fbc6d738584859dd52efd3bd8b7938c7aab5c989d920b4e8affc7966767d  /usr/local/bin/uvx' | sha256sum -c -
+COPY --from=ghcr.io/astral-sh/uv:0.13.6 /uv /uvx /usr/local/bin/
+# RUN echo '13a1f11b0b6fd0bb18b5798fe10043e5933d77a8e0e761a9926d7f3b2394b35a  /usr/local/bin/uv' | sha256sum -c - \
+#   && echo 'f363fbc6d738584859dd52efd3bd8b7938c7aab5c989d920b4e8affc7966767d  /usr/local/bin/uvx' | sha256sum -c -
 RUN uv tool install 'semble==0.5.2' \
   && uv tool install 'markitdown[all]==0.1.9' \
   && uv tool install 'git+https://github.com/mitsuhiko/pexpect-mcp@dff5d421490514fb35cc8891b85cfc90370d8119' \
   && ln -sf /root/.local/bin/* /usr/local/bin/
 
-COPY --from=build /usr/local/cargo/bin/ /usr/local/bin/
+# rtk already installed in base image
 
 # Install radare2 from source.
 RUN git clone --depth 1 https://github.com/radareorg/radare2 /tmp/radare2 \
@@ -58,9 +67,8 @@ RUN npm install -g --ignore-scripts @earendil-works/pi-coding-agent tsx
 #   2. Add ~/.ssh/pi_container.pub to the target host/VM authorized_keys.
 #   3. Create ~/.ssh/config entry: Host winhost / HostName ... / User ... / IdentityFile ~/.ssh/pi_container
 # Run container with SSH access:
-#   podman run --rm -it -v "$PWD:/workspace" -v ~/.ssh:/root/.ssh:ro pi-sandbox
+#   podman run --rm -it -v "$PWD:/workspace" -v ~/.ssh:/root/.ssh:ro localhost/pi
 # Then inside pi: ssh winhost 'cargo build'
 
 WORKDIR /workspace
 ENTRYPOINT ["pi"]
-

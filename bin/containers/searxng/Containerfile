@@ -1,9 +1,9 @@
-# podman build -t searxng .
+# podman build -t localhost/searxng .
 # Localhost only:
-#   podman run --rm -it -p 127.0.0.1:8080:8080 searxng
+#   podman run --rm -it -p 127.0.0.1:8080:8080 localhost/searxng
 # Shared network (other containers reach it by name, no publish):
 #   podman network create searchnet
-#   podman run -d --name searxng --network searchnet searxng
+#   podman run -d --name searxng --network searchnet localhost/searxng
 #   podman run --rm -it --network searchnet your-other-container
 # podman images
 # podman ps -a

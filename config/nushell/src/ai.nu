@@ -3,23 +3,24 @@ module completions {
         match $nu.os-info.name {
             "windows" => {
                 # WARN: calling pi (pi.cmd) directly breaks scrolling
-                let v25 = (ls ([ (^fnm env --json | from json | get FNM_DIR) node-versions ] | path join) | where name =~ "v25" | get name.0)
-                let cli_js = ([$v25 'installation\node_modules\@earendil-works\pi-coding-agent\dist\cli.js'] | path join)
+                let cli_js = ([
+                    ($env.FNM_DIR | path join "aliases" "default")
+                    'installation\node_modules\@earendil-works\pi-coding-agent\dist\cli.js'] | path join)
                 print $'running `node ($cli_js)'
-                fnm exec --using v25 -- node  $cli_js ...$args
+                fnm exec --using default -- node  $cli_js ...$args
             },
             _ => {
-                fnm exec --using v25 -- pi ...$args
+                fnm exec --using default -- pi ...$args
             }
         }
     }
 
-    export def --env pi-env [] { fnm use v25 }
+    export def --env pi-env [] { fnm use default }
 
     export def --env pi-docs [] {
         let root = match $nu.os-info.name {
-            "windows" => (fnm exec --using v25 -- npm.cmd root -g)
-            _ => (fnm exec --using v25 -- npm root -g)
+            "windows" => (fnm exec --using default -- npm.cmd root -g)
+            _ => (fnm exec --using default -- npm root -g)
         }
         let docs = $root | str trim | path join "@earendil-works/pi-coding-agent/docs"
         nvim -c $'cd ($docs)' -c 'e index.md'
@@ -39,7 +40,7 @@ module completions {
              ''
     ]
 
-    export alias pi-reviewer = fnm exec --using v25 -- node --experimental-strip-types ~/src/config.pi/durable/reviewer.ts
+    export alias pi-reviewer = fnm exec --using default -- node --experimental-strip-types ~/src/config.pi/durable/reviewer.ts
 
     export def pi-polite [] {
         let header = $ai_slop ++ [
@@ -145,8 +146,8 @@ module completions {
 
   export def --env pidocs [] {
       let root = match $nu.os-info.name {
-          "windows" => (fnm exec --using v25 -- npm.cmd root -g)
-          _ => (fnm exec --using v25 -- npm root -g)
+          "windows" => (fnm exec --using default -- npm.cmd root -g)
+          _ => (fnm exec --using default -- npm root -g)
       }
       let docs = $root | str trim | path join "@earendil-works/pi-coding-agent/docs"
       nvim -c $'cd ($docs)' -c 'e index.md'

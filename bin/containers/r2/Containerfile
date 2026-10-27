@@ -1,5 +1,5 @@
-# podman build -t r2 .
-# podman run --rm -it r2
+# podman build -t localhost/r2 .
+# podman run --rm -it localhost/r2
 # podman images
 # podman ps -a
 # podman search debian

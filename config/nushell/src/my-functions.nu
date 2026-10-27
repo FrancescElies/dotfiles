@@ -418,16 +418,16 @@ export module "my" {
 
 }
 
-export def --wrapped pi-sandbox [...args] {
+export def --wrapped pi [...args] {
     # searxng must be running on searchnet as "searxng"
-    podman run --rm -it --network searchnet -e SEARXNG_BASE_URL=http://searxng:8080 -v $"(pwd):/workspace" -v $"('~/.pi/agent' | path expand):/root/.pi/agent" ...$args pi-sandbox
+    podman run --rm -it --network searchnet -e SEARXNG_BASE_URL=http://searxng:8080 -v $"(pwd):/workspace" -v $"('~/.pi/agent' | path expand):/root/.pi/agent" ...$args pi
 }
 
-export def --wrapped r2-sandbox [...args] {
+export def --wrapped r2 [...args] {
     podman run --rm -it -v $"(pwd):/workspace" -v $"('~/src/dotfiles/config/.radare2rc' | path expand):/root/.radare2rc" ...$args r2
 }
 
-export def --wrapped searxng-sandbox [...args] {
+export def --wrapped searxng [...args] {
     podman start ...$args searxng
 }
 
@@ -477,8 +477,22 @@ export def nato-alphabet [] {
     print $digits
 }
 
-export def podman-rebuild-r2 [] { cd bin\containers\r2-sandox; podman build -t r2-sandbox . }
-export def podman-rebuild-pi [] { cd bin\containers\pi-sandox; podman build -t pi-sandbox . }
+def "nu-complete sandbox rebuild folders" [] {
+    (ls ("~/src/dotfiles/bin/containers" | path expand) | where type == "dir"
+    | where { ($in.name | path join "Containerfile" | path exists) }
+    | each {$in.name|path basename })  ++ ["all"]
+}
+export def "sandbox rebuild" [folder: string@'nu-complete sandbox rebuild folders'] {
+    let base = ("~/src/dotfiles/bin/containers" | path expand)
+    if $folder == "all" {
+        (ls $base | where type == "dir"
+        | where { ($in.name | path join "Containerfile" | path exists) }) | each { |dir|
+            do { cd $dir.name; podman build -t $"localhost/($dir.name)" . }
+        }
+    } else {
+        do { cd ($base | path join $folder); podman build -t $"localhost/($folder)" . }
+    }
+}
 
 export alias ado-pr-reply = python ~/src/dotfiles/bin/ado-pr-reply.py
 export alias compile-commands = python ~/src/dotfiles/bin/compile-commands.py
@@ -486,3 +500,14 @@ export alias firefox-tabs-to-md = python ~/src/dotfiles/bin/firefox-tabs-to-md.p
 export alias local-ai = python ~/src/dotfiles/bin/local-ai.py
 export alias text-extract-concepts = python ~/src/dotfiles/bin/text-extract-concepts.py
 export alias text-ranks = python ~/src/dotfiles/bin/text-ranks.py
+
+def "nu-complete jellyfin actions" [] { ["run" "stop" "logs"] }
+export def jellyfin [action: string@'nu-complete jellyfin actions'] {
+    const yml = "~/src/dotfiles/bin/containers/jellyfin/compose.yaml" | path expand
+    match $action {
+        "run" => { ^podman compose -f $yml up -d }
+        "stop" => { ^podman compose -f $yml down }
+        "logs" => { ^podman compose -f $yml logs -f }
+        _ => { error make {msg: "usage: jellyfin [run|stop|logs]"} }
+    }
+}

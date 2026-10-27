@@ -1,0 +1,18 @@
+# selftest container - plain Debian with git, curl, sudo, uv, uvx, nushell
+# > podman build -t localhost/selftest .
+
+FROM docker.io/debian:stable-slim
+
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends \
+    git curl sudo build-essential ca-certificates \
+    ripgrep fzf fd-find neovim \
+  && rm -rf /var/lib/apt/lists/*  # remove apt cache to reduce image size
+
+# Install nushell
+RUN curl -sSL https://github.com/nushell/nushell/releases/download/0.116.1/nu-0.116.1-x86_64-unknown-linux-gnu.tar.gz -o /tmp/nu.tar.gz \
+  && tar -xzf /tmp/nu.tar.gz -C /usr/local/bin --strip-components=1 \
+  && rm /tmp/nu.tar.gz
+
+# Install uv + uvx (Astral) via official image
+COPY --from=ghcr.io/astral-sh/uv:0.13.6 /uv /uvx /usr/local/bin/
