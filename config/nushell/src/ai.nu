@@ -5,7 +5,13 @@ module completions {
                 # WARN: calling pi (pi.cmd) directly breaks scrolling
                 let cli_js = ([
                     ($env.FNM_DIR | path join "aliases" "default")
-                    'installation\node_modules\@earendil-works\pi-coding-agent\dist\cli.js'] | path join)
+                    'node_modules\@earendil-works\pi-coding-agent\dist\cli.js'] | path join)
+                if not ($cli_js | path exists) {
+                    print 'missing pi:'
+                    print '  fnm default v26'
+                    print '  fnm use --install-if-missing --silent-if-unchanged v26'
+                    print '  npm install -g --ignore-scripts @earendil-works/pi-coding-agent'
+                }
                 print $'running `node ($cli_js)'
                 fnm exec --using default -- node  $cli_js ...$args
             },

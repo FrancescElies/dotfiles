@@ -418,19 +418,6 @@ export module "my" {
 
 }
 
-export def --wrapped pi [...args] {
-    # searxng must be running on searchnet as "searxng"
-    podman run --rm -it --network searchnet -e SEARXNG_BASE_URL=http://searxng:8080 -v $"(pwd):/workspace" -v $"('~/.pi/agent' | path expand):/root/.pi/agent" ...$args pi
-}
-
-export def --wrapped r2 [...args] {
-    podman run --rm -it -v $"(pwd):/workspace" -v $"('~/src/dotfiles/config/.radare2rc' | path expand):/root/.radare2rc" ...$args r2
-}
-
-export def --wrapped searxng [...args] {
-    podman start ...$args searxng
-}
-
 export def nato-alphabet [] {
     let letters = [
       [char code-word ];
@@ -477,23 +464,6 @@ export def nato-alphabet [] {
     print $digits
 }
 
-def "nu-complete sandbox rebuild folders" [] {
-    (ls ("~/src/dotfiles/bin/containers" | path expand) | where type == "dir"
-    | where { ($in.name | path join "Containerfile" | path exists) }
-    | each {$in.name|path basename })  ++ ["all"]
-}
-export def "sandbox rebuild" [folder: string@'nu-complete sandbox rebuild folders'] {
-    let base = ("~/src/dotfiles/bin/containers" | path expand)
-    if $folder == "all" {
-        (ls $base | where type == "dir"
-        | where { ($in.name | path join "Containerfile" | path exists) }) | each { |dir|
-            do { cd $dir.name; podman build -t $"localhost/($dir.name)" . }
-        }
-    } else {
-        do { cd ($base | path join $folder); podman build -t $"localhost/($folder)" . }
-    }
-}
-
 export alias ado-pr-reply = python ~/src/dotfiles/bin/ado-pr-reply.py
 export alias compile-commands = python ~/src/dotfiles/bin/compile-commands.py
 export alias firefox-tabs-to-md = python ~/src/dotfiles/bin/firefox-tabs-to-md.py
@@ -511,3 +481,42 @@ export def jellyfin [action: string@'nu-complete jellyfin actions'] {
         _ => { error make {msg: "usage: jellyfin [run|stop|logs]"} }
     }
 }
+
+export def --wrapped podman-pi [...args] {
+    # searxng must be running on searchnet as "searxng"
+    (podman run --rm -it
+        --network searchnet -e SEARXNG_BASE_URL=http://searxng:8080
+        -v $"(pwd):/workspace" -v $"('~/.pi/agent' | path expand):/root/.pi/agent"
+        ...$args localhost/pi)
+}
+
+export def --wrapped podman-r2 [...args] {
+    podman run --rm -it -v $"(pwd):/workspace" -v $"('~/src/dotfiles/config/.radare2rc' | path expand):/root/.radare2rc" ...$args localhost/r2
+}
+
+export def --wrapped podman-searxng [...args] {
+    podman start ...$args searxng
+}
+
+def "nu-complete sandbox rebuild folders" [] {
+    (ls ("~/src/dotfiles/bin/containers" | path expand) | where type == "dir"
+    | where { ($in.name | path join "Containerfile" | path exists) }
+    | each {$in.name|path basename })  ++ ["all"]
+}
+export def "sandbox rebuild" [folder: string@'nu-complete sandbox rebuild folders'] {
+    let base = ("~/src/dotfiles/bin/containers" | path expand)
+    if $folder == "all" {
+        let dirs = (ls $base | where type == "dir"
+            | where { ($in.name | path join "Containerfile" | path exists) })
+        for dir in $dirs {
+            let name = ($dir.name | path basename)
+            print $"(ansi pb)building podman localhost/($name)(ansi reset)"
+            cd $dir.name
+            ^podman build -t $"localhost/($name)" .
+        }
+    } else {
+        do { cd ($base | path join $folder); podman build -t $"localhost/($folder)" . }
+    }
+}
+
+
