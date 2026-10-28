@@ -164,6 +164,29 @@ config.mouse_bindings = {
   --   action = wezterm.action.SelectTextAtMouseCursor 'SemanticZone',
   --   mods = 'NONE',
   -- },
+  -- Wheel = Page Up/Down: scrollback normally, key press in alt-screen apps (pi, less, nvim)
+  {
+    event = { Down = { streak = 1, button = { WheelUp = 1 } } },
+    mods = 'NONE',
+    action = wezterm.action_callback(function(window, pane)
+      if pane:is_alt_screen_active() then
+        window:perform_action(wezterm.action.SendKey { key = 'PageUp' }, pane)
+      else
+        window:perform_action(wezterm.action.ScrollByPage(-1), pane)
+      end
+    end),
+  },
+  {
+    event = { Down = { streak = 1, button = { WheelDown = 1 } } },
+    mods = 'NONE',
+    action = wezterm.action_callback(function(window, pane)
+      if pane:is_alt_screen_active() then
+        window:perform_action(wezterm.action.SendKey { key = 'PageDown' }, pane)
+      else
+        window:perform_action(wezterm.action.ScrollByPage(1), pane)
+      end
+    end),
+  },
 }
 
 local mods = 'CTRL|SHIFT'
