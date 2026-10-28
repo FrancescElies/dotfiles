@@ -442,6 +442,7 @@ export def "config git" [] {
   ^git config --global push.autosetupremote true
   ^git config --global push.default current
   ^git config --global rebase.autosquash true
+  ^git config --global rebase.autostash true
   ^git config --global rebase.missingCommitsCheck error
   ^git config --global rebase.updateRefs true
 
