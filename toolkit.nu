@@ -487,6 +487,7 @@ export def "config git" [] {
   ^git config --global fetch.writeCommitGraph true
   # file system monitory
   ^git config --global core.untrackedcache true
+  ^git config --global feature.manyfiles true
   ^git config --global core.fsmonitor true
 
   # ^git config --global commit.template ($repo_dir | path join 'config/git/commit-template')
