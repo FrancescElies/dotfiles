@@ -17,19 +17,6 @@
 # > podman run --rm -it -v "$PWD:/workspace" -v ~/.pi.agent:/root/.pi/agent localhost/pi
 # > podman run --rm -it -v "(pwd):/workspace" -v "('~/.pi.agent' | path expand):/root/.pi.agent" localhost/pi
 
-FROM rust:slim
-
-RUN apt-get update \
-  && apt-get install -y wget \
-  && wget -q https://github.com/rtk-ai/rtk/releases/download/v1.1.0/rtk-v1.1.0.tar.gz -O /tmp/rtk.tar.gz \
-  && echo '0019dfc4b32d63c1392aa264aed2253c1e0c2fb09216f8e2cc269bbfb8bb49b5  /tmp/rtk.tar.gz' | sha256sum -c - \
-  && tar -xzf /tmp/rtk.tar.gz -C /tmp/rtk \
-  && cd /tmp/rtk/rtk-1.1.0 && cargo install --path . \
-  && apt-get purge -y wget \
-  && rm -rf /tmp/rtk.tar.gz /tmp/rtk
-
-RUN rtk init -g --agent localhost/pi
-
 FROM node:24-bookworm-slim
 
 RUN apt-get update \
@@ -45,7 +32,10 @@ RUN uv tool install 'semble==0.5.2' \
   && uv tool install 'git+https://github.com/mitsuhiko/pexpect-mcp@dff5d421490514fb35cc8891b85cfc90370d8119' \
   && ln -sf /root/.local/bin/* /usr/local/bin/
 
-# rtk already installed in base image
+RUN wget -q https://github.com/rtk-ai/rtk/releases/download/v1.1.0/rtk-x86_64-unknown-linux-musl.tar.gz -O /tmp/rtk.tar.gz \
+  && echo '9454ad1b9489daa57ab0a9f4ebe2faaf4dc82b8a0f26c9e5135151abd7c9378d  /tmp/rtk.tar.gz' | sha256sum -c - \
+  && tar -xzf /tmp/rtk.tar.gz -C /usr/local/bin rtk \
+  && rm /tmp/rtk.tar.gz
 
 # Install radare2 from source.
 RUN git clone --depth 1 https://github.com/radareorg/radare2 /tmp/radare2 \
