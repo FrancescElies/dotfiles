@@ -169,22 +169,16 @@ config.mouse_bindings = {
     event = { Down = { streak = 1, button = { WheelUp = 1 } } },
     mods = 'NONE',
     action = wezterm.action_callback(function(window, pane)
-      if pane:is_alt_screen_active() then
-        window:perform_action(wezterm.action.SendKey { key = 'PageUp' }, pane)
-      else
-        window:perform_action(wezterm.action.ScrollByPage(-1), pane)
-      end
+      window:perform_action(wezterm.action.SendKey { key = 'PageUp' }, pane)
+      -- window:perform_action(wezterm.action.ScrollByPage(-1), pane)
     end),
   },
   {
     event = { Down = { streak = 1, button = { WheelDown = 1 } } },
     mods = 'NONE',
     action = wezterm.action_callback(function(window, pane)
-      if pane:is_alt_screen_active() then
-        window:perform_action(wezterm.action.SendKey { key = 'PageDown' }, pane)
-      else
-        window:perform_action(wezterm.action.ScrollByPage(1), pane)
-      end
+      window:perform_action(wezterm.action.SendKey { key = 'PageDown' }, pane)
+      -- window:perform_action(wezterm.action.ScrollByPage(1), pane)
     end),
   },
 }
