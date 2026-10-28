@@ -473,11 +473,18 @@ export alias text-ranks = python ~/src/dotfiles/bin/text-ranks.py
 
 def "nu-complete jellyfin actions" [] { ["run" "stop" "logs"] }
 export def jellyfin [action: string@'nu-complete jellyfin actions'] {
-    const yml = "~/src/dotfiles/bin/containers/jellyfin/compose.yaml" | path expand
     match $action {
-        "run" => { ^podman compose -f $yml up -d }
-        "stop" => { ^podman compose -f $yml down }
-        "logs" => { ^podman compose -f $yml logs -f }
+        "run" => {(
+          ^podman run -d --name jellyfin --label "io.containers.autoupdate=registry"
+              --publish 8096:8096/tcp --publish 7359:7359/udp
+              --device /dev/dri/ --user $"(id -u):(id -g)" --userns keep-id --replace
+              --volume jellyfin-cache:/cache:Z --volume jellyfin-config:/config:Z
+              --mount $"type=bind,source=($env.HOME)/Music,destination=/media/Music,ro=true,relabel=private"
+              --mount $"type=bind,source=($env.HOME)/Videos,destination=/media/Videos,ro=true,relabel=private"
+              docker.io/jellyfin/jellyfin:latest
+        )}
+        "stop" => { ^podman stop jellyfin }
+        "logs" => { ^podman logs -f jellyfin }
         _ => { error make {msg: "usage: jellyfin [run|stop|logs]"} }
     }
 }
