@@ -315,13 +315,9 @@ def "macos config terminal" [] {
     ln -shf ("./config/zellij" | path expand) ~/.config/zellij
 }
 
-def "windows config terminal" [] {
-    rm -rf ~/.config/wezterm
-    mklink /j ("~/.config/wezterm" | path expand)  ($repo_dir | path join "config/wezterm") | path expand --strict
-
-    let alacritty_conf = ($env.APPDATA | path join "alacritty")
-    rm -rf $alacritty_conf
-    mklink /j ($alacritty_conf | path expand)  ($repo_dir | path join "config/alacritty") | path expand --strict
+export def "windows config terminal" [] {
+    symlink --force ("./config/wezterm" | path expand) ~/.config/wezterm
+    symlink --force ("./config/alacritty/" | path expand) ~/AppData/Roaming/alacritty
     symlink --force ("./config/zellij" | path expand) ~/AppData/Roaming/Zellij/config/
 }
 
