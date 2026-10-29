@@ -246,8 +246,8 @@ export def "install wezterm" [method: string@["flatpak" "source"] = "source"] {
     }
     if $method == "source" {
         if (which ^openssl | is-empty) or (not ('/usr/include/openssl/ssl.h' | path exists)) {
-            print $"(ansi pi)sudo apt install -y libssl-dev pkg-setup libwayland-dev libxkbcommon-dev libfontconfig1-dev(ansi reset)"
-            sudo apt install -y libssl-dev pkg-setup libwayland-dev libxkbcommon-dev libfontconfig1-dev
+            print $"(ansi pi)sudo apt install -y libssl-dev pkg-setup libwayland-dev librust-wayland-client-dev libxkbcommon-dev libfontconfig1-dev(ansi reset)"
+            sudo apt install -y libssl-dev pkg-setup libwayland-dev librust-wayland-client-dev libxkbcommon-dev libfontconfig1-dev
         }
         cd ~/src/oss
         if not ('~/src/oss/wezterm' | path exists) {
