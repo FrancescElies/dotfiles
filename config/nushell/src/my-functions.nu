@@ -502,7 +502,7 @@ export def --wrapped podman-r2 [...args] {
 }
 
 export def --wrapped podman-searxng [...args] {
-    podman start ...$args searxng
+    podman run ...$args localhost/searxng
 }
 
 def "nu-complete sandbox rebuild folders" [] {
