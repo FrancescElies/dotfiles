@@ -502,7 +502,9 @@ export def --wrapped podman-r2 [...args] {
 }
 
 export def --wrapped podman-searxng [...args] {
-    podman run ...$args localhost/searxng
+    if (podman network exists searchnet | complete).exit_code != 0 { podman network create searchnet }
+    podman rm -f searxng | complete | ignore
+    podman run -d --name searxng --network searchnet -p 127.0.0.1:8080:8080 ...$args localhost/searxng
 }
 
 def "nu-complete sandbox rebuild folders" [] {
