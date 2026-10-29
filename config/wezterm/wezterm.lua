@@ -165,22 +165,22 @@ config.mouse_bindings = {
   --   mods = 'NONE',
   -- },
   -- Wheel = Page Up/Down: scrollback normally, key press in alt-screen apps (pi, less, nvim)
-  {
-    event = { Down = { streak = 1, button = { WheelUp = 1 } } },
-    mods = 'NONE',
-    action = wezterm.action_callback(function(window, pane)
-      window:perform_action(wezterm.action.SendKey { key = 'PageUp' }, pane)
-      -- window:perform_action(wezterm.action.ScrollByPage(-1), pane)
-    end),
-  },
-  {
-    event = { Down = { streak = 1, button = { WheelDown = 1 } } },
-    mods = 'NONE',
-    action = wezterm.action_callback(function(window, pane)
-      window:perform_action(wezterm.action.SendKey { key = 'PageDown' }, pane)
-      -- window:perform_action(wezterm.action.ScrollByPage(1), pane)
-    end),
-  },
+  -- {
+  --   event = { Down = { streak = 1, button = { WheelUp = 1 } } },
+  --   mods = 'NONE',
+  --   action = wezterm.action_callback(function(window, pane)
+  --     window:perform_action(wezterm.action.SendKey { key = 'PageUp' }, pane)
+  --     -- window:perform_action(wezterm.action.ScrollByPage(-1), pane)
+  --   end),
+  -- },
+  -- {
+  --   event = { Down = { streak = 1, button = { WheelDown = 1 } } },
+  --   mods = 'NONE',
+  --   action = wezterm.action_callback(function(window, pane)
+  --     window:perform_action(wezterm.action.SendKey { key = 'PageDown' }, pane)
+  --     -- window:perform_action(wezterm.action.ScrollByPage(1), pane)
+  --   end),
+  -- },
 }
 
 local mods = 'CTRL|SHIFT'
