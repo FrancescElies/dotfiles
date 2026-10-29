@@ -135,8 +135,8 @@ config.launch_menu = launch_menu
 
 -- Styling Inactive Panes
 config.inactive_pane_hsb = {
-  saturation = 0.7, -- smaller values can make it appear more washed out
-  brightness = 0.6, -- dims or increases the perceived amount of light
+  saturation = 0.9, -- smaller values can make it appear more washed out
+  brightness = 0.8, -- dims or increases the perceived amount of light
 }
 
 config.mouse_bindings = {
