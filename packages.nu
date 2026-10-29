@@ -34,32 +34,29 @@ export const packages = {
     rust-pkgs: [
         "aichat"  # LLM CLI tool
         "coreutils"  # Cross-platform rewrite of GNU coreutils
-        "lstr"  # tree viewer
         "tree-sitter-cli"  # Tree-sitter grammars from the command line
         "bat"  # cat clone
-        "bandwhich"  # display current network utilization by process, connection and remote host
+        # "bandwhich"  # display current network utilization by process, connection and remote host
         "bottom"  # graphical process/system monitor for the terminal.
-        "heatseeker"  # fuzzy selector, a selecta clone
+        # "heatseeker"  # fuzzy selector, a selecta clone
         "broot"  # explore file hierarchies with a tree-like view
         "difftastic"  # structural diff tool
         "diskonaut"  # find whale files that eat up disk space
         "fclones"  # finds and removes duplicate files
         "fd-find"  # find entries in your filesystem
-        "gimoji"  # copy emoji to clipboard, or add them to commit messages
         "just"  # just a command runner https://github.com/casey/just
         "gitu"  # git client inspired by Magit
         "ripgrep_all"  # ripgrep, but also search in PDFs, E-Books, Office documents, zip, tar.gz, etc.
         "killport"  # kill processes running on specified port
         "kondo"  # Kondo recursively cleans project directories.
         "miniserve"  # serve some files over HTTP right now!
-        "mprocs"  # tui for running multiple processes
+        # "mprocs"  # tui for running multiple processes
         "nu"  # nushell language and shell
         "ouch"  # extract/compress files
         "pgen"  # passphrase generator
         "rustscan"  # network scanner
         "tailspin"  # log file highlighter
         "tealdeer"  # TLDR client
-        "xh"  # http requests
     ]
 
     rust-dev-pkgs: [
