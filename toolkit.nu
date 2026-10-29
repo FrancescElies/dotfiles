@@ -219,8 +219,12 @@ export def "setup python" [] {
 
     # create home python virtual environment
     cd ~
+    print $"(ansi purple_bold)setup python venv: ($packages.packages.python)(ansi reset)"
     if not ('.venv' | path exists) { uv venv }
     uv pip install ...($packages.packages.python)
+
+    print $"(ansi purple_bold)setup python tools: ($packages.packages.python-tools)(ansi reset)"
+    ($packages.packages.python-tools) | each { uv tool install $in }
 
     symlink --force ($repo_dir | path join 'config/ipython/config.py') ~/.ipython/profile_default/ipython_config.py
 

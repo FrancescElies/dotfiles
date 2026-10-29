@@ -2,28 +2,32 @@
 # Keep comments for documentation
 
 export const packages = {
-    python: [
+    python-tools: [
+        "cogapp"  # generate content with inlined Python code. https://nedbatchelder.com/code/cog
+        "honcho"  # Foreman clone, manage Procfile apps
+        "img2pdf"  # lossless conversion of rater images to pdf
         "jrnl"  # Collect your thoughts and notes without leaving the command line
         "keyring"  # cli and lib to easyly access the system keyring
-        "aw-client"  # client library for activitywatch 
-        "weasyprint"  # helping web developers to create PDF documents. It turns simple HTML pages into gorgeous statistical reports, invoices, tickets
+        "litecli"  # CLI for SQLite Databases with auto-completion and syntax highlighting
+        "magic-wormhole"  # get things from one computer to another, safely
         "ocrmypdf"  # adds OCR layer to scanned PDF files, allowing them to be searched
-        "cogapp"  # generate content with inlined Python code. https://nedbatchelder.com/code/cog
+        "semble"  # natural language processing
+        "weasyprint"  # helping web developers to create PDF documents. It turns simple HTML pages into gorgeous statistical reports, invoices, tickets
+        "toolong"  # textualize: terminal application to view, tail, merge, and search log files (plus JSONL).
+        "yt-dlp"  # audo video downloader
+    ]
+
+    python: [
+        "aw-client"  # client library for activitywatch
         "hypothesis"  # find edge cases in your code
         "MechanicalSoup"  # automate interaction with websites, (no Javascript, for js see Selenium)
         "frida-tools"  # dynamic instrumentation toolkit for devs
-        "magic-wormhole"  # get things from one computer to another, safely
-        "litecli"  # CLI for SQLite Databases with auto-completion and syntax highlighting 
         "ipython"  # repl
-        "img2pdf"  # lossless conversion of rater images to pdf
-        "honcho"  # Foreman clone, manage Procfile apps
         "ipdb"  # better pdb
         "chardet"  # character encoding detector
-        "toolong"  # textualize: terminal application to view, tail, merge, and search log files (plus JSONL).
         "pytextrank"  # TextRank algorithms (textgraphs) for phrase extraction
         "yake"  # yet another keyword extractor (extract most important keywords from a document)
         "spacy"  # natural language processing
-        "yt-dlp"  # audo video downloader
         "python-benedict"  # dict subclass with keylist/keypath support, built-in I/O operations (base64, csv, html, ini, json, pickle, plist, query-string, toml, xls, xml, yaml), s3 support and many utilities.
     ]
 
@@ -208,7 +212,7 @@ export const packages = {
     ]
 
     go-install: [
-        ""github.com/aandrew-me/tgpt/v2@latest""  
+        ""github.com/aandrew-me/tgpt/v2@latest""
     ]
 
     apt: [
