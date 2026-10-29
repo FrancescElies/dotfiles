@@ -47,8 +47,8 @@ def ask_yes_no [question: string] {
 
 use packages.nu
 
-export def "config nushell" [] {
-    print $"(ansi purple_bold)config nushell(ansi reset)"
+export def "setup nushell" [] {
+    print $"(ansi purple_bold)setup nushell(ansi reset)"
     let nushell_dir = match $nu.os-info.name {
         "windows" => '~\AppData\Roaming\nushell' ,
         "macos" => "~/Library/Application Support/nushell" ,
@@ -68,8 +68,8 @@ export def "config nushell" [] {
     symlink --force ($repo_dir | path join 'config/nushell/config.nu') ($nushell_dir | path join "config.nu")
 }
 
-export def "config fd" [] {
-    print $"(ansi purple_bold)config fd(ansi reset)"
+export def "setup fd" [] {
+    print $"(ansi purple_bold)setup fd(ansi reset)"
     if $nu.os-info.family == 'windows' {
         symlink --force ($repo_dir | path join 'config/fd') ~/AppData/Roaming/fd
     } else {
@@ -84,14 +84,14 @@ def "install glazewm" [] {
     symlink --force ($repo_dir | path join 'config/glazewm/') $config_dir
 }
 
-export def "config foot" [] {
-    print $"(ansi purple_bold)config foot(ansi reset)"
+export def "setup foot" [] {
+    print $"(ansi purple_bold)setup foot(ansi reset)"
     let config_dir = '~/.config/foot'
     symlink --force ($repo_dir | path join 'config/foot/') $config_dir
 }
 
-export def "config aba" [] {
-    print $"(ansi purple_bold)config aba(ansi reset)"
+export def "setup aba" [] {
+    print $"(ansi purple_bold)setup aba(ansi reset)"
     symlink --force ($repo_dir | path join 'local/share/aba.toml') ~/.local/share/aba.toml
 }
 
@@ -134,8 +134,8 @@ def "install zig" [] {
     try { mv $uncompressed ~/bin }
 }
 
-export def "config flowlauncher" [] {
-    print $"(ansi purple_bold)config flowlauncher(ansi reset)"
+export def "setup flowlauncher" [] {
+    print $"(ansi purple_bold)setup flowlauncher(ansi reset)"
     let config_dir = '~\AppData\Roaming\FlowLauncher' | path expand
     let settings_file = $config_dir | path join Settings/Settings.json
     if ($settings_file | path exists) {
@@ -169,7 +169,7 @@ def "install neovim" [] {
     }
 }
 
-export def "config kanata" [] {
+export def "setup kanata" [] {
     let config_dir = match $nu.os-info.name {
         "windows" => '~\AppData\Roaming\kanata' ,
         "macos" => '~/Library/Application Support/kanata' ,
@@ -178,7 +178,7 @@ export def "config kanata" [] {
     symlink --force ($repo_dir | path join 'config/kanata/') $config_dir
 }
 
-export def "config pueue" [] {
+export def "setup pueue" [] {
     let config_dir = match $nu.os-info.name {
         "windows" => '~\AppData\Roaming\pueue' ,
         "macos" => '~/Library/Application Support/pueue' ,
@@ -207,8 +207,8 @@ export def "install fonts" [] {
     }
 }
 
-export def "config python" [] {
-    print $"(ansi purple_bold)config python(ansi reset)"
+export def "setup python" [] {
+    print $"(ansi purple_bold)setup python(ansi reset)"
     # uv
     if (which ^uv | is-empty ) {
         match $nu.os-info.name {
@@ -242,8 +242,8 @@ export def "install wezterm" [method: string@["flatpak" "source"] = "source"] {
     }
     if $method == "source" {
         if (which ^openssl | is-empty) or (not ('/usr/include/openssl/ssl.h' | path exists)) {
-            print $"(ansi pi)sudo apt install -y libssl-dev pkg-config libwayland-dev libxkbcommon-dev libfontconfig1-dev(ansi reset)"
-            sudo apt install -y libssl-dev pkg-config libwayland-dev libxkbcommon-dev libfontconfig1-dev
+            print $"(ansi pi)sudo apt install -y libssl-dev pkg-setup libwayland-dev libxkbcommon-dev libfontconfig1-dev(ansi reset)"
+            sudo apt install -y libssl-dev pkg-setup libwayland-dev libxkbcommon-dev libfontconfig1-dev
         }
         cd ~/src/oss
         if not ('~/src/oss/wezterm' | path exists) {
@@ -260,8 +260,8 @@ export def "install wezterm" [method: string@["flatpak" "source"] = "source"] {
     }
 }
 
-export def "config yt-dlp" [] {
-    print $"(ansi purple_bold)config yt-dlp(ansi reset)"
+export def "setup yt-dlp" [] {
+    print $"(ansi purple_bold)setup yt-dlp(ansi reset)"
     let yt_dlp = "~/bin/yt-dlp" | path expand
     if (not ($yt_dlp | path exists)) { http get https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp | save -f $yt_dlp }
 }
@@ -293,7 +293,7 @@ def "install keyd-remap" [] {
     }
 }
 
-def "linux config terminal" [] {
+def "linux setup terminal" [] {
     # rm -rf ~/.config/wezterm
     # rm -rf ~/.config/zellij
     ln -snf ("./config/alacritty" | path expand) ~/.config/alacritty
@@ -301,13 +301,13 @@ def "linux config terminal" [] {
     ln -snf ("./config/zellij" | path expand) ~/.config/zellij
 }
 
-def "macos config wm" [] {
-    print $"(ansi pi)macos config wm(ansi reset)"
+def "macos setup wm" [] {
+    print $"(ansi pi)macos setup wm(ansi reset)"
     ln -shf ("./config/aerospace" | path expand) ~/.config/aerospace
 }
 
-def "macos config terminal" [] {
-    print $"(ansi pi)macos config terminal(ansi reset)"
+def "macos setup terminal" [] {
+    print $"(ansi pi)macos setup terminal(ansi reset)"
     # rm -rf ~/.config/wezterm
     # rm -rf ~/.config/zellij
     ln -shf ("./config/alacritty" | path expand) ~/.config/alacritty
@@ -315,7 +315,7 @@ def "macos config terminal" [] {
     ln -shf ("./config/zellij" | path expand) ~/.config/zellij
 }
 
-export def "windows config terminal" [] {
+export def "windows setup terminal" [] {
     symlink --force ("./config/wezterm" | path expand) ~/.config/wezterm
     symlink --force ("./config/alacritty/" | path expand) ~/AppData/Roaming/alacritty
     symlink --force ("./config/zellij" | path expand) ~/AppData/Roaming/Zellij/config/
@@ -367,7 +367,7 @@ def "rust dev-packages" [] {
     cargo binstall -q -y ...($packages.packages.rust-dev-pkgs)
 }
 
-export def "config himalaya" [] {
+export def "setup himalaya" [] {
     let config_dir = match $nu.os-info.name {
         "windows" => '~\AppData\Roaming\himalaya' ,
         "macos" => "~/Library/Application Support/himalaya" ,
@@ -377,7 +377,7 @@ export def "config himalaya" [] {
     symlink --force ($repo_dir | path join 'config/himalaya') $config_dir
 }
 
-export def "config broot" [] {
+export def "setup broot" [] {
     let broot_config_dir = match $nu.os-info.name {
         "windows" => '~\AppData\Roaming\dystroy\broot' ,
         _ => "~/.config/broot" ,
@@ -386,12 +386,12 @@ export def "config broot" [] {
     symlink --force ($repo_dir | path join 'config/broot') $broot_config_dir
 }
 
-export def "config psql" [] {
+export def "setup psql" [] {
     symlink --force ($repo_dir | path join 'config/.psqlrc') ~/.psqlrc
 }
 
-export def "config gnome-apps" [] {
-    print $"(ansi purple_bold)config gnome-apps(ansi reset)"
+export def "setup gnome-apps" [] {
+    print $"(ansi purple_bold)setup gnome-apps(ansi reset)"
     let apps_dir = ($repo_dir | path join 'config/nushell/src/linux/gnome-apps')
     for file in (ls $apps_dir | where type == file) {
         let name = ($file.name | path basename)
@@ -407,13 +407,13 @@ export def "config gnome-apps" [] {
     sudo update-desktop-database /usr/share/applications
 }
 
-export def "config git" [] {
+export def "setup git" [] {
   # https://www.youtube.com/watch?v=aolI_Rz0ZqY
   # Apply some useful defaults
   # ^gmy-defaults
   #
   # Give me all my pull requests as local refs
-  # ^git config remote.origin.fetch '+refs/pull/*:refs/remotes/origin/pull/*'
+  # ^git setup remote.origin.fetch '+refs/pull/*:refs/remotes/origin/pull/*'
   #
   # Conditional ~/.gitconfig
   #
@@ -428,49 +428,49 @@ export def "config git" [] {
   # ^git maintenance start
 
   # https://jvns.ca/blog/2024/02/16/popular-git-config-options/#help-autocorrect-10
-  ^git config --global tag.sort -version:refname
-  ^git config --global branch.sort -committerdate
-  ^git config --global diff.algorithm histogram
-  ^git config --global fetch.prune true
-  ^git config --global help.autocorrect 10
-  ^git config --global help.autocorrect prompt
-  ^git config --global init.defaultBranch main
-  ^git config --global interactive.diffFilter delta --color-only
-  ^git config --global log.date iso
-  # ^git config --global merge.conflictstyle zdiff3
-  ^git config --global pull.rebase true
-  ^git config --global push.autosetupremote true
-  ^git config --global push.default current
-  ^git config --global rebase.autosquash true
-  ^git config --global rebase.autostash true
-  ^git config --global rebase.missingCommitsCheck error
-  ^git config --global rebase.updateRefs true
+  ^git setup --global tag.sort -version:refname
+  ^git setup --global branch.sort -committerdate
+  ^git setup --global diff.algorithm histogram
+  ^git setup --global fetch.prune true
+  ^git setup --global help.autocorrect 10
+  ^git setup --global help.autocorrect prompt
+  ^git setup --global init.defaultBranch main
+  ^git setup --global interactive.diffFilter delta --color-only
+  ^git setup --global log.date iso
+  # ^git setup --global merge.conflictstyle zdiff3
+  ^git setup --global pull.rebase true
+  ^git setup --global push.autosetupremote true
+  ^git setup --global push.default current
+  ^git setup --global rebase.autosquash true
+  ^git setup --global rebase.autostash true
+  ^git setup --global rebase.missingCommitsCheck error
+  ^git setup --global rebase.updateRefs true
 
-  ^git config --global rebase.instructionFormat "(%an, %as) %s"
+  ^git setup --global rebase.instructionFormat "(%an, %as) %s"
 
   # gpg
-  # ^git config --global format.signOff true
-  # ^git config --global user.signingKey 3B90F50EE678CC468870A2BEC6514C960DD0AC0B
-  # ^git config --global commit.gpgsign true
-  # ^git config --global tag.gpgsign true
+  # ^git setup --global format.signOff true
+  # ^git setup --global user.signingKey 3B90F50EE678CC468870A2BEC6514C960DD0AC0B
+  # ^git setup --global commit.gpgsign true
+  # ^git setup --global tag.gpgsign true
 
   # Avoid data corruption
-  ^git config --global transfer.fsckobjects true
-  ^git config --global fetch.fsckobjects true
-  ^git config --global receive.fsckObjects true
+  ^git setup --global transfer.fsckobjects true
+  ^git setup --global fetch.fsckobjects true
+  ^git setup --global receive.fsckObjects true
 
-  ^git config --global merge.tool nvimdiff
-  ^git config --global merge.conflictstyle diff3
-  ^git config --global mergetool.nvimdiff.cmd 'nvim -d $LOCAL $REMOTE $MERGED -c "$wincmd w" -c "wincmd J"'
-  ^git config --global diff.tool nvimdiff
-  ^git config --global diff.colorMoved default
+  ^git setup --global merge.tool nvimdiff
+  ^git setup --global merge.conflictstyle diff3
+  ^git setup --global mergetool.nvimdiff.cmd 'nvim -d $LOCAL $REMOTE $MERGED -c "$wincmd w" -c "wincmd J"'
+  ^git setup --global diff.tool nvimdiff
+  ^git setup --global diff.colorMoved default
 
 
   # REuse REordered REsolution, tells ^git to remember conflicts so if it sees them again he won't ask about it.
-  ^git config --global rerere.enabled true
-  ^git config --global branch.sort -committerdate
-  # ^git config gpg.format ssh
-  # ^git config user.signingkey ~/.ssh/id_ed25519
+  ^git setup --global rerere.enabled true
+  ^git setup --global branch.sort -committerdate
+  # ^git setup gpg.format ssh
+  # ^git setup user.signingkey ~/.ssh/id_ed25519
 
   # Big repository stuff
   #
@@ -481,20 +481,20 @@ export def "config git" [] {
   # See multipack indexes, reachability bitmaps and geometric repacking
   # https://github.blog/2021-04-29-scaling-monorepo-maintenance
   # ^git maintenance start will also write the commit-graph
-  ^git config --global fetch.writeCommitGraph true
+  ^git setup --global fetch.writeCommitGraph true
   # file system monitory
-  ^git config --global core.untrackedcache true
-  ^git config --global feature.manyfiles true
-  ^git config --global core.fsmonitor true
+  ^git setup --global core.untrackedcache true
+  ^git setup --global feature.manyfiles true
+  ^git setup --global core.fsmonitor true
 
-  # ^git config --global commit.template ($repo_dir | path join 'config/git/commit-template')
+  # ^git setup --global commit.template ($repo_dir | path join 'config/git/commit-template')
 }
 
-export def "config bashrc" [] { symlink --force ($repo_dir | path join 'config/.bashrc') ~/.bashrc }
-export def "config inputrc" [] { symlink --force ($repo_dir | path join 'config/.inputrc') ~/.inputrc }
-export def "config radare2" [] { symlink --force ($repo_dir | path join 'config/.radare2rc') ~/.radare2rc }
+export def "setup bashrc" [] { symlink --force ($repo_dir | path join 'config/.bashrc') ~/.bashrc }
+export def "setup inputrc" [] { symlink --force ($repo_dir | path join 'config/.inputrc') ~/.inputrc }
+export def "setup radare2" [] { symlink --force ($repo_dir | path join 'config/.radare2rc') ~/.radare2rc }
 
-export def "config bacon" [] {
+export def "setup bacon" [] {
     let bacon_config_dir = match $nu.os-info.name {
         "windows" => '~\AppData\Roaming\dystroy\bacon\config' ,
         "macos" => '~/Library/Application Support/org.dystroy.bacon' ,
@@ -504,7 +504,7 @@ export def "config bacon" [] {
     symlink --force ($repo_dir | path join 'config/bacon') $bacon_config_dir
 }
 
-export def "config meli" [] {
+export def "setup meli" [] {
     let config_dir = match $nu.os-info.name {
         "windows" => 'TODO' ,
         "macos" => '~/.config/meli' ,
@@ -514,7 +514,7 @@ export def "config meli" [] {
     symlink --force ($repo_dir | path join 'config/meli') $config_dir
 }
 
-export def "config aerc" [] {
+export def "setup aerc" [] {
     let config_dir = match $nu.os-info.name {
         "windows" => 'TODO' ,
         "macos" => '~/Library/Preferences/aerc/' ,
@@ -524,7 +524,7 @@ export def "config aerc" [] {
     symlink --force ($repo_dir | path join 'config/aerc') $config_dir
 }
 
-export def "config neomutt" [] {
+export def "setup neomutt" [] {
     let config_dir = match $nu.os-info.name {
         "windows" => 'TODO' ,
         _ => "~/.config/neomutt" ,
@@ -532,12 +532,12 @@ export def "config neomutt" [] {
     symlink --force ($repo_dir | path join 'config/neomutt') $config_dir
 }
 
-export def "config herdr" [] {
+export def "setup herdr" [] {
     let config_dir = "~/.config/herdr"
     symlink --force ($repo_dir | path join 'config/herdr') $config_dir
 }
 
-export def "config searxng" [] {
+export def "setup searxng" [] {
     symlink --force ($repo_dir | path join 'config/searxng') ~/searxng
     let conf = ("($repo_dir | path join 'config/searxng')" | path expand)
     podman rm -f searxng
@@ -554,41 +554,41 @@ export def bootstrap [] {
     def run-step [name: string, action: closure]: nothing -> string {
         try { do $action; "" } catch { |err| $"($name): ($err.msg)" }
     }
-    let r1 = (run-step "config git" { config git })
+    let r1 = (run-step "setup git" { setup git })
     if $r1 != "" { $errors = ($errors | append $r1) }
-    let r2 = (run-step "config inputrc" { config inputrc })
+    let r2 = (run-step "setup inputrc" { setup inputrc })
     if $r2 != "" { $errors = ($errors | append $r2) }
-    let r3 = (run-step "config bashrc" { config bashrc })
+    let r3 = (run-step "setup bashrc" { setup bashrc })
     if $r3 != "" { $errors = ($errors | append $r3) }
-    let r4 = (run-step "config nushell" { config nushell })
+    let r4 = (run-step "setup nushell" { setup nushell })
     if $r4 != "" { $errors = ($errors | append $r4) }
-    let r5 = (run-step "config fd" { config fd })
+    let r5 = (run-step "setup fd" { setup fd })
     if $r5 != "" { $errors = ($errors | append $r5) }
-    let r6 = (run-step "config yt-dlp" { config yt-dlp })
+    let r6 = (run-step "setup yt-dlp" { setup yt-dlp })
     if $r6 != "" { $errors = ($errors | append $r6) }
-    let r7 = (run-step "config bacon" { config bacon })
+    let r7 = (run-step "setup bacon" { setup bacon })
     if $r7 != "" { $errors = ($errors | append $r7) }
-    let r8 = (run-step "config aerc" { config aerc })
+    let r8 = (run-step "setup aerc" { setup aerc })
     if $r8 != "" { $errors = ($errors | append $r8) }
-    let r9 = (run-step "config neomutt" { config neomutt })
+    let r9 = (run-step "setup neomutt" { setup neomutt })
     if $r9 != "" { $errors = ($errors | append $r9) }
-    let r10 = (run-step "config herdr" { config herdr })
+    let r10 = (run-step "setup herdr" { setup herdr })
     if $r10 != "" { $errors = ($errors | append $r10) }
-    let r11 = (run-step "config meli" { config meli })
+    let r11 = (run-step "setup meli" { setup meli })
     if $r11 != "" { $errors = ($errors | append $r11) }
-    let r12 = (run-step "config radare2" { config radare2 })
+    let r12 = (run-step "setup radare2" { setup radare2 })
     if $r12 != "" { $errors = ($errors | append $r12) }
-    let r13 = (run-step "config psql" { config psql })
+    let r13 = (run-step "setup psql" { setup psql })
     if $r13 != "" { $errors = ($errors | append $r13) }
-    let r14 = (run-step "config broot" { config broot })
+    let r14 = (run-step "setup broot" { setup broot })
     if $r14 != "" { $errors = ($errors | append $r14) }
-    let r15 = (run-step "config himalaya" { config himalaya })
+    let r15 = (run-step "setup himalaya" { setup himalaya })
     if $r15 != "" { $errors = ($errors | append $r15) }
-    let r16 = (run-step "config pueue" { config pueue })
+    let r16 = (run-step "setup pueue" { setup pueue })
     if $r16 != "" { $errors = ($errors | append $r16) }
-    let r17 = (run-step "config kanata" { config kanata })
+    let r17 = (run-step "setup kanata" { setup kanata })
     if $r17 != "" { $errors = ($errors | append $r17) }
-    let r18 = (run-step "config python" { config python })
+    let r18 = (run-step "setup python" { setup python })
     if $r18 != "" { $errors = ($errors | append $r18) }
 
     match $nu.os-info.name {
@@ -598,10 +598,10 @@ export def bootstrap [] {
                 rustup component add llvm-tools rust-analyzer
             }
             install glazewm
-            config flowlauncher
+            setup flowlauncher
             let winget_install = $"winget install --silent ($packages.packages.windows | str join ' ')"
             input $"(ansi bb)run as admin(ansi reset): (ansi pi)($winget_install)(ansi reset) - press enter when done"
-            windows config terminal
+            windows setup terminal
             symlink --force ($repo_dir | path join 'bin/windows-os/win-update.ps1') ~/Desktop/win-update.ps1
             symlink --force ($repo_dir | path join 'bin/windows-os/admin-term.ps1') ~/Desktop/admin-term.ps1
         },
@@ -612,13 +612,13 @@ export def bootstrap [] {
                 rustup component add llvm-tools rust-analyzer
             }
             install sway
-            config foot
-            config aba
+            setup foot
+            setup aba
             install keyd-remap
             install fonts
             if not (which nano | is-empty) { sudo apt remove -y nano }
             if (which age | is-empty) { install debian packages }
-            linux config terminal
+            linux setup terminal
             install neovim  # last might take long
         }
         "macos" => {
@@ -629,8 +629,8 @@ export def bootstrap [] {
 
             brew install --force ...($packages.packages.mac-brew)
             brew install --force --cask ...($packages.packages.mac-brew-cask)
-            macos config terminal
-            macos config wm
+            macos setup terminal
+            macos setup wm
         },
         _ => {
 
