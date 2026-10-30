@@ -43,3 +43,6 @@ export def gc [] {
     if ((open $f | str trim | is-empty)) { print "Empty message, aborted"; return }
     git commit -F $f
 }
+
+# Rewrite commit hours to 6pm-1am, only my commits, skip already-in-ballpark
+export alias rewrite-git-hours = uv run --with git-filter-repo python ~/src/dotfiles/bin/rewrite-git-hours.py

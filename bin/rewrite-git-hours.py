@@ -18,17 +18,24 @@ import random
 from datetime import datetime, timedelta, timezone
 
 # Use author date as the source of truth; apply the same new time to both.
+author_email = getattr(commit, 'author_email', b'').decode('ascii', 'replace').strip('<> ').lower()
+if author_email != '__AUTHOR_EMAIL__':
+    return
 date_bytes = getattr(commit, 'author_date')
 if not date_bytes:
-    continue
+    return
 date_str = date_bytes.decode('ascii')
 parts = date_str.split()
 if len(parts) != 2:
-    continue
+    return
 ts = int(parts[0])
 tz_str = parts[1]
-tz = timezone.fromisoformat(f'+00:00{tz_str}' if tz_str[0] == '+' else f'-00:00{tz_str[1:]}')
+sign = 1 if tz_str[0] == '+' else -1
+tz = timezone(sign * timedelta(hours=int(tz_str[1:3]), minutes=int(tz_str[3:5])))
 dt = datetime.fromtimestamp(ts, tz=tz)
+# Skip commits already in the desired 6pm-1am ballpark.
+if dt.hour >= 18 or dt.hour == 0:
+    return
 new_hour = random.randint(18, 25)
 if new_hour >= 24:
     dt = dt + timedelta(days=1)
@@ -109,7 +116,7 @@ def preview_new_times(branch):
             dt = datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S %z")
         except ValueError:
             print(line)
-            continue
+            return
         new_hour = random.randint(18, 25)
         if new_hour >= 24:
             dt = dt + timedelta(days=1)
@@ -141,8 +148,14 @@ def main():
         preview_new_times(args.branch)
         return 0
 
+    author_email = (
+        subprocess.run(["git", "config", "user.email"], capture_output=True, text=True)
+        .stdout.strip()
+        .lower()
+    )
+    callback = CALLBACK_SCRIPT.replace("__AUTHOR_EMAIL__", author_email)
     with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
-        f.write(CALLBACK_SCRIPT)
+        f.write(callback)
         callback_file = f.name
 
     try:
