@@ -397,7 +397,7 @@ export module "my" {
         ~/src/dotfiles
     ]
 
-    export def "config pull-push" [] {
+    export def "repos pull-push" [] {
        $repos | each {
         print $"(ansi pb)($in)(ansi reset)"
         cd $in; git stash; git pull; git push; git stash pop | ignore; git status
@@ -405,15 +405,24 @@ export module "my" {
     }
 
     export def "repos status" [] {
-        $repos | each { cd $in; print $"(ansi pb)($in)(ansi reset)"; ^git status }
+        $repos | each {
+           print $"(ansi pb)($in)(ansi reset)"
+            cd $in; ; ^git status
+        }
     }
 
     export def "repos push" [] {
-        $repos | each { cd $in; print $"(ansi pb)($in)(ansi reset)"; ^git push --force-with-lease }
+        $repos | each {
+            print $"(ansi pb)($in)(ansi reset)"
+            cd $in; ^git push --force-with-lease
+        }
     }
 
     export def "repos pull" [] {
-        $repos | each { cd $in; print $"(ansi pb)($in)(ansi reset)"; ^git pull }
+        $repos | each {
+            print $"(ansi pb)($in)(ansi reset)"
+            cd $in; git stash; ^git pull; git stash pop
+        }
     }
 
 }
