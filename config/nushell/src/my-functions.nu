@@ -428,7 +428,11 @@ export module "my" {
     export def "repos pull" [] {
         $repos | each {
             print $"(ansi pb)($in)(ansi reset)"
-            cd $in; git stash; ^git pull; git stash pop
+            cd $in
+            let dirty = (git status --porcelain | is-not-empty)
+            if $dirty { git stash | ignore }
+            git pull
+            if $dirty { git stash pop | ignore }
         }
     }
 
