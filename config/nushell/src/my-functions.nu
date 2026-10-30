@@ -399,8 +399,15 @@ export module "my" {
 
     export def "repos pull-push" [] {
        $repos | each {
-        print $"(ansi pb)($in)(ansi reset)"
-        cd $in; git stash; git pull; git push; git stash pop | ignore; git status
+        let repo = $in
+        print $"(ansi pb)($repo)(ansi reset)"
+        cd $repo
+        let dirty = (git status --porcelain | is-not-empty)
+        if $dirty { git stash | ignore }
+        git pull --rebase
+        git push --force-with-lease
+        if $dirty { git stash pop | ignore }
+        git status
       }
     }
 
