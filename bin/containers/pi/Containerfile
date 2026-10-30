@@ -1,5 +1,6 @@
 # NOTE: build this file
 #
+# >  podman build -t localhost/r2 ../r2
 # >  podman build -t localhost/pi .
 
 # Running it
@@ -37,18 +38,9 @@ RUN wget -q https://github.com/rtk-ai/rtk/releases/download/v1.1.0/rtk-x86_64-un
   && tar -xzf /tmp/rtk.tar.gz -C /usr/local/bin rtk \
   && rm /tmp/rtk.tar.gz
 
-# Install radare2 from source.
-RUN git clone --depth 1 https://github.com/radareorg/radare2 /tmp/radare2 \
-  && cd /tmp/radare2 && sys/install.sh \
-  && rm -rf /tmp/radare2
-
-# Install Ghidra.
-RUN wget -q https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_12.2_build/ghidra_12.2_PUBLIC_20261016.zip -O /tmp/ghidra.zip \
-  && echo '2c2cd776db3c1f6a097ba418922378ac3649cadd5e844a6f5f088ae628a7be67  /tmp/ghidra.zip' | sha256sum -c - \
-  && unzip -q /tmp/ghidra.zip -d /opt \
-  && rm /tmp/ghidra.zip \
-  && ln -s /opt/ghidra_12.2_PUBLIC/ghidraRun /usr/local/bin/ghidra \
-  && ln -s /opt/ghidra_12.2_PUBLIC/support/analyzeHeadless /usr/local/bin/analyzeHeadless
+# Reuse prebuilt r2 + ghidra layer (build localhost/r2 first).
+COPY --from=localhost/r2 /usr/local /usr/local
+COPY --from=localhost/r2 /opt /opt
 
 RUN npm install -g --ignore-scripts @earendil-works/pi-coding-agent tsx
 

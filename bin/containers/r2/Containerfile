@@ -1,17 +1,22 @@
 # podman build -t localhost/r2 .
 # podman run --rm -it localhost/r2
-# podman images
-# podman ps -a
-# podman search debian
 
 FROM debian:stable-slim
 
 RUN apt-get update && \
-apt-get install -y --no-install-recommends git bash fd-find ripgrep bat fzf build-essential ca-certificates && \
+apt-get install -y --no-install-recommends git bash fd-find ripgrep bat fzf build-essential ca-certificates curl wget unzip default-jdk-headless && \
 rm -rf /var/lib/apt/lists/*
 
 RUN git clone --depth 1 https://github.com/radareorg/radare2 /tmp/radare2 && \
-/tmp/radare2/sys/install.sh
+/tmp/radare2/sys/install.sh && \
+rm -rf /tmp/radare2
+
+# Install Ghidra.
+RUN wget -q https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_12.2_build/ghidra_12.2_PUBLIC_20261016.zip -O /tmp/ghidra.zip \
+  && echo '2c2cd776db3c1f6a097ba418922378ac3649cadd5e844a6f5f088ae628a7be67  /tmp/ghidra.zip' | sha256sum -c - \
+  && unzip -q /tmp/ghidra.zip -d /opt \
+  && rm /tmp/ghidra.zip \
+  && ln -s /opt/ghidra_12.2_PUBLIC/ghidraRun /usr/local/bin/ghidra \
+  && ln -s /opt/ghidra_12.2_PUBLIC/support/analyzeHeadless /usr/local/bin/analyzeHeadless
 
 WORKDIR /workspace
-# CMD ["r2", "-v"]
