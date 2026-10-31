@@ -1,7 +1,13 @@
 module completions {
-    export def --wrapped pi [--sandboxed, ...args] {
+    export def --wrapped pi [--sandboxed, --share: list<string>, ...args] {
         if $sandboxed {
-            podman run --rm -it -v $"(pwd):/workspace" -v $"(($env.HOME)/.pi/agent | path expand):/root/.pi/agent" localhost/pi ...$args
+            mut mounts = [-v $"(pwd):/workspace", -v $"(($env.HOME)/.pi/agent | path expand):/root/.pi/agent"]
+            for p in ($share | default []) {
+                let hp = ($p | path expand)
+                let name = ($hp | path basename)
+                $mounts = ($mounts | append [-v $"($hp):/shared/($name)"])
+            }
+            podman run --rm -it ...$mounts localhost/pi ...$args
             return
         }
         match $nu.os-info.name {
