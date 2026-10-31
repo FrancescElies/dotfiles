@@ -1,0 +1,320 @@
+" viemu.com graphical cheat sheet - http://www.viemu.com/a_vi_vim_graphical_cheat_sheet_tutorial.html
+
+" https://github.com/wklken/vim-for-server/blob/master/vimrc
+let mapleader = " "
+let maplocalleader = ","
+
+" execute as shell command from cursor to EOL
+"nnoremap <F4> :execute system(getline('.')[col('.')-1:])<CR>
+nnoremap <localleader>x "ey$:!<c-r>e<cr>
+" execute as : command from cursor to EOL
+"nnoremap <F5> :execute getline('.')[col('.')-1:]<CR>
+nnoremap <localleader>X "ey$:<c-r>e<cr>
+
+" TPOPE PLUGINS COMMON STEPS:
+" mkdir ~/.vim/pack/plugins/start
+" cd ~/.vim/pack/tpope/start
+" SENSIBLE DEFAULTS:
+" git clone https://tpope.io/vim/sensible.git
+" SUBSTITUTE WORD VARIANTS:
+" git clone https://tpope.io/vim/abolish.git
+" vim -u NONE -c "helptags abolish/doc" -c q
+" NIX SHELL COMMANDS: :Remove, :Delete, :Move, :Chmod, :Mkdir, :Cfind, :Clocate, :Lfind/, :Wall, :SudoWrite, :SudoEdit
+" git clone https://tpope.io/vim/eunuch.git
+" vim -u NONE -c "helptags eunuch/doc" -c q
+" UNIMPAIRED:
+" git clone https://tpope.io/vim/unimpaired.git
+" vim -u NONE -c "helptags unimpaired/doc" -c q
+" GIT:
+" git clone https://tpope.io/vim/fugitive.git
+" vim -u NONE -c "helptags fugitive/doc" -c q
+" COMMENTARY: gc
+" git clone https://tpope.io/vim/commentary.git
+" vim -u NONE -c "helptags commentary/doc" -c q
+" SURROUND:
+" git clone https://tpope.io/vim/surround.git
+" vim -u NONE -c "helptags surround/doc" -c q
+" SESSIONS:
+" git clone https://github.com/tpope/vim-obsession.git
+" vim -u NONE -c "helptags vim-obsession/doc" -c q
+" This plugin highlights patterns and ranges, closest thing to neovim 'inccommand'
+" git clone --depth 1 https://github.com/markonm/traces.vim
+
+" Something simple for emergencies or to easily copy on servers.
+
+"    Fuzzy search:
+"    When moving to another buffer with :b, hit tab to autocomplete, or simply
+"    hit Enter to go to the first buffer with a unique match to what you have
+"    already typed.
+"
+"    By adding set path+=** and set wildmenu to the vimrc, we are now able to
+"    hit Tab when running a :find command to expand partial matches.
+"
+"    Another asterisk (*) can be placed in the query to return fuzzy/partial matches.
+"    ^x^n to search within the file
+"    ^x^f to complete filenames (works with path+=**!)
+"    ^x^] to complete only tags
+"
+"    Snippets:
+"    nnoremap ,html :-1read $HOME/.vim/.skeleton.html<CR>
+
+" FINDING FILES:
+
+" Search down into subfolders
+" Provides tab-completion for all file-related tasks
+set path+=**
+
+" Display all matching files when we tab complete
+set wildmenu
+set wildignorecase
+set wildmode=list:longest,full
+set wildignore=*.o,*~,*.pyc,*.class
+
+" https://github.com/mhinz/vim-galore?tab=readme-ov-file#cosmetic-changes-to-colorschemes
+autocmd ColorScheme * highlight StatusLine ctermbg=darkgray cterm=NONE guibg=darkgray gui=NONE
+colorscheme desert
+
+" save
+cmap w!! w !sudo tee > /dev/null %
+
+" Toggle syntax on/off
+nnoremap <F6> :exec exists('syntax_on') ? 'syn off' : 'syn on'<CR>
+set synmaxcol=500
+
+" cycle previous entries showing only the ones starting with current input
+cnoremap <C-j> <t_kd>
+cnoremap <C-k> <t_ku>
+
+" y$ -> Y Make Y behave like other capitals
+map Y y$
+
+nnoremap ls :ls<cr>:b
+nnoremap cgn *Ncgn
+" [s]witch to alternat[e] buffer
+nnoremap se :e #<cr>
+" [s]ource buffer
+nnoremap so :so %<cr>
+
+" https://github.com/iggredible/Learn-Vim/blob/master/ch03_searching_files.md
+":grep "pizza"
+":cfdo %s/pizza/donut/g | update
+if executable('rg')
+  " Use ripgrep in "vimgrep" (parseable) mode
+  set grepprg=rg\ --vimgrep\ --smart-case\ --follow
+endif
+
+" WHICH KEYS TO MAP: :h map-which-keys
+
+" H/L defaults top/bottom barely used, us them to move current or selected lines
+nnoremap H :bprevious<CR>
+nnoremap L :bnext<CR>
+" unimpaired-style line moves
+nnoremap [e :m .-2<CR>==
+nnoremap ]e :m .+1<CR>==
+vnoremap [e :m '<-2<CR>gv=gv
+vnoremap ]e :m '>+1<CR>gv=gv
+
+" QUICKLY NAVIGATE QUICKFIX LIST:
+function! ToggleQuickfix() abort
+  if empty(filter(getwininfo(), 'v:val.quickfix'))
+    copen
+  else
+    cclose
+  endif
+endfunction
+nnoremap <leader>q :call ToggleQuickfix()<CR>
+nnoremap <M-k> :cprev<cr>zOzz
+nnoremap <M-j> :cnext<cr>zOzz
+
+augroup QF_MyMaps
+  autocmd!
+  autocmd FileType qf nnoremap <buffer> J :cnext<CR>zvzz<C-w>p
+  autocmd FileType qf nnoremap <buffer> K :cprev<CR>zvzz<C-w>p
+augroup END
+
+" Keybinds to make split navigation easier.
+nnoremap <C-h> <C-w><C-h>
+tnoremap <C-h> <C-w><C-h>
+nnoremap <C-l> <C-w><C-l>
+tnoremap <C-l> <C-w><C-l>
+nnoremap <C-j> <C-w><C-j>
+tnoremap <C-j> <C-w><C-j>
+nnoremap <C-k> <C-w><C-k>
+tnoremap <C-k> <C-w><C-k>
+
+" KEEP THINGS VERTICALLY CENTERED DURING SEARCHES:
+nnoremap <C-d> <C-d>zz
+nnoremap <C-u> <C-u>zz
+nnoremap n     nzzzv
+nnoremap N     Nzzzv
+nnoremap *     *zzzv
+nnoremap #     #zzzv
+nnoremap g*    g*zzzv
+nnoremap g#    g#zzzv
+
+" QUICK ESCAPE:
+inoremap jk <Esc>
+inoremap <C-c> <Esc>
+nnoremap <C-c> <Esc>
+nnoremap Q <nop>
+
+" Turkish keyboard
+nnoremap ı  i
+
+"nnoremap <leader>y "+y
+"vnoremap <leader>y "+yg_
+"nnoremap <leader>d "_d
+"vnoremap <leader>d "_d
+"nnoremap <leader>p "+p
+"vnoremap <leader>p "+p
+
+nnoremap <leader>ve  :e $MYVIMRC<cr>
+nnoremap <localleader>wq :wq<cr>
+
+function! FindRootAndCd()
+  let l:markers = ['.git', 'Cargo.toml', 'package.json', 'pyproject.toml', '.hg']
+  let l:dir = expand('%:p:h')
+  while l:dir !=# '/'
+    for l:marker in l:markers
+      if filereadable(l:dir . '/' . l:marker) || isdirectory(l:dir . '/' . l:marker)
+        execute 'cd' fnameescape(l:dir)
+        echo "Changed directory to project root: " . l:dir
+        return
+      endif
+    endfor
+    let l:dir = fnamemodify(l:dir, ':h')
+  endwhile
+  echo "No project root marker found."
+endfunction
+
+command! Cdd call FindRootAndCd()
+nnoremap cdb  :cd %:p:h<cr>
+nnoremap cdd  :Cdd<cr>
+
+nnoremap <leader>m  :<c-u><c-r><c-r>='let @'. v:register .' = '. string(getreg(v:register))<cr><c-f><left>
+
+autocmd InsertLeave,WinEnter * set cursorline
+autocmd InsertEnter,WinLeave * set nocursorline
+
+nnoremap [<space>  :<c-u>put! =repeat(nr2char(10), v:count1)<cr>'[
+nnoremap ]<space>  :<c-u>put =repeat(nr2char(10), v:count1)<cr>
+
+if exists("loaded_matchit") == 0
+  packadd! matchit
+endif
+if exists("loaded_cfilter") == 0
+  packadd! cfilter
+endif
+autocmd FileType python let b:match_words = '\<if\>:\<elif\>:\<else\>'
+
+autocmd BufLeave *.{h,hpp} mark H
+autocmd BufLeave *.js      mark J
+autocmd BufLeave *.lua     mark L
+autocmd BufLeave *.rs      mark R
+autocmd BufLeave *.py      mark P
+autocmd BufLeave *.ts      mark J
+autocmd BufLeave *.{c,cpp} mark C
+
+command! Bigger  :let &guifont = substitute(&guifont, '\d\+$', '\=submatch(0)+1', '')
+command! Smaller :let &guifont = substitute(&guifont, '\d\+$', '\=submatch(0)-1', '')
+
+set guicursor=n-v-c:block,i-ci-ve:ver25,r-cr:hor20,o:hor50
+
+set scrolloff=5
+
+set ruler
+set number
+set relativenumber
+set nowrap
+set showcmd
+set showmode
+set showmatch
+set matchtime=2
+
+set foldmethod=indent
+autocmd FileType vim setlocal foldmethod=marker
+autocmd FileType javascript setlocal foldmethod=expr
+autocmd FileType javascript setlocal foldexpr=JSFolds()
+function! JSFolds()
+  let thisline = getline(v:lnum)
+  if thisline =~? '\v^\s*$'
+    return '-1'
+  endif
+  if thisline =~ '^import.*$'
+    return 1
+  else
+    return indent(v:lnum) / &shiftwidth
+  endif
+endfunction
+autocmd BufWinLeave *.* mkview
+autocmd BufWinEnter *.* silent loadview
+
+set nocompatible
+
+filetype plugin indent on
+syntax on
+
+set autoindent
+set expandtab
+set softtabstop =4
+set shiftwidth  =4
+set shiftround
+
+set backspace   =indent,eol,start
+set hidden
+set laststatus  =2
+set display     =lastline
+
+set showmode
+set showcmd
+
+set incsearch
+set hlsearch
+set ignorecase
+set smartcase
+
+set ttyfast
+set lazyredraw
+
+set splitbelow
+set splitright
+
+set cursorline
+set wrapscan
+set report      =0
+set synmaxcol   =200
+
+set list
+if has('multi_byte') && &encoding ==# 'utf-8'
+  let &listchars = 'tab:▸ ,extends:❯,precedes:❮,nbsp:±'
+else
+  let &listchars = 'tab:> ,extends:>,precedes:<,nbsp:.'
+endif
+
+if &shell =~# 'nu$'
+    set shellcmdflag=--stdin\ --no-newline\ -c
+    set shellpipe   =\|\ complete\ \|\ update\ stderr\ {\ ansi\ strip\ \}\ \|\ tee\ {\ get\ stderr\ \|\ save\ --force\ --raw\ %s\ }\ \|\ into\ record
+    set shellredir  =out+err>\ %s
+    set noshelltemp
+    set shellquote  =
+    set shellxescape=
+    set shellxquote =
+else
+    set shell=/bin/bash
+endif
+
+set backup
+set backupdir   =$HOME/.vim/files/backup/
+set backupext   =-vimbackup
+set backupskip  =
+set directory   =$HOME/.vim/files/swap//
+set updatecount =100
+set undofile
+set undodir     =$HOME/.vim/files/undo/
+if has('nvim')
+    set viminfo     ='100,n$HOME/.local/state/nvim/viminfo
+else
+    set viminfo     ='100,n$HOME/.vim/files/info/viminfo
+endif
+EOF
+echo done

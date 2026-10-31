@@ -56,5 +56,6 @@ RUN npm install -g --ignore-scripts @earendil-works/pi-coding-agent tsx
 #   podman run --rm -it -v "$PWD:/workspace" -v ~/.ssh:/root/.ssh:ro localhost/pi
 # Then inside pi: ssh winhost 'cargo build'
 
+COPY vimrc /root/.vimrc
 WORKDIR /workspace
 ENTRYPOINT ["pi"]
