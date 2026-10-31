@@ -541,14 +541,6 @@ export def "setup herdr" [] {
     symlink --force ($repo_dir | path join 'config/herdr') $config_dir
 }
 
-export def "setup searxng" [] {
-    symlink --force ($repo_dir | path join 'config/searxng') ~/searxng
-    let conf = ("($repo_dir | path join 'config/searxng')" | path expand)
-    podman rm -f searxng
-    let secret = (random chars --length 64)
-    podman create --name searxng --restart unless-stopped -p 8888:8080 -e $"SEARXNG_SECRET=($secret)" -v $"($conf):/etc/searxng" docker.io/searxng/searxng
-}
-
 export def bootstrap [] {
     mkdir ~/bin
     mkdir ~/src/work
@@ -666,14 +658,5 @@ export def dotfiles-selftest [] {
         ^podman build -t localhost/selftest ($repo_dir | path join 'bin/containers/selftest')
     }
     ^podman run --rm -it -w /dotfiles -v $"($env.PWD):/dotfiles:Z" localhost/selftest bash -c "nu -c 'use toolkit.nu; toolkit bootstrap' || bash"
-}
-
-export def pi [...args] {
-    let image_exists = try { podman image exists localhost/pi; true } catch { false }
-    if not $image_exists {
-        print "Building pi image..."
-        ^podman build -t localhost/pi ($repo_dir | path join 'bin/containers/pi')
-    }
-    ^podman run --rm -it -e ANTHROPIC_API_KEY -v $"($env.PWD):/workspace" -v pi-agent-home:/root/.pi/agent localhost/pi ...$args
 }
 

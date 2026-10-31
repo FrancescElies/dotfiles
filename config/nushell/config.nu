@@ -37,6 +37,7 @@ use ~/src/dotfiles/config/nushell/src/git-aliases.nu *
 use ~/src/dotfiles/config/nushell/src/git-completions.nu *
 use ~/src/dotfiles/config/nushell/src/git-tools.nu *
 use ~/src/dotfiles/config/nushell/src/ouch-completions.nu *
+use ~/src/dotfiles/config/nushell/src/podman-completions.nu *
 use ~/src/dotfiles/config/nushell/src/pueue-completions.nu *
 use ~/src/dotfiles/config/nushell/src/reverse-eng.nu *
 use ~/src/dotfiles/config/nushell/src/rg-completions.nu *
