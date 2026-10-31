@@ -49,6 +49,7 @@ COPY --from=localhost/r2 /opt /opt
 RUN npm install -g --ignore-scripts @earendil-works/pi-coding-agent tsx
 
 # Post-run setup (do on host, not in image):
+# Why: container has no SSH keys; mount ~/.ssh (ro) with a dedicated key so pi can reach remote hosts/VMs.
 #   1. Generate a dedicated SSH key: ssh-keygen -t ed25519 -f ~/.ssh/pi_container -N ''
 #   2. Add ~/.ssh/pi_container.pub to the target host/VM authorized_keys.
 #   3. Create ~/.ssh/config entry: Host winhost / HostName ... / User ... / IdentityFile ~/.ssh/pi_container
