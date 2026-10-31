@@ -1,5 +1,9 @@
 module completions {
-    export def --wrapped pi [...args] {
+    export def --wrapped pi [--sandboxed, ...args] {
+        if $sandboxed {
+            podman run --rm -it -v $"(pwd):/workspace" -v $"(($env.HOME)/.pi/agent | path expand):/root/.pi/agent" localhost/pi ...$args
+            return
+        }
         match $nu.os-info.name {
             "windows" => {
                 # WARN: calling pi (pi.cmd) directly breaks scrolling
