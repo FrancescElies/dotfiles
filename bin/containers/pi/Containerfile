@@ -20,7 +20,9 @@
 
 FROM node:24-bookworm-slim
 
-RUN apt-get update \
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+  --mount=type=cache,target=/var/lib/apt/lists,sharing=locked \
+  apt-get update \
   && apt-get install -y --no-install-recommends bash ca-certificates git fd-find bat fzf ripgrep python3 python3-pip python3-venv curl default-jdk-headless unzip wget build-essential binutils xxd file yara openssh-client iputils-ping nmap neovim \
   && rm -rf /var/lib/apt/lists/*
 RUN wget -q https://github.com/rtk-ai/rtk/releases/download/v1.1.0/rtk-x86_64-unknown-linux-musl.tar.gz -O /tmp/rtk.tar.gz \
@@ -32,15 +34,11 @@ RUN wget -q https://github.com/rtk-ai/rtk/releases/download/v1.1.0/rtk-x86_64-un
 COPY --from=ghcr.io/astral-sh/uv:0.13.6 /uv /uvx /usr/local/bin/
 # RUN echo '13a1f11b0b6fd0bb18b5798fe10043e5933d77a8e0e761a9926d7f3b2394b35a  /usr/local/bin/uv' | sha256sum -c - \
 #   && echo 'f363fbc6d738584859dd52efd3bd8b7938c7aab5c989d920b4e8affc7966767d  /usr/local/bin/uvx' | sha256sum -c -
-RUN uv tool install 'semble==0.5.2' \
+RUN --mount=type=cache,target=/root/.cache/uv \
+  uv tool install 'semble==0.5.2' \
   && uv tool install 'markitdown[all]==0.1.9' \
   && uv tool install 'git+https://github.com/mitsuhiko/pexpect-mcp@dff5d421490514fb35cc8891b85cfc90370d8119' \
   && ln -sf /root/.local/bin/* /usr/local/bin/
-
-RUN wget -q https://github.com/rtk-ai/rtk/releases/download/v1.1.0/rtk-x86_64-unknown-linux-musl.tar.gz -O /tmp/rtk.tar.gz \
-  && echo '9454ad1b9489daa57ab0a9f4ebe2faaf4dc82b8a0f26c9e5135151abd7c9378d  /tmp/rtk.tar.gz' | sha256sum -c - \
-  && tar -xzf /tmp/rtk.tar.gz -C /usr/local/bin rtk \
-  && rm /tmp/rtk.tar.gz
 
 # Reuse prebuilt r2 + ghidra layer (build localhost/r2 first).
 COPY --from=localhost/r2 /usr/local /usr/local
