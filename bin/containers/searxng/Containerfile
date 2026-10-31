@@ -17,7 +17,7 @@ RUN apt-get update \
 # Install SearXNG into an isolated venv.
 RUN python -m venv /opt/searxng \
   && /opt/searxng/bin/pip install --no-cache-dir searxng==0.1.2 \
-  && ln -s /opt/searxng/bin/searxng-run /usr/local/bin/searxng-run
+  && ln -s /opt/searxng/bin/searxng /usr/local/bin/searxng
 
 ENV PATH="/opt/searxng/bin:${PATH}"
 ENV SEARXNG_SETTINGS_PATH=/etc/searxng/settings.yml
@@ -26,4 +26,4 @@ RUN mkdir -p /etc/searxng
 COPY settings.yml /etc/searxng/settings.yml
 
 EXPOSE 8080
-CMD ["searxng-run", "-p", "8080", "-b", "0.0.0.0"]
+CMD ["searxng", "--port", "8080", "--host", "0.0.0.0", "--transport", "http"]
