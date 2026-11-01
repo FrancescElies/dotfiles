@@ -523,8 +523,11 @@ wezterm.on('user-var-changed', function(window, pane, name, value)
     window:perform_action(wezterm.action.SwitchToWorkspace { name = ws, spawn = { cwd = cwd } }, pane)
     return
   end
-  if name == 'PI_STATE' and (value == 'idle' or value == 'waiting') and not window:is_focused() then
-    window:toast_notification('pi', value == 'waiting' and 'Needs approval' or 'Agent finished', nil, 4000)
+  if name == 'PI_STATE' and (value == 'idle' or value == 'waiting') then
+    window:set_right_status(wezterm.format({
+      { Foreground = { Color = value == 'waiting' and '#ff5555' or '#50fa7b' } },
+      { Text = value == 'waiting' and 'π ⏳  ' or 'π ✅  ' },
+    }))
   end
 end)
 
