@@ -31,17 +31,41 @@ local platform = {
   is_mac = string.find(wezterm.target_triple, 'apple') ~= nil,
 }
 
-widgets.apply_to_config(config, {
-  right = {
-    widgets.battery.charge.widget(),
-    widgets.cpu.utilization.widget(),
-    widgets.ram.utilization.widget(),
-    widgets.network.download.widget(),
-    widgets.network.upload.widget(),
-    { get_formatted = function() return { { Foreground = { Color = '#bbccbb' } }, { Text = '   ' .. wezterm.strftime '%a %Y-%m-%d   %H:%M' .. ' ' } } end },
-  },
-  separator = { text = '|', color = '#3b4261' },
-})
+local right_widgets = {
+  widgets.battery.charge.widget(),
+  widgets.cpu.utilization.widget(),
+  widgets.ram.utilization.widget(),
+  widgets.network.download.widget(),
+  widgets.network.upload.widget(),
+  { get_formatted = function() return { { Foreground = { Color = '#bbccbb' } }, { Text = '   ' .. wezterm.strftime '%a %Y-%m-%d   %H:%M' .. ' ' } } end },
+}
+local pi_state = nil
+local right_separator = { text = '  |  ', color = '#3b4261' }
+
+local function build_right_status()
+  local items = {}
+  for i, widget in ipairs(right_widgets) do
+    if i > 1 and right_separator.text and #right_separator.text > 0 then
+      table.insert(items, { Foreground = { Color = right_separator.color } })
+      table.insert(items, { Text = right_separator.text })
+    end
+    local formatted = widget.get_formatted()
+    for _, item in ipairs(formatted) do
+      table.insert(items, item)
+    end
+  end
+  if pi_state == 'idle' or pi_state == 'waiting' then
+    if #items > 0 then
+      table.insert(items, { Foreground = { Color = right_separator.color } })
+      table.insert(items, { Text = right_separator.text })
+    end
+    table.insert(items, { Foreground = { Color = pi_state == 'waiting' and '#ff5555' or '#50fa7b' } })
+    table.insert(items, { Text = pi_state == 'waiting' and 'π 🚒  ' or 'π ✅  ' })
+  end
+  return items
+end
+
+wezterm.on('update-status', function(window, pane) window:set_right_status(wezterm.format(build_right_status())) end)
 
 local config = {}
 if wezterm.config_builder then
@@ -524,10 +548,8 @@ wezterm.on('user-var-changed', function(window, pane, name, value)
     return
   end
   if name == 'PI_STATE' and (value == 'idle' or value == 'waiting') then
-    window:set_right_status(wezterm.format({
-      { Foreground = { Color = value == 'waiting' and '#ff5555' or '#50fa7b' } },
-      { Text = value == 'waiting' and 'π ⏳  ' or 'π ✅  ' },
-    }))
+    pi_state = value
+    window:set_right_status(wezterm.format(build_right_status()))
   end
 end)
 
