@@ -123,7 +123,7 @@ module completions {
           ""
         ]
        (pi --system-prompt ($sys | str join " ") --tools read,bash,grep,find,ls --no-extensions
-         --no-skills --model gpt-6-luna
+         --no-skills
          --no-prompt-templates --no-context-files --no-session -p $prompt)
        if $push { git push }
     }
