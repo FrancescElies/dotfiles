@@ -1,7 +1,7 @@
 module completions {
     export def --wrapped pi [--sandboxed, --share: list<string>, ...args] {
         if $sandboxed {
-            mut mounts = [-v $"(pwd):/workspace", -v $"(($env.HOME)/.pi/agent | path expand):/root/.pi/agent"]
+            mut mounts = [-v $"(pwd):/workspace", -v $"(($env.HOME)/.pi/agent | path expand):/root/.pi/agent", -v $"(($env.HOME)/.gitconfig | path expand):/root/.gitconfig:ro"]
             for p in ($share | default []) {
                 let hp = ($p | path expand)
                 let name = ($hp | path basename)

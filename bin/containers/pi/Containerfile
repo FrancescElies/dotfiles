@@ -16,6 +16,8 @@
 #
 # Mounting your host ~/.pi.agent exposes host auth and session files to the container.
 # > podman run --rm -it -v "$PWD:/workspace" -v ~/.pi.agent:/root/.pi/agent localhost/pi
+# Mount your host gitconfig (global) so git identity/settings are available:
+# > podman run --rm -it -v "$PWD:/workspace" -v ~/.gitconfig:/root/.gitconfig:ro localhost/pi
 # > podman run --rm -it -v "(pwd):/workspace" -v "('~/.pi.agent' | path expand):/root/.pi.agent" localhost/pi
 
 FROM node:24-bookworm-slim
@@ -56,5 +58,7 @@ RUN npm install -g --ignore-scripts @earendil-works/pi-coding-agent tsx
 # Then inside pi: ssh winhost 'cargo build'
 
 COPY vimrc /root/.vimrc
+# Git config is host-specific; mount it at runtime instead of baking in:
+#   podman run --rm -it -v "$PWD:/workspace" -v ~/.gitconfig:/root/.gitconfig:ro localhost/pi
 WORKDIR /workspace
 ENTRYPOINT ["pi"]
