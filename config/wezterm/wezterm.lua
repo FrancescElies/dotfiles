@@ -39,8 +39,21 @@ local right_widgets = {
   widgets.network.upload.widget(),
   { get_formatted = function() return { { Foreground = { Color = '#bbccbb' } }, { Text = '   ' .. wezterm.strftime '%a %Y-%m-%d   %H:%M' .. ' ' } } end },
 }
-local pi_state = nil
+local pi_states = {}
 local right_separator = { text = '  |  ', color = '#3b4261' }
+
+local function aggregate_pi_state()
+  local waiting, working, idle = false, false, false
+  for _, st in pairs(pi_states) do
+    if st == 'waiting' then waiting = true
+    elseif st == 'working' then working = true
+    elseif st == 'idle' then idle = true end
+  end
+  if waiting then return 'waiting' end
+  if working then return 'working' end
+  if idle then return 'idle' end
+  return nil
+end
 
 local function build_right_status()
   local items = {}
@@ -54,18 +67,26 @@ local function build_right_status()
       table.insert(items, item)
     end
   end
-  if pi_state == 'idle' or pi_state == 'waiting' then
+  local ps = aggregate_pi_state()
+  if ps == 'idle' or ps == 'waiting' or ps == 'working' then
     if #items > 0 then
       table.insert(items, { Foreground = { Color = right_separator.color } })
       table.insert(items, { Text = right_separator.text })
     end
-    table.insert(items, { Foreground = { Color = pi_state == 'waiting' and '#ff5555' or '#50fa7b' } })
-    table.insert(items, { Text = pi_state == 'waiting' and 'π 🚒  ' or 'π ✅  ' })
+    local color = ps == 'waiting' and '#ff5555' or (ps == 'working' and '#f1fa8c' or '#50fa7b')
+    local text = ps == 'waiting' and 'π 🚒  ' or (ps == 'working' and 'π ⏳  ' or 'π ✅  ')
+    table.insert(items, { Foreground = { Color = color } })
+    table.insert(items, { Text = text })
   end
   return items
 end
 
-wezterm.on('update-status', function(window, pane) window:set_right_status(wezterm.format(build_right_status())) end)
+wezterm.on('update-status', function(window, pane)
+  for id in pairs(pi_states) do
+    if not wezterm.mux.get_pane(id) then pi_states[id] = nil end
+  end
+  window:set_right_status(wezterm.format(build_right_status()))
+end)
 
 local config = {}
 if wezterm.config_builder then
@@ -547,8 +568,13 @@ wezterm.on('user-var-changed', function(window, pane, name, value)
     window:perform_action(wezterm.action.SwitchToWorkspace { name = ws, spawn = { cwd = cwd } }, pane)
     return
   end
-  if name == 'PI_STATE' and (value == 'idle' or value == 'waiting') then
-    pi_state = value
+  if name == 'PI_STATE' then
+    local id = pane:pane_id()
+    if value == 'exit' then
+      pi_states[id] = nil
+    else
+      pi_states[id] = value
+    end
     window:set_right_status(wezterm.format(build_right_status()))
   end
 end)
