@@ -338,6 +338,16 @@ export module ado {
 
     def "nu-complete pr-id" [] { (ls prs mine) | rename -c {id: value,  title: description} }
 
+    export def "pr open" [ pr_id?: number@"nu-complete pr-id" ] {
+        let pr_id = if ($pr_id | is-empty) {
+            az repos pr list --source-branch $"(git branch --show-current)" --status active | from json | input list --fuzzy --display title | get pullRequestId
+        } else {
+            $pr_id
+        }
+        print $"(ansi pb)Opening tab in browser(ansi reset)"
+        az repos pr show --id $pr_id --open  | ignore
+    }
+
     # edit pr description
     export def "pr edit" [ pr_id?: number@"nu-complete pr-id" ] {
         let pr_id = if ($pr_id | is-empty) {
