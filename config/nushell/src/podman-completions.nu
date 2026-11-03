@@ -18,6 +18,10 @@ export def podman-jellyfin [action: string@'nu-complete jellyfin actions'] {
 
 export def --wrapped podman-pi [...args] {
     # searxng must be running on searchnet as "searxng"
+    if (podman image exists localhost/pi | complete).exit_code != 0 {
+        print "building localhost/pi..."
+        podman build -t localhost/pi ($env.HOME | path join src/dotfiles/bin/containers/pi)
+    }
     (podman run --rm -it
         --network searchnet -e SEARXNG_BASE_URL=http://searxng:8080
         -e PI_PROVIDER -e PI_MODEL -e PI_REASONING_LEVEL -e PI_TELEMETRY -e PI_CODING_AGENT
@@ -31,6 +35,10 @@ export def --wrapped podman-r2 [...args] {
 
 export def --wrapped podman-searxng [...args] {
     if (podman network exists searchnet | complete).exit_code != 0 { podman network create searchnet }
+    if (podman image exists localhost/searxng | complete).exit_code != 0 {
+        print "building localhost/searxng..."
+        podman build -t localhost/searxng ($env.HOME | path join src/dotfiles/bin/containers/searxng)
+    }
     podman rm -f searxng | complete | ignore
     podman run -d --name searxng --network searchnet -p 127.0.0.1:8080:8080 ...$args localhost/searxng
 }
