@@ -40,6 +40,19 @@ export def "wibu ls-bin" [] {
 
 export module win {
     use broot.nu *
+
+    export def hibernate [delay: duration = 0sec] {
+        if $delay > 0sec { sleep $delay }
+        ^shutdown.exe /h
+    }
+
+    export def poweroff [delay: duration = 0sec] {
+        ^shutdown.exe /s /t ($delay / 1sec | into int)
+    }
+
+    export def reboot [delay: duration = 0sec] {
+        ^shutdown.exe /r /t ($delay / 1sec | into int)
+    }
     # file version and signature viewer from file
     export def "read version" [file: path] {
         ^sigcheck -nobanner $file | lines | skip 1 | parse --regex '\s*(?<name>.+?):(?<value>.+)'
