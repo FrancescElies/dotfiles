@@ -1,4 +1,4 @@
-config/glazewm/errors.log
+*.log
 config/zellij/*.bak*
 history.txt
 local/share/aba.toml
