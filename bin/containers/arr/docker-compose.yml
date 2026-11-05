@@ -9,40 +9,64 @@ services:
     build: ./bazarr
     container_name: bazarr
     ports:
-      - 6767:6767
+      - 127.0.0.1:6767:6767
     volumes:
       - ~/arr/config/bazarr:/config
       - ~/arr/media:/data/media
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    networks:
+      - arr
     restart: unless-stopped
 
   radarr:
     build: ./radarr
     container_name: radarr
     ports:
-      - 7878:7878
+      - 127.0.0.1:7878:7878
     volumes:
       - ~/arr/.config/radarr:/config
       - ~/arr/media:/data/media
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    networks:
+      - arr
     restart: unless-stopped
 
   readarr:
     build: ./readarr
     container_name: readarr
     ports:
-      - 8787:8787
+      - 127.0.0.1:8787:8787
     volumes:
       - ~/arr/.config/readarr:/config
       - ~/arr/media:/data/media
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    networks:
+      - arr
     restart: unless-stopped
 
   qbittorrent:
     build: ./qbittorrent
     container_name: qbittorrent
     ports:
-      - 8080:8080
+      - 127.0.0.1:8080:8080
       - 6881:6881
       - 6881:6881/udp
     volumes:
       - ~/arr/.config/qbittorrent:/config
       - ~/arr/downloads:/data/downloads
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    networks:
+      - arr
     restart: unless-stopped
