@@ -6,7 +6,7 @@ FROM debian:bookworm-slim AS base
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates curl git python3 python3-pip python3-venv \
-    libicu-dev libssl-dev zlib1g supervisor && rm -rf /var/lib/apt/lists/*
+    libicu-dev libssl-dev zlib1g supervisor qbittorrent-nox && rm -rf /var/lib/apt/lists/*
 
 # .NET SDK for building the *arr apps
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS dotnet-build
@@ -14,9 +14,9 @@ WORKDIR /src
 RUN git clone --depth 1 https://github.com/Radarr/Radarr.git radarr && \
     git clone --depth 1 https://github.com/Lidarr/Lidarr.git lidarr && \
     git clone --depth 1 https://github.com/Readarr/Readarr.git readarr
-RUN dotnet publish /src/radarr/src/NzbDrone.Console/Radarr.Console.csproj -c Release -o /out/radarr && \
-    dotnet publish /src/lidarr/src/NzbDrone.Console/Lidarr.Console.csproj -c Release -o /out/lidarr && \
-    dotnet publish /src/readarr/src/NzbDrone.Console/Readarr.Console.csproj -c Release -o /out/readarr
+RUN dotnet publish /src/radarr/src/NzbDrone.Console/Radarr.Console.csproj -c Release -f net10.0 -o /out/radarr && \
+    dotnet publish /src/lidarr/src/NzbDrone.Console/Lidarr.Console.csproj -c Release -f net10.0 -o /out/lidarr && \
+    dotnet publish /src/readarr/src/NzbDrone.Console/Readarr.Console.csproj -c Release -f net10.0 -o /out/readarr
 
 # Bazarr (Python) source
 FROM base AS bazarr-src
@@ -41,5 +41,5 @@ COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY ../vimrc /root/.vimrc
 
 VOLUME ["/config", "/data"]
-EXPOSE 6767 7878 8686 8787
+EXPOSE 6767 7878 8080 8686 8787
 CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/supervisord.conf"]
