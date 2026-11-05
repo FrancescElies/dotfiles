@@ -21,6 +21,11 @@ from datetime import datetime, timedelta, timezone
 author_email = getattr(commit, 'author_email', b'').decode('ascii', 'replace').strip('<> ').lower()
 if author_email != '__AUTHOR_EMAIL__':
     return
+# Optional: only rewrite the last N commits.
+original_id = getattr(commit, 'original_id', None)
+if original_id is not None and LAST_COMMITS is not None:
+    if original_id.decode('ascii', 'replace') not in LAST_COMMITS:
+        return
 date_bytes = getattr(commit, 'author_date')
 if not date_bytes:
     return
@@ -65,6 +70,12 @@ Examples:
         "--dry-run",
         action="store_true",
         help="Preview new commit times without modifying history",
+    )
+    parser.add_argument(
+        "--last",
+        type=int,
+        default=None,
+        help="Only rewrite the last N commits (default: all)",
     )
     return parser.parse_args()
 
@@ -153,7 +164,19 @@ def main():
         .stdout.strip()
         .lower()
     )
+    if args.last:
+        res = subprocess.run(
+            ["git", "rev-list", "-n", str(args.last), args.branch],
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        commits = {h.strip() for h in res.stdout.split() if h.strip()}
+        last_commits_repr = repr(commits)
+    else:
+        last_commits_repr = "None"
     callback = CALLBACK_SCRIPT.replace("__AUTHOR_EMAIL__", author_email)
+    callback = f"LAST_COMMITS = {last_commits_repr}\n" + callback
     with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
         f.write(callback)
         callback_file = f.name
