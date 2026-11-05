@@ -45,8 +45,15 @@ export module ado {
 
     const dbfile = ('~/.git-ado.json' | path expand )
 
+    # open PRs: value = source branch, description = id + title
+    def "nu-complete open-pr-branches" [] {
+        az repos pr list --status active --top 1000 -ojson --query "[].{id: pullRequestId, title: title, source: sourceRefName, author: createdBy.displayName, draft: isDraft}"
+        | from json
+        | each {|pr| {value: ($pr.source | str replace refs/heads/ ''), description: $"#($pr.id) ($pr.author): (if $pr.draft { '[draft] ' } else { '' })($pr.title)"} }
+    }
+
     # review a pr on a separate folder
-    export def "pr review" [ branch: string ] {
+    export def "pr review" [ branch: string@"nu-complete open-pr-branches" ] {
         git fetch --all | ignore
         let startingat = $"origin/($branch)"
         let path = $branch | str replace "/" "--" | str replace " " "-"
