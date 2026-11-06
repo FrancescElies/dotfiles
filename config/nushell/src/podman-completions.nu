@@ -6,8 +6,8 @@ export def podman-jellyfin [action: string@'nu-complete jellyfin actions'] {
               --publish 8096:8096/tcp --publish 7359:7359/udp
               --device /dev/dri/ --user $"(id -u):(id -g)" --userns keep-id --replace
               --volume jellyfin-cache:/cache:Z --volume jellyfin-config:/config:Z
-              --mount $"type=bind,source=($env.HOME)/Music,destination=/media/Music,ro=true,relabel=private"
-              --mount $"type=bind,source=($env.HOME)/Videos,destination=/media/Videos,ro=true,relabel=private"
+              --mount $"type=bind,source=/media/cesc/data/Music/,destination=/media/Music,ro=true,relabel=private"
+              --mount $"type=bind,source=/media/cesc/data/Videos/,destination=/media/Videos,ro=true,relabel=private"
               docker.io/jellyfin/jellyfin:latest
         )}
         "stop" => { ^podman stop jellyfin }
