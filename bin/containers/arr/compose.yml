@@ -6,7 +6,9 @@
 #   podman compose down
 services:
   bazarr:
-    build: ./bazarr
+    build:
+      context: ./bazarr
+      dockerfile: Containerfile
     container_name: bazarr
     ports:
       - 127.0.0.1:6767:6767
@@ -22,7 +24,9 @@ services:
     restart: unless-stopped
 
   radarr:
-    build: ./radarr
+    build:
+      context: ./radarr
+      dockerfile: Containerfile
     container_name: radarr
     ports:
       - 127.0.0.1:7878:7878
@@ -38,7 +42,9 @@ services:
     restart: unless-stopped
 
   readarr:
-    build: ./readarr
+    build:
+      context: ./readarr
+      dockerfile: Containerfile
     container_name: readarr
     ports:
       - 127.0.0.1:8787:8787
@@ -54,7 +60,9 @@ services:
     restart: unless-stopped
 
   qbittorrent:
-    build: ./qbittorrent
+    build:
+      context: ./qbittorrent
+      dockerfile: Containerfile
     container_name: qbittorrent
     ports:
       - 127.0.0.1:8080:8080
