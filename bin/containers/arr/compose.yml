@@ -1,5 +1,5 @@
 # Create host folders first:
-#   mkdir ~/arr/config/{bazarr,lidarr,radarr,readarr,qbittorrent,downloads}
+#   mkdir /media/cesc/data/arr/config/{bazarr,lidarr,radarr,readarr,qbittorrent,downloads}
 # Build and run all services (podman):
 #   podman compose up -d --build
 # Stop:
@@ -13,8 +13,8 @@ services:
     ports:
       - 127.0.0.1:6767:6767
     volumes:
-      - ~/arr/config/bazarr:/config
-      - ~/arr/media:/data/media
+      - /media/cesc/data/arr/config/bazarr:/config
+      - /media/cesc/data/arr/media:/data/media
     security_opt:
       - no-new-privileges:true
     cap_drop:
@@ -31,8 +31,8 @@ services:
     ports:
       - 127.0.0.1:7878:7878
     volumes:
-      - ~/arr/config/radarr:/config
-      - ~/arr/media:/data/media
+      - /media/cesc/data/arr/config/radarr:/config
+      - /media/cesc/data/arr/media:/data/media
     security_opt:
       - no-new-privileges:true
     cap_drop:
@@ -49,8 +49,8 @@ services:
     ports:
       - 127.0.0.1:8787:8787
     volumes:
-      - ~/arr/config/readarr:/config
-      - ~/arr/media:/data/media
+      - /media/cesc/data/arr/config/readarr:/config
+      - /media/cesc/data/arr/media:/data/media
     security_opt:
       - no-new-privileges:true
     cap_drop:
@@ -69,8 +69,8 @@ services:
       - 6881:6881
       - 6881:6881/udp
     volumes:
-      - ~/arr/config/qbittorrent:/config
-      - ~/arr/downloads:/data/downloads
+      - /media/cesc/data/arr/config/qbittorrent:/config
+      - /media/cesc/data/arr/downloads:/data/downloads
     security_opt:
       - no-new-privileges:true
     cap_drop:

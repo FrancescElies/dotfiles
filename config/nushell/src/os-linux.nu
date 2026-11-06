@@ -22,11 +22,11 @@ export def "arr open all" [] {
 }
 
 export def "arr up" [] {
-    podman compose -f /home/cesc/src/dotfiles/bin/containers/arr/docker-compose.yml up -d --build
+    podman compose -f /home/cesc/src/dotfiles/bin/containers/arr/compose.yml up -d --build
 }
 export def "arr down" [] {
-    podman compose -f /home/cesc/src/dotfiles/bin/containers/arr/docker-compose.yml down
+    podman compose -f /home/cesc/src/dotfiles/bin/containers/arr/compose.yml down
 }
 export def "arr build" [] {
-    podman compose -f /home/cesc/src/dotfiles/bin/containers/arr/docker-compose.yml build
+    podman compose -f /home/cesc/src/dotfiles/bin/containers/arr/compose.yml build
 }
