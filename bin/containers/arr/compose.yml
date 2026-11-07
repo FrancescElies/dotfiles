@@ -1,132 +1,120 @@
-# Create host folders first:
-#   mkdir -p /media/cesc/data/arr/config/{bazarr,lidarr,radarr,readarr,prowlarr,qbittorrent,downloads,media}
-# Build and run all services (podman):
-#   podman compose up -d --build
-# Stop:
-#   podman compose down
+# Setup:
+#   mkdir -p /media/cesc/data/arr/{config/{bazarr,lidarr,radarr,prowlarr,qbittorrent},data/{torrents/{radarr,lidarr},media/{movies,music}}}
+#   podman compose up -d
+#
+# Layout (TRaSH): ONE /data mount in every container => hardlinks/atomic moves work
+#   https://trash-guides.info/File-and-Folder-Structure/How-to-set-up/Docker/
+# In apps use: root folders /data/media/movies, /data/media/music;
+#   qBittorrent save path /data/torrents, categories radarr -> /data/torrents/radarr, lidarr -> /data/torrents/lidarr
+# Prowlarr -> Apps: http://radarr:7878, http://lidarr:8686 | qBittorrent client host: qbittorrent, port 8081
+# FlareSolverr proxy in Prowlarr: http://flaresolverr:8191
+
+x-env: &env
+  PUID: ${PUID:-1000}
+  PGID: ${PGID:-1000}
+  TZ: ${TZ:-UTC}
+
+x-arr: &arr
+  security_opt: [no-new-privileges:true]
+  networks: [arr]
+  restart: unless-stopped
+
+x-hc: &hc
+  interval: 30s
+  timeout: 10s
+  retries: 3
+  start_period: 60s
+
 services:
-  bazarr:  # https://github.com/linuxserver/docker-bazarr
-    image: lscr.io/linuxserver/bazarr:latest
-    container_name: bazarr
-    environment: [PUID=1000, PGID=1000, TZ=UTC]
-    ports: ["127.0.0.1:6767:6767"]
-    volumes:
-      - /media/cesc/data/arr/config/bazarr:/config
-      - /media/cesc/data/arr/media:/data/media
-    security_opt: [no-new-privileges:true]
-    networks: [arr]
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:6767/ || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
-  radarr:  # https://github.com/linuxserver/docker-radarr
-    image: lscr.io/linuxserver/radarr:latest
-    container_name: radarr
-    environment: [PUID=1000, PGID=1000, TZ=UTC]
-    ports: ["127.0.0.1:7878:7878"]
-    volumes:
-      - /media/cesc/data/arr/config/radarr:/config
-      - /media/cesc/data/arr/media:/data/media
-      - /media/cesc/data/arr/downloads:/data/downloads
-    security_opt: [no-new-privileges:true]
-    networks: [arr]
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:7878/ || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
-  # readarr:  # deprecated/stalled; uncomment to enable
-  #   image: ghcr.io/hotio/readarr:release
-  #   container_name: readarr
-  #   environment: [PUID=1000, PGID=1000, TZ=UTC]
-  #   ports: ["127.0.0.1:8787:8787"]
-  #   volumes:
-  #     - /media/cesc/data/arr/config/readarr:/config
-  #     - /media/cesc/data/arr/media:/data/media
-  #     - /media/cesc/data/arr/downloads:/data/downloads
-  #   security_opt: [no-new-privileges:true]
-  #   networks: [arr]
-  #   restart: unless-stopped
-
-  lidarr:  # https://github.com/linuxserver/docker-lidarr
-    image: lscr.io/linuxserver/lidarr:latest
-    container_name: lidarr
-    environment: [PUID=1000, PGID=1000, TZ=UTC]
-    ports: ["127.0.0.1:8686:8686"]
-    volumes:
-      - /media/cesc/data/arr/config/lidarr:/config
-      - /media/cesc/data/arr/media:/data/media
-      - /media/cesc/data/arr/downloads:/data/downloads
-    security_opt: [no-new-privileges:true]
-    networks: [arr]
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:8686/ || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
-  prowlarr:  # https://github.com/linuxserver/docker-prowlarr
-    image: lscr.io/linuxserver/prowlarr:latest
-    container_name: prowlarr
-    ports: ["127.0.0.1:9696:9696"]
-    environment: [PUID=1000, PGID=1000, TZ=UTC]
-    volumes:
-      - /media/cesc/data/arr/config/prowlarr:/config
-    security_opt: [no-new-privileges:true]
-    networks: [arr]
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:9696/ || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
-  flaresolverr:  # https://github.com/FlareSolverr/FlareSolverr
-    image: ghcr.io/flaresolverr/flaresolverr:latest
-    container_name: flaresolverr
-    ports: ["127.0.0.1:8191:8191"]
-    environment: [LOG_LEVEL=info]
-    security_opt: [no-new-privileges:true]
-    networks: [arr]
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:8191/ || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
   qbittorrent:  # https://github.com/linuxserver/docker-qbittorrent
-    image: lscr.io/linuxserver/qbittorrent:latest
+    <<: *arr
+    image: lscr.io/linuxserver/qbittorrent:5.1.2
     container_name: qbittorrent
-    environment: [PUID=1000, PGID=1000, TZ=UTC, WEBUI_PORT=8081]
+    environment:
+      <<: *env
+      WEBUI_PORT: 8081
     ports:
       - "127.0.0.1:8081:8081"
       - "6881:6881"
       - "6881:6881/udp"
     volumes:
-      - /media/cesc/data/arr/config/qbittorrent:/config
-      - /media/cesc/data/arr/downloads:/data/downloads
-    security_opt: [no-new-privileges:true]
-    networks: [arr]
-    restart: unless-stopped
+      - ${ARR_ROOT:-/media/cesc/data/arr}/config/qbittorrent:/config
+      - ${ARR_ROOT:-/media/cesc/data/arr}/data/torrents:/data/torrents
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:8081/ >/dev/null 2>&1 && nc -z localhost 6881"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+      <<: *hc
+      test: ["CMD-SHELL", "curl -fsS -o /dev/null http://localhost:8081/"]
+
+  prowlarr:  # https://github.com/linuxserver/docker-prowlarr
+    <<: *arr
+    image: lscr.io/linuxserver/prowlarr:2.0.5
+    container_name: prowlarr
+    environment: *env
+    ports: ["127.0.0.1:9696:9696"]
+    volumes:
+      - ${ARR_ROOT:-/media/cesc/data/arr}/config/prowlarr:/config
+    depends_on:
+      flaresolverr: {condition: service_started}
+    healthcheck:
+      <<: *hc
+      test: ["CMD-SHELL", "curl -fsS http://localhost:9696/ping"]
+
+  radarr:  # https://github.com/linuxserver/docker-radarr
+    <<: *arr
+    image: lscr.io/linuxserver/radarr:5.26.2
+    container_name: radarr
+    environment: *env
+    ports: ["127.0.0.1:7878:7878"]
+    volumes:
+      - ${ARR_ROOT:-/media/cesc/data/arr}/config/radarr:/config
+      - ${ARR_ROOT:-/media/cesc/data/arr}/data:/data
+    healthcheck:
+      <<: *hc
+      test: ["CMD-SHELL", "curl -fsS http://localhost:7878/ping"]
+
+  lidarr:  # https://github.com/linuxserver/docker-lidarr
+    <<: *arr
+    image: lscr.io/linuxserver/lidarr:2.12.4
+    container_name: lidarr
+    environment: *env
+    ports: ["127.0.0.1:8686:8686"]
+    volumes:
+      - ${ARR_ROOT:-/media/cesc/data/arr}/config/lidarr:/config
+      - ${ARR_ROOT:-/media/cesc/data/arr}/data:/data
+    healthcheck:
+      <<: *hc
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8686/ping"]
+
+  bazarr:  # https://github.com/linuxserver/docker-bazarr
+    <<: *arr
+    image: lscr.io/linuxserver/bazarr:1.5.2
+    container_name: bazarr
+    environment: *env
+    ports: ["127.0.0.1:6767:6767"]
+    volumes:
+      - ${ARR_ROOT:-/media/cesc/data/arr}/config/bazarr:/config
+      - ${ARR_ROOT:-/media/cesc/data/arr}/data/media:/data/media
+    healthcheck:
+      <<: *hc
+      test: ["CMD-SHELL", "curl -fsS -o /dev/null http://localhost:6767/"]
+
+  flaresolverr:  # https://github.com/FlareSolverr/FlareSolverr
+    <<: *arr
+    image: ghcr.io/flaresolverr/flaresolverr:v3.3.21
+    container_name: flaresolverr
+    environment:
+      LOG_LEVEL: info
+      TZ: ${TZ:-UTC}
+    # no published port: only Prowlarr needs it, via the arr network
+    healthcheck:
+      <<: *hc
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8191/health"]
 
 networks:
   arr:
     driver: bridge
-# Notes:
-# - qBittorrent categories: create categories 'radarr', 'lidarr', 'readarr' pointing at /data/downloads/<name>
-# - Atomic moves: keep downloads+media on same FS (both under /media/cesc/data/arr); set arr download client path /data/downloads
-# - Prowlarr -> add apps (Radarr/Lidarr/Readarr) via http://radarr:7878 etc; point indexers needing FlareSolverr at http://flaresolverr:8191
-# - Popular trackers/indexers to add in Prowlarr: 1337x, RARBG (if up), The Pirate Bay, EZTV, YTS, plus private trackers via FlareSolverr
-# TODO: add gluetun service and route qbittorrent network_mode through it for VPN
+
+# Optional .env
+#   ARR_ROOT=/media/cesc/data/arr
+#   PUID=1000
+#   PGID=1000
+#   TZ=UTC
