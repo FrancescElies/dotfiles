@@ -154,7 +154,7 @@ def "install neovim" [] {
         git clone https://github.com/francescelies/kickstart.nvim
     }
     cd kickstart.nvim
-    nu bootstrap.nu
+    nu -c 'use toolkit.nu; toolkit bootstrap'
 
     cd ~/src
     if (not ('neovim' | path exists)) {

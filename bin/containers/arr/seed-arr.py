@@ -51,8 +51,6 @@ TZ=UTC
 RADARR_IMPORT_EXISTING=true
 # Import them as monitored? false = Radarr won't search for upgrades of your existing files
 RADARR_IMPORT_MONITORED=false
-# Subtitle languages for Bazarr (ISO 639-1 codes, comma separated), e.g. en,de
-BAZARR_LANGUAGES=en
 # Optional OpenSubtitles.com account (free) for better subtitle coverage
 OPENSUBTITLES_USER=
 OPENSUBTITLES_PASS=
@@ -154,8 +152,7 @@ def pick(schema, implementation):
 
 
 print("Waiting for services...")
-BAZARR = os.getenv("BAZARR_URL", "http://127.0.0.1:6767").rstrip("/")
-for u in (f"{RADARR}/ping", f"{LIDARR}/ping", f"{PROWLARR}/ping", f"{QB}/", f"{BAZARR}/"):
+for u in (f"{RADARR}/ping", f"{LIDARR}/ping", f"{PROWLARR}/ping", f"{QB}/", ):
     wait_for(u)
 
 # ---------- 1. qBittorrent: credentials, save path, categories ----------
@@ -331,99 +328,3 @@ for item in req(PROWLARR, PKEY, "/api/v1/indexer/schema"):
     except Exception as e:
         print("prowlarr indexer skipped:", n, "->", e)
 print("prowlarr configured")
-
-# ---------- 4. Bazarr: link Radarr, languages + profile, providers ----------
-# Settings API = what Bazarr's web UI posts (form-encoded, header X-API-KEY). Failures only warn.
-LANGS = [x.strip() for x in os.getenv("BAZARR_LANGUAGES", "en").split(",") if x.strip()]
-PROFILE_NAME = "Default"
-PROVIDERS = ["podnapisi", "yifysubtitles"] + (["opensubtitlescom"] if os.getenv("OPENSUBTITLES_USER") else [])
-
-
-def bazarr_key():
-    cfg = ARR_ROOT / "config/bazarr/config/config.yaml"
-    for _ in range(60):  # Bazarr writes its key to config.yaml on first start
-        try:
-            m = re.search(r"^auth:\n(?:[ \t]+.*\n)*?[ \t]+apikey:\s*['\"]?([^'\"\s]+)", cfg.read_text(), re.M)
-            if m:
-                return m.group(1)
-        except FileNotFoundError:
-            pass
-        time.sleep(2)
-    raise RuntimeError(f"Bazarr API key not found in {cfg}")
-
-
-def bz(path, form=None):
-    r = urllib.request.Request(
-        BAZARR + path,
-        data=urllib.parse.urlencode(form, doseq=True).encode() if form is not None else None,
-        headers={"X-API-KEY": BKEY},
-    )
-    try:
-        with urllib.request.urlopen(r, timeout=30) as res:
-            raw = res.read()
-            return json.loads(raw) if raw else None
-    except urllib.error.HTTPError as e:
-        print(e.code, e.read().decode()[:500], file=sys.stderr)
-        raise
-
-
-try:
-    BKEY = bazarr_key()
-    profiles = bz("/api/system/languages/profiles") or []
-    prof = next((x for x in profiles if x["name"] == PROFILE_NAME), None)
-    if prof is None:  # append only; never drop profiles you made by hand
-        prof = {
-            "profileId": max([x["profileId"] for x in profiles], default=0) + 1,
-            "name": PROFILE_NAME,
-            "cutoff": None,
-            "items": [
-                {"id": i + 1, "language": code, "audio_exclude": "False", "audio_only_include": "False",
-                 "hi": "False", "forced": "False"}
-                for i, code in enumerate(LANGS)
-            ],
-            "mustContain": [],
-            "mustNotContain": [],
-            "originalFormat": False,
-        }
-        profiles.append(prof)
-    enabled_langs = {x["code2"] for x in bz("/api/system/languages") if x.get("enabled")} | set(LANGS)
-    providers = list(dict.fromkeys(bz("/api/system/settings")["general"].get("enabled_providers", []) + PROVIDERS))
-    form = {
-        "languages-enabled": sorted(enabled_langs),
-        "languages-profiles": json.dumps(profiles),
-        "settings-general-enabled_providers": providers,
-        "settings-general-movie_default_enabled": "true",
-        "settings-general-movie_default_profile": str(prof["profileId"]),
-        "settings-general-use_radarr": "true",
-        "settings-radarr-ip": "radarr",
-        "settings-radarr-port": "7878",
-        "settings-radarr-base_url": "/",
-        "settings-radarr-ssl": "false",
-        "settings-radarr-apikey": RKEY,
-    }
-    if os.getenv("OPENSUBTITLES_USER"):
-        form["settings-opensubtitlescom-username"] = os.environ["OPENSUBTITLES_USER"]
-        form["settings-opensubtitlescom-password"] = os.getenv("OPENSUBTITLES_PASS", "")
-    bz("/api/system/settings", form)
-    print("bazarr configured (movies sync from Radarr within minutes; or System -> Tasks)")
-
-    # apply the profile to movies already known to Radarr, then search for missing subtitles
-    try:
-        expected = len(req(RADARR, RKEY, "/api/v3/movie"))
-        bz("/api/system/tasks", {"taskid": "update_movies"})  # pull movie list from Radarr now
-        movies = []
-        for _ in range(40):
-            movies = bz("/api/movies?start=0&length=-1")["data"]
-            if len(movies) >= expected:
-                break
-            time.sleep(3)
-        todo = [m for m in movies if m.get("profileId") is None]
-        if todo:
-            bz("/api/movies", {"radarrid": [m["radarrId"] for m in todo], "profileid": [prof["profileId"]] * len(todo)})
-        print(f"bazarr: profile applied to {len(todo)} of {len(movies)} movies")
-        bz("/api/system/tasks", {"taskid": "wanted_search_missing_subtitles_movies"})
-        print("bazarr: searching for missing subtitles")
-    except Exception as e:
-        print(f"bazarr: existing movies not processed ({e}); use Movies -> Mass Edit in the UI", file=sys.stderr)
-except Exception as e:
-    print(f"bazarr: NOT configured ({e}). Do it in the UI: Settings -> Radarr / Languages / Providers.", file=sys.stderr)

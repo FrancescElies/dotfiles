@@ -1,4 +1,4 @@
-const ARR_PORTS = { radarr: 7878, lidarr: 8686, prowlarr: 9696, bazarr: 6767, qbittorrent: 8081 }
+const ARR_PORTS = { radarr: 7878, lidarr: 8686, prowlarr: 9696, qbittorrent: 8081 }
 def "nu-complete arr services" [] { $ARR_PORTS | columns | append "all" }
 # Open a service's web UI: `arr open radarr`, or `arr open all`
 export def "arr open" [service: string@"nu-complete arr services"] {
@@ -68,7 +68,7 @@ export def "arr build" [
 
     let root = (get-env ARR_ROOT "/media/cesc/data/arr")
     for d in [
-        config/bazarr config/lidarr config/radarr config/prowlarr config/qbittorrent config/gluetun
+        config/lidarr config/radarr config/prowlarr config/qbittorrent config/gluetun
         data/torrents/radarr data/torrents/lidarr data/media/movies data/media/music
     ] { mkdir ($root | path join $d) }
 
@@ -83,7 +83,7 @@ export def "arr up" [--seed (-s)] {
     if $seed { ^python3 $SEED_SCRIPT }
 }
 
-const ARR_CONTAINERS = [gluetun qbittorrent prowlarr radarr lidarr bazarr flaresolverr]
+const ARR_CONTAINERS = [gluetun qbittorrent prowlarr radarr lidarr flaresolverr]
 
 # Stop everything, whichever profile was running (-f: no grace period, remove leftovers)
 export def "arr down" [--force (-f)] {

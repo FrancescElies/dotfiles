@@ -20,7 +20,7 @@
 #   Mullvad no longer offers port forwarding, so expect fewer incoming peers.
 #
 # Setup:
-#   mkdir -p /media/cesc/data/arr/{config/{bazarr,lidarr,radarr,prowlarr,qbittorrent,gluetun},data/{torrents/{radarr,lidarr},media/{movies,music}}}
+#   mkdir -p /media/cesc/data/arr/{config/{lidarr,radarr,prowlarr,qbittorrent,gluetun},data/{torrents/{radarr,lidarr},media/{movies,music}}}
 #   cp .env.example .env   # fill in VPN vars, see bottom
 #   podman compose up -d
 #
@@ -157,19 +157,6 @@ services:
     healthcheck:
       <<: *hc
       test: ["CMD-SHELL", "curl -fsS http://localhost:8686/ping"]
-
-  bazarr:  # https://github.com/linuxserver/docker-bazarr
-    <<: *arr
-    image: lscr.io/linuxserver/bazarr:1.6.0
-    container_name: bazarr
-    environment: *env
-    ports: ["127.0.0.1:6767:6767"]
-    volumes:
-      - ${ARR_ROOT:-/media/cesc/data/arr}/config/bazarr:/config
-      - ${ARR_ROOT:-/media/cesc/data/arr}/data/media:/data/media
-    healthcheck:
-      <<: *hc
-      test: ["CMD-SHELL", "curl -fsS -o /dev/null http://localhost:6767/"]
 
   flaresolverr:  # https://github.com/FlareSolverr/FlareSolverr
     <<: *arr
