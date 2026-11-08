@@ -8,3 +8,4 @@ src/linux/gnome-apps/start-tor-browser.desktop
 src/os-this-machine.nu
 bin/__pycache__
 .DS_Store
+bin/containers/arr/.env
