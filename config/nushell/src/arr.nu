@@ -71,6 +71,7 @@ export def "arr build" [
         config/lidarr config/radarr config/prowlarr config/qbittorrent config/gluetun
         data/torrents/radarr data/torrents/lidarr data/media/movies data/media/music
     ] { mkdir ($root | path join $d) }
+    ^podman unshare chown -R 1000:1000 ($root | path join "data")
 
     compose pull
     print $"Profile: ($new). Next: arr up --seed"
