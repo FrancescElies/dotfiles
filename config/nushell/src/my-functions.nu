@@ -490,3 +490,4 @@ export alias firefox-tabs-to-md = python ~/src/dotfiles/bin/firefox-tabs-to-md.p
 export alias local-ai = python ~/src/dotfiles/bin/local-ai.py
 export alias text-extract-concepts = python ~/src/dotfiles/bin/text-extract-concepts.py
 export alias text-ranks = python ~/src/dotfiles/bin/text-ranks.py
+export alias subtitles-download = python ~/src/dotfiles/bin/subtitles-download.py

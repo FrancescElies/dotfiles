@@ -26,6 +26,7 @@ export const packages = {
         "ipdb"  # better pdb
         "chardet"  # character encoding detector
         "pytextrank"  # TextRank algorithms (textgraphs) for phrase extraction
+        "guessit"  # extract as much info ass possible from video filename
         "yake"  # yet another keyword extractor (extract most important keywords from a document)
         "spacy"  # natural language processing
         "python-benedict"  # dict subclass with keylist/keypath support, built-in I/O operations (base64, csv, html, ini, json, pickle, plist, query-string, toml, xls, xml, yaml), s3 support and many utilities.
