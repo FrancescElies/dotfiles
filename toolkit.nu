@@ -417,7 +417,7 @@ export def "setup git" [] {
   # ^gmy-defaults
   #
   # Give me all my pull requests as local refs
-  # ^git setup remote.origin.fetch '+refs/pull/*:refs/remotes/origin/pull/*'
+  # ^git config remote.origin.fetch '+refs/pull/*:refs/remotes/origin/pull/*'
   #
   # Conditional ~/.gitconfig
   #
@@ -432,49 +432,49 @@ export def "setup git" [] {
   # ^git maintenance start
 
   # https://jvns.ca/blog/2024/02/16/popular-git-config-options/#help-autocorrect-10
-  ^git setup --global tag.sort -version:refname
-  ^git setup --global branch.sort -committerdate
-  ^git setup --global diff.algorithm histogram
-  ^git setup --global fetch.prune true
-  ^git setup --global help.autocorrect 10
-  ^git setup --global help.autocorrect prompt
-  ^git setup --global init.defaultBranch main
-  ^git setup --global interactive.diffFilter delta --color-only
-  ^git setup --global log.date iso
-  # ^git setup --global merge.conflictstyle zdiff3
-  ^git setup --global pull.rebase true
-  ^git setup --global push.autosetupremote true
-  ^git setup --global push.default current
-  ^git setup --global rebase.autosquash true
-  ^git setup --global rebase.autostash true
-  ^git setup --global rebase.missingCommitsCheck error
-  ^git setup --global rebase.updateRefs true
+  ^git config --global tag.sort -version:refname
+  ^git config --global branch.sort -committerdate
+  ^git config --global diff.algorithm histogram
+  ^git config --global fetch.prune true
+  ^git config --global help.autocorrect 10
+  ^git config --global help.autocorrect prompt
+  ^git config --global init.defaultBranch main
+  ^git config --global interactive.diffFilter delta --color-only
+  ^git config --global log.date iso
+  # ^git config --global merge.conflictstyle zdiff3
+  ^git config --global pull.rebase true
+  ^git config --global push.autosetupremote true
+  ^git config --global push.default current
+  ^git config --global rebase.autosquash true
+  ^git config --global rebase.autostash true
+  ^git config --global rebase.missingCommitsCheck error
+  ^git config --global rebase.updateRefs true
 
-  ^git setup --global rebase.instructionFormat "(%an, %as) %s"
+  ^git config --global rebase.instructionFormat "(%an, %as) %s"
 
   # gpg
-  # ^git setup --global format.signOff true
-  # ^git setup --global user.signingKey 3B90F50EE678CC468870A2BEC6514C960DD0AC0B
-  # ^git setup --global commit.gpgsign true
-  # ^git setup --global tag.gpgsign true
+  # ^git config --global format.signOff true
+  # ^git config --global user.signingKey 3B90F50EE678CC468870A2BEC6514C960DD0AC0B
+  # ^git config --global commit.gpgsign true
+  # ^git config --global tag.gpgsign true
 
   # Avoid data corruption
-  ^git setup --global transfer.fsckobjects true
-  ^git setup --global fetch.fsckobjects true
-  ^git setup --global receive.fsckObjects true
+  ^git config --global transfer.fsckobjects true
+  ^git config --global fetch.fsckobjects true
+  ^git config --global receive.fsckObjects true
 
-  ^git setup --global merge.tool nvimdiff
-  ^git setup --global merge.conflictstyle diff3
-  ^git setup --global mergetool.nvimdiff.cmd 'nvim -d $LOCAL $REMOTE $MERGED -c "$wincmd w" -c "wincmd J"'
-  ^git setup --global diff.tool nvimdiff
-  ^git setup --global diff.colorMoved default
+  ^git config --global merge.tool nvimdiff
+  ^git config --global merge.conflictstyle diff3
+  ^git config --global mergetool.nvimdiff.cmd 'nvim -d $LOCAL $REMOTE $MERGED -c "$wincmd w" -c "wincmd J"'
+  ^git config --global diff.tool nvimdiff
+  ^git config --global diff.colorMoved default
 
 
   # REuse REordered REsolution, tells ^git to remember conflicts so if it sees them again he won't ask about it.
-  ^git setup --global rerere.enabled true
-  ^git setup --global branch.sort -committerdate
-  # ^git setup gpg.format ssh
-  # ^git setup user.signingkey ~/.ssh/id_ed25519
+  ^git config --global rerere.enabled true
+  ^git config --global branch.sort -committerdate
+  # ^git config gpg.format ssh
+  # ^git config user.signingkey ~/.ssh/id_ed25519
 
   # Big repository stuff
   #
@@ -485,13 +485,13 @@ export def "setup git" [] {
   # See multipack indexes, reachability bitmaps and geometric repacking
   # https://github.blog/2021-04-29-scaling-monorepo-maintenance
   # ^git maintenance start will also write the commit-graph
-  ^git setup --global fetch.writeCommitGraph true
+  ^git config --global fetch.writeCommitGraph true
   # file system monitory
-  ^git setup --global core.untrackedcache true
-  ^git setup --global feature.manyfiles true
-  ^git setup --global core.fsmonitor true
+  ^git config --global core.untrackedcache true
+  ^git config --global feature.manyfiles true
+  ^git config --global core.fsmonitor true
 
-  # ^git setup --global commit.template ($repo_dir | path join 'config/git/commit-template')
+  # ^git config --global commit.template ($repo_dir | path join 'config/git/commit-template')
 }
 
 export def "setup bashrc" [] { symlink --force ($repo_dir | path join 'config/.bashrc') ~/.bashrc }
