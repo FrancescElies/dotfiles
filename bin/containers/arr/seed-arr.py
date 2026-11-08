@@ -190,6 +190,19 @@ for cat in ("radarr", "lidarr"):
         pass  # 409 = exists
 print("qbittorrent configured")
 
+# IP blocklist (best-effort)
+try:
+    bl_url = "https://github.com/Naunter/BT_BlockLists/raw/master/bt_blocklists.gz"
+    bl_path = ARR_ROOT / "config/qbittorrent/blocklist.gz"
+    urllib.request.urlretrieve(bl_url, bl_path)
+    qb_post("/api/v2/app/setPreferences", {"json": json.dumps({
+        "ip_filter_enabled": True,
+        "ip_filter_path": "/config/blocklist.gz",
+    })})
+    print("qbittorrent blocklist configured")
+except Exception as e:
+    print(f"qbittorrent blocklist not configured ({e})", file=sys.stderr)
+
 
 # ---------- 2. Radarr / Lidarr: root folder + qBittorrent client ----------
 def add_qbt(base, key, ver, cat_field, cat):
