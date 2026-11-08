@@ -1,4 +1,4 @@
-const ARR_PORTS = { radarr: 7878, lidarr: 8686, prowlarr: 9696, qbittorrent: 8081 }
+const ARR_PORTS = { radarr: 7878, lidarr: 8686, prowlarr: 9696, qbittorrent: 8081, jellyfin: 8096 }
 def "nu-complete arr services" [] { $ARR_PORTS | columns | append "all" }
 # Open a service's web UI: `arr open radarr`, or `arr open all`
 export def "arr open" [service: string@"nu-complete arr services"] {
