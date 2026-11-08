@@ -327,4 +327,51 @@ for item in req(PROWLARR, PKEY, "/api/v1/indexer/schema"):
         print("prowlarr indexer added:", n)
     except Exception as e:
         print("prowlarr indexer skipped:", n, "->", e)
+# configure qBittorrent as download client in Prowlarr
+try:
+    existing = {d["name"] for d in req(PROWLARR, PKEY, "/api/v1/downloadclient")}
+    if "qBittorrent" not in existing:
+        schema = req(PROWLARR, PKEY, "/api/v1/downloadclient/schema")
+        item = next(x for x in schema if x["name"] == "qBittorrent")
+        item.update({
+            "name": "qBittorrent",
+            "enable": True,
+            "host": "qbittorrent",
+            "port": 8081,
+            "useSsl": False,
+            "username": "admin",
+            "password": os.getenv("QBT_PASSWORD", ""),
+        })
+        req(PROWLARR, PKEY, "/api/v1/downloadclient?forceSave=true", "POST", item)
+        print("prowlarr download client added: qBittorrent")
+    else:
+        print("prowlarr download client already present: qBittorrent")
+except Exception as e:
+    print(f"prowlarr download client not configured ({e})", file=sys.stderr)
+# configure qBittorrent as download client in Radarr
+try:
+    existing = {d["name"] for d in req(RADARR, RKEY, "/api/v3/downloadclient")}
+    if "qBittorrent" not in existing:
+        schema = req(RADARR, RKEY, "/api/v3/downloadclient/schema")
+        item = next(x for x in schema if x["name"] == "qBittorrent")
+        item.update({"name": "qBittorrent", "enable": True, "host": "qbittorrent", "port": 8081,
+                     "useSsl": False, "username": "admin", "password": os.getenv("QBT_PASSWORD", "")})
+        req(RADARR, RKEY, "/api/v3/downloadclient?forceSave=true", "POST", item)
+        print("radarr download client added: qBittorrent")
+except Exception as e:
+    print(f"radarr download client not configured ({e})", file=sys.stderr)
+
+# configure qBittorrent as download client in Lidarr
+try:
+    existing = {d["name"] for d in req(LIDARR, LKEY, "/api/v1/downloadclient")}
+    if "qBittorrent" not in existing:
+        schema = req(LIDARR, LKEY, "/api/v1/downloadclient/schema")
+        item = next(x for x in schema if x["name"] == "qBittorrent")
+        item.update({"name": "qBittorrent", "enable": True, "host": "qbittorrent", "port": 8081,
+                     "useSsl": False, "username": "admin", "password": os.getenv("QBT_PASSWORD", "")})
+        req(LIDARR, LKEY, "/api/v1/downloadclient?forceSave=true", "POST", item)
+        print("lidarr download client added: qBittorrent")
+except Exception as e:
+    print(f"lidarr download client not configured ({e})", file=sys.stderr)
+
 print("prowlarr configured")
