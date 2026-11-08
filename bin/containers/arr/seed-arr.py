@@ -105,7 +105,7 @@ QB_PASS = os.getenv("QBT_PASSWORD") or sys.exit("QBT_PASSWORD missing in .env")
 QB_USER = "admin"
 QB_HOST, QB_PORT = "qbittorrent", 8081  # as seen from the other containers (gluetun aliases it in vpn mode)
 QB_SUBNET = "172.28.0.0/24"             # must match the arr network subnet in compose.yaml
-INDEXERS = ["1337x", "the pirate bay", "nyaa", "eztv", "yts"]   # name prefixes, case-insensitive
+INDEXERS = ["1337x", "the pirate bay", "eztv", "yts"]   # name prefixes, case-insensitive
 NEEDS_FLARESOLVERR = {"1337x"}
 for name, k in (("RADARR", RKEY), ("LIDARR", LKEY), ("PROWLARR", PKEY)):
     if not k:
@@ -120,7 +120,7 @@ def req(base, key, path, method="GET", body=None):
         headers={"X-Api-Key": key, "Content-Type": "application/json"},
     )
     try:
-        with urllib.request.urlopen(r, timeout=30) as res:
+        with urllib.request.urlopen(r, timeout=3) as res:
             raw = res.read()
             return json.loads(raw) if raw else None
     except urllib.error.HTTPError as e:
@@ -345,16 +345,15 @@ try:
     existing = {d["name"] for d in req(PROWLARR, PKEY, "/api/v1/downloadclient")}
     if "qBittorrent" not in existing:
         schema = req(PROWLARR, PKEY, "/api/v1/downloadclient/schema")
-        item = next(x for x in schema if x["name"] == "qBittorrent")
-        item.update({
-            "name": "qBittorrent",
-            "enable": True,
-            "host": "qbittorrent",
-            "port": 8081,
-            "useSsl": False,
-            "username": "admin",
-            "password": os.getenv("QBT_PASSWORD", ""),
-        })
+        item = next(x for x in schema if x.get("implementation") == "QBittorrent")
+        item["name"] = "qBittorrent"
+        item["enable"] = True
+        for f in item.get("fields", []):
+            if f["name"] == "host": f["value"] = "qbittorrent"
+            elif f["name"] == "port": f["value"] = 8081
+            elif f["name"] == "useSsl": f["value"] = False
+            elif f["name"] == "username": f["value"] = "admin"
+            elif f["name"] == "password": f["value"] = os.getenv("QBT_PASSWORD", "")
         req(PROWLARR, PKEY, "/api/v1/downloadclient?forceSave=true", "POST", item)
         print("prowlarr download client added: qBittorrent")
     else:
@@ -366,9 +365,15 @@ try:
     existing = {d["name"] for d in req(RADARR, RKEY, "/api/v3/downloadclient")}
     if "qBittorrent" not in existing:
         schema = req(RADARR, RKEY, "/api/v3/downloadclient/schema")
-        item = next(x for x in schema if x["name"] == "qBittorrent")
-        item.update({"name": "qBittorrent", "enable": True, "host": "qbittorrent", "port": 8081,
-                     "useSsl": False, "username": "admin", "password": os.getenv("QBT_PASSWORD", "")})
+        item = next(x for x in schema if x.get("implementation") == "QBittorrent")
+        item["name"] = "qBittorrent"
+        item["enable"] = True
+        for f in item.get("fields", []):
+            if f["name"] == "host": f["value"] = "qbittorrent"
+            elif f["name"] == "port": f["value"] = 8081
+            elif f["name"] == "useSsl": f["value"] = False
+            elif f["name"] == "username": f["value"] = "admin"
+            elif f["name"] == "password": f["value"] = os.getenv("QBT_PASSWORD", "")
         req(RADARR, RKEY, "/api/v3/downloadclient?forceSave=true", "POST", item)
         print("radarr download client added: qBittorrent")
 except Exception as e:
@@ -379,9 +384,15 @@ try:
     existing = {d["name"] for d in req(LIDARR, LKEY, "/api/v1/downloadclient")}
     if "qBittorrent" not in existing:
         schema = req(LIDARR, LKEY, "/api/v1/downloadclient/schema")
-        item = next(x for x in schema if x["name"] == "qBittorrent")
-        item.update({"name": "qBittorrent", "enable": True, "host": "qbittorrent", "port": 8081,
-                     "useSsl": False, "username": "admin", "password": os.getenv("QBT_PASSWORD", "")})
+        item = next(x for x in schema if x.get("implementation") == "QBittorrent")
+        item["name"] = "qBittorrent"
+        item["enable"] = True
+        for f in item.get("fields", []):
+            if f["name"] == "host": f["value"] = "qbittorrent"
+            elif f["name"] == "port": f["value"] = 8081
+            elif f["name"] == "useSsl": f["value"] = False
+            elif f["name"] == "username": f["value"] = "admin"
+            elif f["name"] == "password": f["value"] = os.getenv("QBT_PASSWORD", "")
         req(LIDARR, LKEY, "/api/v1/downloadclient?forceSave=true", "POST", item)
         print("lidarr download client added: qBittorrent")
 except Exception as e:
