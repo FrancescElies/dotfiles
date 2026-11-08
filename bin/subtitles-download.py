@@ -34,6 +34,7 @@ Features:
     - Downloads the best-ranked subtitle
 """
 
+import argparse
 import os
 import struct
 import subprocess
@@ -423,17 +424,35 @@ def download_subtitle(best, movie, language, token):
 
 def main():
 
-    if len(sys.argv) < 2:
-        print("Usage:")
-        print("python subtitles.py movie.mkv [language]")
+    parser = argparse.ArgumentParser(description="OpenSubtitles smart subtitle downloader")
+    parser.add_argument("movie", help="movie file")
+    parser.add_argument("language", nargs="?", default="en", help="language code (en, es, tr, ...)")
+    parser.add_argument("-l", "--language", dest="lang_flag", help="language code (en, es, tr, ...)")
+    parser.add_argument("-f", "--force", action="store_true", help="download even if subtitle already exists")
+    args = parser.parse_args()
+
+    movie = Path(args.movie)
+    language = args.lang_flag or args.language
+
+    VIDEO_EXTS = {".mkv", ".mp4", ".avi", ".m4v", ".mov", ".wmv", ".flv", ".webm"}
+
+    if movie.is_dir():
+        files = [f for f in sorted(movie.rglob("*")) if f.is_file() and f.suffix.lower() in VIDEO_EXTS]
+        total = len(files)
+        for i, f in enumerate(files, 1):
+            print(f"\n[{i}/{total}] {f}")
+            sys.argv = [sys.argv[0], str(f), language] + (["-f"] if args.force else [])
+            main()
         return
-
-    movie = Path(sys.argv[1])
-
-    language = sys.argv[2] if len(sys.argv) > 2 else "en"
 
     if not movie.is_file():
         print("Movie file not found.")
+        return
+
+    output_path = movie.with_suffix(f".{language}.srt")
+    if output_path.exists() and not args.force:
+        print(f"Subtitle already exists: {output_path}")
+        print("Use -f to download anyway.")
         return
 
     if API_KEY == "YOUR_API_KEY":
