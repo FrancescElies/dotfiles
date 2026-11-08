@@ -80,7 +80,7 @@ export def "arr build" [
 # Start the stack (profile comes from .env); --seed also configures the apps via API
 export def "arr up" [--seed (-s)] {
     if not ($ENV_FILE | path exists) { error make { msg: "no .env: run `arr build` first" } }
-    compose up -d
+    compose --profile (get-env COMPOSE_PROFILES "novpn") up -d
     if $seed { ^python3 $SEED_SCRIPT }
 }
 
