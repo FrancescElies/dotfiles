@@ -1,5 +1,27 @@
+# No-UI setup: after `podman compose up -d`, run python3 bootstrap.py (stdlib only).
+#   It creates root folders, qBittorrent categories/credentials, download clients and Prowlarr apps.
+#   Add to .env: RADARR_API_KEY / LIDARR_API_KEY / PROWLARR_API_KEY (each: openssl rand -hex 16), QBT_PASSWORD.
+#
+# VPN switch: set ONE profile in .env (compose reads COMPOSE_PROFILES automatically)
+#   COMPOSE_PROFILES=vpn      # gluetun + qBittorrent inside the tunnel
+#   COMPOSE_PROFILES=novpn    # qBittorrent directly on the network, no gluetun
+#   Switching: podman compose --profile "*" down && edit .env && podman compose up -d
+#   Apps/Prowlarr always reach qBittorrent at http://qbittorrent:8081 (gluetun has that alias).
+#
+# Mullvad setup (WireGuard, only needed with COMPOSE_PROFILES=vpn):
+#   1. https://mullvad.net/en/account/wireguard-config -> log in with account number
+#   2. "Generate key" (uses one of your 5 device slots), pick any country, download the .conf
+#   3. From its [Interface] section copy PrivateKey -> WIREGUARD_PRIVATE_KEY,
+#      Address (IPv4 part, e.g. 10.64.222.21/32) -> WIREGUARD_ADDRESSES in .env
+#   4. podman compose up -d gluetun && podman logs gluetun   # look for "Public IP address is ..."
+#   5. Verify the torrent client exits via Mullvad:
+#        podman exec qbittorrent curl -s https://am.i.mullvad.net/connected
+#   Server filters: https://github.com/qdm12/gluetun-wiki/blob/main/setup/providers/mullvad.md
+#   Mullvad no longer offers port forwarding, so expect fewer incoming peers.
+#
 # Setup:
-#   mkdir -p /media/cesc/data/arr/{config/{bazarr,lidarr,radarr,prowlarr,qbittorrent},data/{torrents/{radarr,lidarr},media/{movies,music}}}
+#   mkdir -p /media/cesc/data/arr/{config/{bazarr,lidarr,radarr,prowlarr,qbittorrent,gluetun},data/{torrents/{radarr,lidarr},media/{movies,music}}}
+#   cp .env.example .env   # fill in VPN vars, see bottom
 #   podman compose up -d
 #
 # Layout (TRaSH): ONE /data mount in every container => hardlinks/atomic moves work
@@ -25,30 +47,76 @@ x-hc: &hc
   retries: 3
   start_period: 60s
 
+# qBittorrent is defined once and used by two mutually exclusive profiles (vpn / novpn).
+x-qbt: &qbt
+  image: lscr.io/linuxserver/qbittorrent:5.1.2
+  container_name: qbittorrent   # same name in both profiles; only one profile runs at a time
+  security_opt: [no-new-privileges:true]
+  restart: unless-stopped
+  environment:
+    <<: *env
+    WEBUI_PORT: 8081
+  volumes:
+    - ${ARR_ROOT:-/media/cesc/data/arr}/config/qbittorrent:/config
+    - ${ARR_ROOT:-/media/cesc/data/arr}/data/torrents:/data/torrents
+  healthcheck:
+    <<: *hc
+    test: ["CMD-SHELL", "curl -fsS -o /dev/null http://localhost:8081/"]
+
 services:
-  qbittorrent:  # https://github.com/linuxserver/docker-qbittorrent
+  gluetun:  # https://github.com/qdm12/gluetun-wiki
     <<: *arr
-    image: lscr.io/linuxserver/qbittorrent:5.1.2
-    container_name: qbittorrent
+    image: qmcgaw/gluetun:v3.40.0
+    container_name: gluetun
+    profiles: [vpn]
+    networks:
+      arr:
+        aliases: [qbittorrent]   # apps always use host "qbittorrent", with or without VPN
+    cap_add: [NET_ADMIN]
+    devices: ["/dev/net/tun:/dev/net/tun"]
     environment:
-      <<: *env
-      WEBUI_PORT: 8081
+      VPN_SERVICE_PROVIDER: mullvad
+      VPN_TYPE: wireguard                       # gluetun supports Mullvad via WireGuard only
+      WIREGUARD_PRIVATE_KEY: ${WIREGUARD_PRIVATE_KEY:-}
+      WIREGUARD_ADDRESSES: ${WIREGUARD_ADDRESSES:-}   # e.g. 10.64.222.21/32 (IPv4 only)
+      SERVER_COUNTRIES: ${SERVER_COUNTRIES:-}
+      SERVER_CITIES: ${SERVER_CITIES:-}
+      TZ: ${TZ:-UTC}
+      # let other containers reach qBittorrent through the tunnel container
+      FIREWALL_INPUT_PORTS: "8081"
+      FIREWALL_OUTBOUND_SUBNETS: 172.28.0.0/24
+    ports:
+      - "127.0.0.1:8081:8081"   # qBittorrent WebUI (published here, since qbittorrent shares this netns)
+    volumes:
+      - ${ARR_ROOT:-/media/cesc/data/arr}/config/gluetun:/gluetun
+    healthcheck:
+      <<: *hc
+      test: ["CMD", "/gluetun-entrypoint", "healthcheck"]
+
+  qbittorrent-vpn:  # https://github.com/linuxserver/docker-qbittorrent
+    <<: *qbt
+    profiles: [vpn]
+    network_mode: "service:gluetun"   # all traffic via VPN; no VPN = no network (kill switch)
+    depends_on:
+      gluetun: {condition: service_healthy}
+
+  qbittorrent-direct:
+    <<: *qbt
+    profiles: [novpn]
+    networks: [arr]
     ports:
       - "127.0.0.1:8081:8081"
       - "6881:6881"
       - "6881:6881/udp"
-    volumes:
-      - ${ARR_ROOT:-/media/cesc/data/arr}/config/qbittorrent:/config
-      - ${ARR_ROOT:-/media/cesc/data/arr}/data/torrents:/data/torrents
-    healthcheck:
-      <<: *hc
-      test: ["CMD-SHELL", "curl -fsS -o /dev/null http://localhost:8081/"]
 
   prowlarr:  # https://github.com/linuxserver/docker-prowlarr
     <<: *arr
     image: lscr.io/linuxserver/prowlarr:2.0.5
     container_name: prowlarr
-    environment: *env
+    environment:
+      <<: *env
+      PROWLARR__AUTH__APIKEY: ${PROWLARR_API_KEY}   # fixed key so bootstrap.py can call the API
+      PROWLARR__AUTH__METHOD: External          # no login prompt; ports are bound to 127.0.0.1 only
     ports: ["127.0.0.1:9696:9696"]
     volumes:
       - ${ARR_ROOT:-/media/cesc/data/arr}/config/prowlarr:/config
@@ -62,7 +130,10 @@ services:
     <<: *arr
     image: lscr.io/linuxserver/radarr:5.26.2
     container_name: radarr
-    environment: *env
+    environment:
+      <<: *env
+      RADARR__AUTH__APIKEY: ${RADARR_API_KEY}   # fixed key so bootstrap.py can call the API
+      RADARR__AUTH__METHOD: External          # no login prompt; ports are bound to 127.0.0.1 only
     ports: ["127.0.0.1:7878:7878"]
     volumes:
       - ${ARR_ROOT:-/media/cesc/data/arr}/config/radarr:/config
@@ -75,7 +146,10 @@ services:
     <<: *arr
     image: lscr.io/linuxserver/lidarr:2.12.4
     container_name: lidarr
-    environment: *env
+    environment:
+      <<: *env
+      LIDARR__AUTH__APIKEY: ${LIDARR_API_KEY}   # fixed key so bootstrap.py can call the API
+      LIDARR__AUTH__METHOD: External          # no login prompt; ports are bound to 127.0.0.1 only
     ports: ["127.0.0.1:8686:8686"]
     volumes:
       - ${ARR_ROOT:-/media/cesc/data/arr}/config/lidarr:/config
@@ -86,7 +160,7 @@ services:
 
   bazarr:  # https://github.com/linuxserver/docker-bazarr
     <<: *arr
-    image: lscr.io/linuxserver/bazarr:1.5.2
+    image: lscr.io/linuxserver/bazarr:1.6.0
     container_name: bazarr
     environment: *env
     ports: ["127.0.0.1:6767:6767"]
@@ -112,9 +186,20 @@ services:
 networks:
   arr:
     driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/24
 
-# Optional .env
+# .env.example
+#   COMPOSE_PROFILES=vpn            # or novpn
 #   ARR_ROOT=/media/cesc/data/arr
 #   PUID=1000
 #   PGID=1000
 #   TZ=UTC
+#   RADARR_API_KEY=<openssl rand -hex 16>
+#   LIDARR_API_KEY=<openssl rand -hex 16>
+#   PROWLARR_API_KEY=<openssl rand -hex 16>
+#   QBT_PASSWORD=<choose a password>
+#   WIREGUARD_PRIVATE_KEY=<PrivateKey from Mullvad .conf>   # vpn profile only
+#   WIREGUARD_ADDRESSES=10.64.222.21/32
+#   SERVER_COUNTRIES=Switzerland     # optional; or SERVER_CITIES=Zurich

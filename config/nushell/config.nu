@@ -16,6 +16,7 @@ $env.NU_LIB_DIRS = [
 #     cog.outl(f"use {this_repo / file} *".replace('\\', '/'))
 # ]]]*/
 use ~/src/dotfiles/config/nushell/src/ai.nu *
+use ~/src/dotfiles/config/nushell/src/arr.nu *
 use ~/src/dotfiles/config/nushell/src/ado-completions.nu *
 use ~/src/dotfiles/config/nushell/src/broot.nu *
 use ~/src/dotfiles/config/nushell/src/cargo-completions.nu *
