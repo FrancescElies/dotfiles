@@ -416,20 +416,20 @@ config.keys = {
   -- { key = '^',   mods = "NONE", action = act.SendKey { key = '6', mods = mods.shift_ctrl } },
 
   -- QWERT
-  -- { key = 'q', mods = mods, action = act.CloseCurrentPane { confirm = false } },
-  {
-    key = 'q',
-    mods = mods,
-    action = wezterm.action_callback(function(window, pane)
-      local tab = window:active_tab()
-      window:perform_action(act.CloseCurrentPane { confirm = false }, pane)
-      wezterm.time.call_after(0.1, function()
-        if window:active_tab():tab_id() == tab:tab_id() then
-          equalize(window)
-        end
-      end)
-    end),
-  },
+  { key = 'q', mods = mods, action = act.CloseCurrentPane { confirm = false } },
+  -- {
+  --   key = 'q',
+  --   mods = mods,
+  --   action = wezterm.action_callback(function(window, pane)
+  --     local tab = window:active_tab()
+  --     window:perform_action(act.CloseCurrentPane { confirm = false }, pane)
+  --     wezterm.time.call_after(0.1, function()
+  --       if window:active_tab():tab_id() == tab:tab_id() then
+  --         equalize(window)
+  --       end
+  --     end)
+  --   end),
+  -- },
   { key = 'r', mods = mods, action = act.RotatePanes 'Clockwise' }, -- [r]otate panes
   -- ASDFG
   -- NOTE: CapsLock-as-Ctrl + LShift + W/S/X may fail due to keyboard ghosting (hardware matrix limit), use RShift or an NKRO keyboard.
