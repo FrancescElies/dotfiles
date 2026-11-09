@@ -19,10 +19,10 @@ export def symlink [
     if $nu.os-info.family == 'windows' {
         if ($existing | path type) == 'dir' {
             print $"dir link created ($new_link_name)"
-            mklink /D $new_link_name $existing
+            ^cmd /c mklink /D ($new_link_name | str replace --all "/" "\\") ($existing | str replace --all "/" "\\")
         } else {
             print $"file link created ($new_link_name)"
-            mklink $new_link_name $existing
+            ^cmd /c mklink ($new_link_name | str replace --all "/" "\\") ($existing | str replace --all "/" "\\")
         }
     } else {
         print $"link created ($new_link_name)"

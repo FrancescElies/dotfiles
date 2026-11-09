@@ -7,20 +7,33 @@ use symlinks.nu *
 
 def "nu-complete max-version" [] { {
     options: { completion_algorithm: fuzzy, case_sensitive: false, positional: false, sort: true, },
-    completions: ([912 914])
+    completions: ([912 914 921])
 } }
-export def --env "Max use" [ version?: path@"nu-complete max-version" ] {
+export def --env "Max use" [ version?: string@"nu-complete max-version" ] {
     if $nu.os-info.name == "windows" {
-        $env.MAX_BIN = $"C:/Program Files/Cycling '74/Max ($version)/Max.exe"
+        let install_dir = "C:/Program Files/Cycling '74"
+        let link = $"($install_dir)/Max 9"
+        let target = $"($install_dir)/Max ($version)"
+        let norm = {|p| $p | str replace --all "/" "\\" | str lowercase }
+        if ($link | path type) == "symlink" {
+            let current = (ls -l $install_dir | where name == ($link | str replace --all "/" "\\") | get 0.target)
+            if (do $norm $current) == (do $norm $target) {
+                print $"($link) already points to ($target)"
+                $env.MAX_BIN = $"($link)/Max.exe"
+                return
+            }
+        }
+        symlink --force $target $link
+
+        $env.MAX_BIN = $"($link)/Max.exe"
     } else if $nu.os-info.name == "macos" {
         "/Applications/Max.app/Contents/MacOS/Max"
     } else {
-         'not implemented' 
+         'not implemented'
     }
 }
 
-export-env { Max use 914 }
-
+export-env { Max use 921 }
 
 const max_resources_pkgs = if $nu.os-info.name == "windows" {
     "C:/Program Files/Cycling '74/Max 9/resources/packages"

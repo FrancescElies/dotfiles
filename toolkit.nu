@@ -220,7 +220,10 @@ export def "setup python" [] {
     # create home python virtual environment
     cd ~
     print $"(ansi purple_bold)setup python venv: ($packages.packages.python)(ansi reset)"
-    if not ('.venv' | path exists) { uv venv }
+    # uv venv writes the activate scripts (incl. activate.nu); skipping it when
+    # .venv already exists leaves them missing, so recreate if activate.nu is absent
+    let activate_nu = if $nu.os-info.name == "windows" { '.venv/Scripts/activate.nu' } else { '.venv/bin/activate.nu' }
+    if not ($activate_nu | path exists) { uv venv --clear }
     uv pip install ...($packages.packages.python)
 
     print $"(ansi purple_bold)setup python tools: ($packages.packages.python-tools)(ansi reset)"

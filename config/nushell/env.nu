@@ -109,4 +109,4 @@ $env.RUSTC_WRAPPER = 'sccache'
 $env.RESTIC_PASSWORD_COMMAND = 'keyring get restic elies'
 # $env.RESTIC_PASSWORD_COMMAND = 'secret-tool lookup service restic'
 
-overlay use ~/.venv/bin/activate.nu
+# overlay use ~/.venv/bin/activate.nu
