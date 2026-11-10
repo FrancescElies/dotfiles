@@ -328,3 +328,8 @@ source ~/src/dotfiles/config/.zoxide.nu
 # print $"(ansi defb)ctrl-i(ansi reset): (ansi defr)TAB(ansi reset), (ansi defb)ctrl-m(ansi reset): (ansi defr)ENTER(ansi reset), (ansi defb)ctrl-[(ansi reset): (ansi defr)ESC(ansi reset)"
 print $"(ansi rb)ctrl(ansi reset): ($ctrl_bindings | str join ', ')"
 
+# right prompt: wezterm pane id next to the date
+$env.PROMPT_COMMAND_RIGHT = {||
+    let pane = ($env.WEZTERM_PANE? | default "-")
+    $"(ansi grey)pane ($pane)  (date now | format date '%a %Y-%m-%d %H:%M')(ansi reset)"
+}
