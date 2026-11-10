@@ -38,6 +38,8 @@ export def "wibu ls-bin" [] {
 }
 
 
+const file_version_py = (path self | path dirname | path join file_version.py)
+
 export module win {
     use broot.nu *
 
@@ -56,6 +58,11 @@ export module win {
     # file version and signature viewer from file
     export def "read version" [file: path] {
         ^sigcheck -nobanner $file | lines | skip 1 | parse --regex '\s*(?<name>.+?):(?<value>.+)'
+    }
+
+    # numeric file and product version via version.dll (file_version.py)
+    export def "file-version" [file: path] {
+        ^python $file_version_py ($file | path expand) | lines | parse "{key}: {value}" | transpose -r -d
     }
 
 
