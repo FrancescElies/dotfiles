@@ -580,7 +580,7 @@ do
     local title = ''
     title = title .. '[' .. wezterm.mux.get_active_workspace() .. ']' .. ' '
     title = title .. wezterm.mux.get_domain():name() .. ' '
-    title = title .. zoomed .. index .. ' '
+    title = title .. zoomed .. index .. 'pane ' .. tostring(tab.active_pane.pane_id) .. ' '
 
     return title
   end)
