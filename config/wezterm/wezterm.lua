@@ -175,7 +175,7 @@ else
 end
 
 -- Shell Profiles
-local nushell = wezterm.home_dir .. '/.cargo/bin/nu'
+local nushell = wezterm.home_dir .. '/bin/nu'
 local launch_menu = {}
 
 if platform.is_win then
