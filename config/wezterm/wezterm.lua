@@ -31,13 +31,24 @@ local platform = {
   is_mac = string.find(wezterm.target_triple, 'apple') ~= nil,
 }
 
+local active_pane_id = nil
 local right_widgets = {
   widgets.battery.charge.widget(),
-  widgets.cpu.utilization.widget(),
-  widgets.ram.utilization.widget(),
-  widgets.network.download.widget(),
-  widgets.network.upload.widget(),
-  { get_formatted = function() return { { Foreground = { Color = '#bbccbb' } }, { Text = '   ' .. wezterm.strftime '%a %Y-%m-%d   %H:%M' .. ' ' } } end },
+  -- Disabled: both call powershell.exe (Get-CimInstance, ~2 s per call) synchronously
+  -- inside update-status, which fires on every pane switch and froze the UI.
+  -- widgets.cpu.utilization.widget(),
+  -- widgets.ram.utilization.widget(),
+  -- widgets.network.download.widget(),
+  -- widgets.network.upload.widget(),
+  -- wezterm.strftime '%a %Y-%m-%d   %H:%M'
+  {
+    get_formatted = function()
+      return {
+        { Foreground = { Color = '#bbccbb' } },
+        { Text = '   pane ' .. tostring(active_pane_id or '-') .. ' ' },
+      }
+    end,
+  },
 }
 local pi_states = {}
 local right_separator = { text = '  |  ', color = '#3b4261' }
@@ -45,13 +56,23 @@ local right_separator = { text = '  |  ', color = '#3b4261' }
 local function aggregate_pi_state()
   local waiting, working, idle = false, false, false
   for _, st in pairs(pi_states) do
-    if st == 'waiting' then waiting = true
-    elseif st == 'working' then working = true
-    elseif st == 'idle' then idle = true end
+    if st == 'waiting' then
+      waiting = true
+    elseif st == 'working' then
+      working = true
+    elseif st == 'idle' then
+      idle = true
+    end
   end
-  if waiting then return 'waiting' end
-  if working then return 'working' end
-  if idle then return 'idle' end
+  if waiting then
+    return 'waiting'
+  end
+  if working then
+    return 'working'
+  end
+  if idle then
+    return 'idle'
+  end
   return nil
 end
 
@@ -82,8 +103,11 @@ local function build_right_status()
 end
 
 wezterm.on('update-status', function(window, pane)
+  active_pane_id = pane:pane_id()
   for id in pairs(pi_states) do
-    if not wezterm.mux.get_pane(id) then pi_states[id] = nil end
+    if not wezterm.mux.get_pane(id) then
+      pi_states[id] = nil
+    end
   end
   window:set_right_status(wezterm.format(build_right_status()))
 end)
