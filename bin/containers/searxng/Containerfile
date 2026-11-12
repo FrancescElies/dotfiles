@@ -1,29 +1,16 @@
 # podman build -t localhost/searxng .
-# Localhost only:
-#   podman run --rm -it -p 127.0.0.1:8080:8080 localhost/searxng
+# Localhost only (pi's searxng-web extension auto-starts the container "searxng"):
+#   podman run -d --name searxng --env-file ~/.config/searxng/env --read-only --tmpfs /tmp --cap-drop=ALL -p 127.0.0.1:8080:8080 localhost/searxng
+# ~/.config/searxng/env lives outside the repo and holds the secret key as one line (see SearXNG docs for the variable name).
 # Shared network (other containers reach it by name, no publish):
 #   podman network create searchnet
-#   podman run -d --name searxng --network searchnet localhost/searxng
-#   podman run --rm -it --network searchnet your-other-container
+#   podman run -d --name searxng --network searchnet --env-file ~/.config/searxng/env --read-only --tmpfs /tmp --cap-drop=ALL localhost/searxng
 # podman images
 # podman ps -a
 
-FROM python:3.12-slim
+FROM docker.io/searxng/searxng@sha256:8093eb8fc595b868acb7ee79bbafab7958b8a4159dc96fa643f6a3efc870b5bb
 
-RUN apt-get update \
-  && apt-get install -y --no-install-recommends ca-certificates curl git \
-  && rm -rf /var/lib/apt/lists/*
-
-# Install SearXNG into an isolated venv.
-RUN python -m venv /opt/searxng \
-  && /opt/searxng/bin/pip install --no-cache-dir searxng==0.1.2 \
-  && ln -s /opt/searxng/bin/searxng /usr/local/bin/searxng
-
-ENV PATH="/opt/searxng/bin:${PATH}"
-ENV SEARXNG_SETTINGS_PATH=/etc/searxng/settings.yml
-
-RUN mkdir -p /etc/searxng
+# settings.yml enables the JSON output format used by the pi extension.
 COPY settings.yml /etc/searxng/settings.yml
 
 EXPOSE 8080
-CMD ["searxng", "--port", "8080", "--host", "0.0.0.0", "--transport", "http"]
