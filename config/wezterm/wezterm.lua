@@ -196,7 +196,7 @@ else
   config.default_prog = { 'nu' }
   launch_menu = {
     { label = 'Bash', args = { 'bash' } },
-    { label = 'Nushell', args = { 'nu' } },
+    { label = 'Nushell', args = { nushell } },
     { label = 'Zsh', args = { 'zsh' } },
   }
 end
