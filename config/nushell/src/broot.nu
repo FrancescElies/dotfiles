@@ -51,7 +51,7 @@ export def --env br [
     --listen-auto                   # Listen for commands on a random linux socket
     --no-hidden(-H)                 # Don't show hidden files
     --height: int                   # Height (if you don't want to fill the screen or for file export)
-    --help                          # Print help information
+    --broot-help                          # Print broot help information
     --git-ignored(-i)               # Show git ignored files
     --no-git-ignored(-I)            # Don't show git ignored files
     --install                       # Install or reinstall the br shell function
@@ -91,7 +91,7 @@ export def --env br [
     if $hidden { $args = ($args | append $'--hidden') }
     if $no_hidden { $args = ($args | append $'--no-hidden') }
     if $height != null { $args = ($args | append $'--height=($height)') }
-    if $help { $args = ($args | append $'--help') }
+    if $broot_help { $args = ($args | append $'--help') }
     if $git_ignored { $args = ($args | append $'--git-ignored') }
     if $no_git_ignored { $args = ($args | append $'--no-git-ignored') }
     if $install { $args = ($args | append $'--install') }
@@ -153,7 +153,7 @@ export extern main [
     --hidden(-h)                    # Show hidden files
     --no-hidden(-H)                 # Don't show hidden files
     --height: int                   # Height (if you don't want to fill the screen or for file export)
-    --help                          # Print help information
+    --broot-help                          # Print broot help information
     --git-ignored(-i)               # Show git ignored files
     --no-git-ignored(-I)            # Don't show git ignored files
     --install                       # Install or reinstall the br shell function

@@ -304,11 +304,11 @@ export module ado {
     # list my pull requests
     export def "ls prs" [] {
         let my_query = "[].{title: title, createdby: createdBy.displayName, reviewers: reviewers, status: status, repo: repository.name, id: pullRequestId, draft: isDraft, source: sourceRefName, target: targetRefName}"
-        let prs = az repos pr list -ojson --query $my_query | from json | select id status createdby title source target draft reviewers | update cells -c [source target] { $in | str replace refs/heads/ '' }
+        let prs = az repos pr list -ojson --query $my_query | from json | select id status createdby title source target draft reviewers | update cells { $in | str replace refs/heads/ '' } source target
         $prs | insert ci-status {
             pr status $in.id
             | select status title type | sort-by type status
-            | update cells -c [status] { $in | str replace approved ✅| str replace running 👟| str replace queued ⏳| str replace rejected ❌ }
+            | update cells { $in | str replace approved ✅| str replace running 👟| str replace queued ⏳| str replace rejected ❌ } status
         }
     }
 
@@ -328,7 +328,7 @@ export module ado {
 
     export def "ls prs completed" [] {
         let my_query = "[].{title: title, createdby: createdBy.displayName, reviewers: reviewers, status: status, repo: repository.name, id: pullRequestId, lastMergeCommit: lastMergeCommit.commitId, source: sourceRefName, target: targetRefName }"
-        let prs = az repos pr list --status completed -ojson --query $my_query | from json | select id createdby title source target lastMergeCommit | update cells -c [source target] { $in | str replace refs/heads/ '' }
+        let prs = az repos pr list --status completed -ojson --query $my_query | from json | select id createdby title source target lastMergeCommit | update cells { $in | str replace refs/heads/ '' } source target
         $prs
     }
 
@@ -339,7 +339,7 @@ export module ado {
         $prs | insert ci-status {
             pr status $in.id
             | select status title type | sort-by type status
-            | update cells -c [status] { $in | str replace approved ✅| str replace running 👟| str replace queued ⏳| str replace rejected ❌ }
+            | update cells { $in | str replace approved ✅| str replace running 👟| str replace queued ⏳| str replace rejected ❌ } status
         }
     }
 

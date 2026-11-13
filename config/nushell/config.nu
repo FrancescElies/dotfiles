@@ -149,7 +149,7 @@ $env.config.hooks.env_change = {
     ]
 }
 
-$env.config.menus = [
+$env.config.menus ++= [
     {
       name: abbr_menu
       only_buffer_difference: false
@@ -177,7 +177,7 @@ $env.config.menus = [
 #
 # https://www.nushell.sh/book/line_editor.html#vi-normal-actions
 # keycodes: none control alt shift shift_alt alt_shift control_alt alt_control control_shift shift_control control_alt_shift control_shift_alt
-$env.config.keybindings = [
+$env.config.keybindings ++= [
     # https://www.nushell.sh/blog/2024-05-15-top-nushell-hacks.html
     {
         name: abbr
