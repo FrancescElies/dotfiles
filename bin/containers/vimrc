@@ -123,8 +123,8 @@ function! ToggleQuickfix() abort
   endif
 endfunction
 nnoremap <leader>q :call ToggleQuickfix()<CR>
-nnoremap <M-k> :cprev<cr>zOzz
-nnoremap <M-j> :cnext<cr>zOzz
+nnoremap <C-k> :cprev<cr>zOzz
+nnoremap <C-j> :cnext<cr>zOzz
 
 augroup QF_MyMaps
   autocmd!
@@ -132,15 +132,15 @@ augroup QF_MyMaps
   autocmd FileType qf nnoremap <buffer> K :cprev<CR>zvzz<C-w>p
 augroup END
 
-" Keybinds to make split navigation easier.
-nnoremap <C-h> <C-w><C-h>
-tnoremap <C-h> <C-w><C-h>
-nnoremap <C-l> <C-w><C-l>
-tnoremap <C-l> <C-w><C-l>
-nnoremap <C-j> <C-w><C-j>
-tnoremap <C-j> <C-w><C-j>
-nnoremap <C-k> <C-w><C-k>
-tnoremap <C-k> <C-w><C-k>
+"" Keybinds to make split navigation easier.
+"nnoremap <C-h> <C-w><C-h>
+"tnoremap <C-h> <C-w><C-h>
+"nnoremap <C-l> <C-w><C-l>
+"tnoremap <C-l> <C-w><C-l>
+"nnoremap <C-j> <C-w><C-j>
+"tnoremap <C-j> <C-w><C-j>
+"nnoremap <C-k> <C-w><C-k>
+"tnoremap <C-k> <C-w><C-k>
 
 " KEEP THINGS VERTICALLY CENTERED DURING SEARCHES:
 nnoremap <C-d> <C-d>zz
