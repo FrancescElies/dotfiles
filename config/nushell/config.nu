@@ -149,6 +149,21 @@ $env.config.hooks.env_change = {
     ]
 }
 
+# OSC 7501 program status (https://www.superlogical.com/rex/docs/build/program-status)
+def osc7501 [state: string] {
+    print -n $"\e]7501;state=($state)\e\\"
+}
+
+$env.config.hooks.pre_execution = ($env.config.hooks.pre_execution? | default [] | append {|| osc7501 "working" })
+
+$env.config.hooks.pre_prompt = ($env.config.hooks.pre_prompt? | default [] | append {||
+    if ($env.CMD_DURATION_MS? != null) {
+        if ($env.LAST_EXIT_CODE? | default 0) == 0 { osc7501 "done" } else { osc7501 "error" }
+    } else {
+        osc7501 "idle"
+    }
+})
+
 $env.config.menus ++= [
     {
       name: abbr_menu
