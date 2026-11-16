@@ -176,16 +176,27 @@ if not qb_login(QB_PASS):  # first run: qBittorrent logs a temporary password
     found = re.findall(r"temporary password is provided for this session: (\S+)", logs.stdout + logs.stderr)
     if not (found and qb_login(found[-1])):
         sys.exit("qBittorrent login failed (check QBT_PASSWORD / `arr logs qbittorrent`)")
-qb_post("/api/v2/app/setPreferences", {"json": json.dumps({
-    "save_path": "/data/torrents",
-    "web_ui_username": QB_USER,
-    "web_ui_password": QB_PASS,
-    "bypass_auth_subnet_whitelist_enabled": True,
-    "bypass_auth_subnet_whitelist": QB_SUBNET,
-})})
+qb_post(
+    "/api/v2/app/setPreferences",
+    {
+        "json": json.dumps(
+            {
+                "save_path": "/data/torrents",
+                "web_ui_username": QB_USER,
+                "web_ui_password": QB_PASS,
+                "bypass_auth_subnet_whitelist_enabled": True,
+                "bypass_auth_subnet_whitelist": QB_SUBNET,
+                "move_completed_path_enabled": False,
+            }
+        )
+    },
+)
 for cat in ("radarr", "lidarr"):
     try:
-        qb_post("/api/v2/torrents/createCategory", {"category": cat, "savePath": f"/data/torrents/{cat}"})
+        qb_post(
+            "/api/v2/torrents/createCategory",
+            {"category": cat, "savePath": f"/data/torrents/{cat}"},
+        )
     except urllib.error.HTTPError:
         pass  # 409 = exists
 print("qbittorrent configured")
@@ -195,10 +206,17 @@ try:
     bl_url = "https://github.com/Naunter/BT_BlockLists/raw/master/bt_blocklists.gz"
     bl_path = ARR_ROOT / "config/qbittorrent/blocklist.gz"
     urllib.request.urlretrieve(bl_url, bl_path)
-    qb_post("/api/v2/app/setPreferences", {"json": json.dumps({
-        "ip_filter_enabled": True,
-        "ip_filter_path": "/config/blocklist.gz",
-    })})
+    qb_post(
+        "/api/v2/app/setPreferences",
+        {
+            "json": json.dumps(
+                {
+                    "ip_filter_enabled": True,
+                    "ip_filter_path": "/config/blocklist.gz",
+                }
+            )
+        },
+    )
     print("qbittorrent blocklist configured")
 except Exception as e:
     print(f"qbittorrent blocklist not configured ({e})", file=sys.stderr)
@@ -209,27 +227,52 @@ def add_qbt(base, key, ver, cat_field, cat):
     path = f"/api/{ver}/downloadclient"
     if any(c["name"] == "qBittorrent" for c in req(base, key, path)):
         return
-    item = set_fields(pick(req(base, key, path + "/schema"), "QBittorrent"), {
-        "host": QB_HOST, "port": QB_PORT, "username": QB_USER, "password": QB_PASS, cat_field: cat,
-    })
+    item = set_fields(
+        pick(req(base, key, path + "/schema"), "QBittorrent"),
+        {
+            "host": QB_HOST,
+            "port": QB_PORT,
+            "username": QB_USER,
+            "password": QB_PASS,
+            cat_field: cat,
+        },
+    )
     item.update(name="qBittorrent", enable=True)
     req(base, key, path + "?forceSave=true", "POST", item)
 
 
 def has_root(base, key, ver, folder):
-    return any(r["path"].rstrip("/") == folder for r in req(base, key, f"/api/{ver}/rootfolder"))
+    return any(
+        r["path"].rstrip("/") == folder
+        for r in req(base, key, f"/api/{ver}/rootfolder")
+    )
 
 
-if not has_root(RADARR, RKEY, "v3", "/data/media/movies"):
-    req(RADARR, RKEY, "/api/v3/rootfolder", "POST", {"path": "/data/media/movies"})
+if not has_root(RADARR, RKEY, "v3", "/media/Videos/movies"):
+    req(RADARR, RKEY, "/api/v3/rootfolder", "POST", {"path": "/media/Videos/movies"})
 add_qbt(RADARR, RKEY, "v3", "movieCategory", "radarr")
+
+# Radarr: completed download handling - remove from qBittorrent after import
+req(
+    RADARR,
+    RKEY,
+    "/api/v3/mediamanagement",
+    "PUT",
+    {
+        "removeCompletedDownloads": False,
+        "deleteEmptyFolders": True,
+        "replaceFileNames": True,
+        "importExtraFiles": True,
+        "importExtraFileExtensions": ["srt", "sub", "idx"],
+    },
+)
 print("radarr configured")
 
 
 # ---- import movies already on disk (folders in /data/media/movies unknown to Radarr) ----
 # Folder names like "Title (2010)", or with {tmdb-123} / {imdb-tt123} tags, are matched via Radarr's lookup.
 # Imported unmonitored by default so Radarr never goes hunting for upgrades; no search is triggered.
-MOVIES_ROOT = "/data/media/movies"
+MOVIES_ROOT = "/media/Videos/movies"
 IMPORT_EXISTING = os.getenv("RADARR_IMPORT_EXISTING", "true").lower() == "true"
 IMPORT_MONITORED = os.getenv("RADARR_IMPORT_MONITORED", "false").lower() == "true"
 
@@ -241,7 +284,9 @@ def norm(s):
 def folder_title_year(name):
     m = re.search(r"\((\d{4})\)", name)
     year = int(m.group(1)) if m else None
-    title = re.sub(r"\{.*?\}|\[.*?\]|\(\d{4}\)", "", name.replace(".", " ").replace("_", " ")).strip()
+    title = re.sub(
+        r"\{.*?\}|\[.*?\]|\(\d{4}\)", "", name.replace(".", " ").replace("_", " ")
+    ).strip()
     return title, year
 
 
@@ -249,22 +294,37 @@ def match_folder(name):
     """Return the Radarr lookup entry for a folder name, or None."""
     tmdb = re.search(r"tmdb-(\d+)", name, re.I)
     imdb = re.search(r"imdb-(tt\d+)", name, re.I)
-    ident = f"tmdb:{tmdb.group(1)}" if tmdb else f"imdb:{imdb.group(1)}" if imdb else None
+    ident = (
+        f"tmdb:{tmdb.group(1)}" if tmdb else f"imdb:{imdb.group(1)}" if imdb else None
+    )
     title, year = folder_title_year(name)
     term = ident or f"{title} {year or ''}".strip()
     try:
-        cands = req(RADARR, RKEY, "/api/v3/movie/lookup?term=" + urllib.parse.quote(term)) or []
+        cands = (
+            req(RADARR, RKEY, "/api/v3/movie/lookup?term=" + urllib.parse.quote(term))
+            or []
+        )
     except Exception:
         return None
     if ident:
         return cands[0] if cands else None
-    hits = [c for c in cands if norm(c["title"]) == norm(title) and (year is None or c.get("year") == year)]
+    hits = [
+        c
+        for c in cands
+        if norm(c["title"]) == norm(title) and (year is None or c.get("year") == year)
+    ]
     return hits[0] if hits else None  # strict on purpose: better unmatched than wrong
 
 
 def import_existing_movies():
-    root = next(r for r in req(RADARR, RKEY, "/api/v3/rootfolder") if r["path"].rstrip("/") == MOVIES_ROOT)
-    unmapped = req(RADARR, RKEY, f"/api/v3/rootfolder/{root['id']}").get("unmappedFolders", [])
+    root = next(
+        r
+        for r in req(RADARR, RKEY, "/api/v3/rootfolder")
+        if r["path"].rstrip("/") == MOVIES_ROOT
+    )
+    unmapped = req(RADARR, RKEY, f"/api/v3/rootfolder/{root['id']}").get(
+        "unmappedFolders", []
+    )
     known = {m["tmdbId"] for m in req(RADARR, RKEY, "/api/v3/movie")}
     quality = req(RADARR, RKEY, "/api/v3/qualityprofile")[0]["id"]
     added, missed = 0, []
@@ -273,8 +333,13 @@ def import_existing_movies():
         if not m or m["tmdbId"] in known:
             missed.append(f["name"])
             continue
-        m.update(qualityProfileId=quality, rootFolderPath=MOVIES_ROOT, path=f["path"],
-                 monitored=IMPORT_MONITORED, addOptions={"searchForMovie": False})
+        m.update(
+            qualityProfileId=quality,
+            rootFolderPath=MOVIES_ROOT,
+            path=f["path"],
+            monitored=IMPORT_MONITORED,
+            addOptions={"searchForMovie": False},
+        )
         try:
             req(RADARR, RKEY, "/api/v3/movie", "POST", m)
             known.add(m["tmdbId"])
@@ -292,17 +357,40 @@ if IMPORT_EXISTING:
     except Exception as e:
         print(f"radarr: import of existing movies failed ({e})", file=sys.stderr)
 
-if not has_root(LIDARR, LKEY, "v1", "/data/media/music"):
-    req(LIDARR, LKEY, "/api/v1/rootfolder", "POST", {
-        "name": "Music",
-        "path": "/data/media/music",
-        "defaultQualityProfileId": req(LIDARR, LKEY, "/api/v1/qualityprofile")[0]["id"],
-        "defaultMetadataProfileId": req(LIDARR, LKEY, "/api/v1/metadataprofile")[0]["id"],
-        "defaultMonitorOption": "all",
-        "defaultNewItemMonitorOption": "all",
-        "defaultTags": [],
-    })
+if not has_root(LIDARR, LKEY, "v1", "/media/Music"):
+    req(
+        LIDARR,
+        LKEY,
+        "/api/v1/rootfolder",
+        "POST",
+        {
+            "name": "Music",
+            "path": "/media/Music",
+            "defaultQualityProfileId": req(LIDARR, LKEY, "/api/v1/qualityprofile")[0][
+                "id"
+            ],
+            "defaultMetadataProfileId": req(LIDARR, LKEY, "/api/v1/metadataprofile")[0][
+                "id"
+            ],
+            "defaultMonitorOption": "all",
+            "defaultNewItemMonitorOption": "all",
+            "defaultTags": [],
+        },
+    )
 add_qbt(LIDARR, LKEY, "v1", "musicCategory", "lidarr")
+
+# Lidarr: completed download handling - remove from qBittorrent after import
+req(
+    LIDARR,
+    LKEY,
+    "/api/v1/mediamanagement",
+    "PUT",
+    {
+        "removeCompletedDownloads": False,
+        "deleteEmptyFolders": True,
+        "replaceFileNames": True,
+    },
+)
 print("lidarr configured")
 
 # ---------- 3. Prowlarr: apps, FlareSolverr proxy, indexers ----------

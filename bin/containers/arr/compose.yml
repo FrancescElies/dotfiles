@@ -138,6 +138,7 @@ services:
     volumes:
       - ${ARR_ROOT:-/media/cesc/data/arr}/config/radarr:/config
       - ${ARR_ROOT:-/media/cesc/data/arr}/data:/data
+      - /media/cesc/data/Videos:/media/Videos
     healthcheck:
       <<: *hc
       test: ["CMD-SHELL", "curl -fsS http://localhost:7878/ping"]
@@ -154,6 +155,7 @@ services:
     volumes:
       - ${ARR_ROOT:-/media/cesc/data/arr}/config/lidarr:/config
       - ${ARR_ROOT:-/media/cesc/data/arr}/data:/data
+      - /media/cesc/data/Music:/media/Music
     healthcheck:
       <<: *hc
       test: ["CMD-SHELL", "curl -fsS http://localhost:8686/ping"]
