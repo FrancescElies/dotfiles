@@ -14,15 +14,6 @@ def wt-list [] {
 # Table of worktrees
 export def wt [] { wt-list | reject path }
 
-# Fuzzy-pick a worktree and open it in a wezterm workspace named after it
-export def "wt jump" [] {
-    let pick = wt-list | where {|r| not $r.prunable } | input list --fuzzy --display name "Worktree:"
-    if $pick == null { return }
-    # wezterm.lua (user-var-changed JUMP_WORKSPACE) does the actual switch
-    let v = $"($pick.name)|($pick.path)" | encode base64
-    print -n $"(char -u "1b")]1337;SetUserVar=JUMP_WORKSPACE=($v)(char bel)"
-}
-
 # Remove prunable worktrees and clean (merged, no changes) ones, after confirmation
 export def "wt clean" [] {
     let rows = wt-list | where {|r| $r.name != "main" and ($r.prunable or ($r.merged and $r.dirty == 0)) }

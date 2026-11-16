@@ -208,7 +208,7 @@ content_search_max_file_size: 10MB
 # Kitty Keyboard extension
 #
 # If you want to use advanced keyboard shortcuts in Kitty
-# compatible terminals (Kitty, Wezterm), set this to true.
+# compatible terminals (Kitty), set this to true.
 #
 # This makes it possible to use shortcuts like 'space-n',
 # 'ctrl-alt-a-b', 'shift-space', etc.

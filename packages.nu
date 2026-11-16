@@ -184,7 +184,6 @@ export const packages = {
         ""bmatzelle.Gow""  # unix tools for windows
         ""mesonbuild.meson""  # build system# build system
         ""sharkdp.fd""  # fast find# fd find
-        ""wez.wezterm""  # terminal# terminal
         ""x64dbg.x64dbg""  # debugger# debugger
     ]
 
@@ -204,7 +203,6 @@ export const packages = {
         "gimp"  # image editor
         "obs"  # streaming/recording
         "vlc"  # media player
-        "wezterm"  # terminal emulator
         "bitwarden"  # password manager
         ""nikitabobko/tap/aerospace""  # i3 like window manager
     ]

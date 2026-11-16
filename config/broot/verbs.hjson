@@ -39,7 +39,7 @@ verbs: [
         name: open-maxpat
         key: enter
         extensions: [ "maxpat", "maxhelp" ]
-        execution: "wezterm cli spawn -- nu -e \"Max start {file}\""
+        execution: "zellij run -- nu -e \"Max start {file}\""
         working_dir: "{root}"
         leave_broot: false
     }

@@ -66,7 +66,7 @@ $env.config.show_banner = false
 # $env.config.buffer_editor = ["nvim" "-u" "~/src/kickstart.nvim/minimal-vimrc.vim"]
 $env.config.buffer_editor = ["nvim"]
 $env.config.shell_integration.osc7 = true
-$env.config.shell_integration.osc133 = false   # causing autoscrolling issues in wezterm
+$env.config.shell_integration.osc133 = false   # causing autoscrolling issues
 # https://www.nushell.sh/book/custom_completions.html
 # $env.config.completions.algorithm = "prefix"
 $env.config.completions.algorithm = "fuzzy"
@@ -343,8 +343,8 @@ source ~/src/dotfiles/config/.zoxide.nu
 # print $"(ansi defb)ctrl-i(ansi reset): (ansi defr)TAB(ansi reset), (ansi defb)ctrl-m(ansi reset): (ansi defr)ENTER(ansi reset), (ansi defb)ctrl-[(ansi reset): (ansi defr)ESC(ansi reset)"
 print $"(ansi rb)ctrl(ansi reset): ($ctrl_bindings | str join ', ')"
 
-# right prompt: wezterm pane id next to the date
+# right prompt: zellij pane id next to the date
 $env.PROMPT_COMMAND_RIGHT = {||
-    let pane = ($env.WEZTERM_PANE? | default "-")
+    let pane = ($env.ZELLIJ_PANE_ID? | default "-")
     $"(ansi grey)pane ($pane)  (date now | format date '%a %Y-%m-%d %H:%M')(ansi reset)"
 }

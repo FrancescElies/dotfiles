@@ -112,8 +112,7 @@ def "nu-complete list-d2" [] { ls *.d2 | get name }
 export def --wrapped "diagram edit-and-watch" [name: path@"nu-complete list-d2" ...rest] {
     let filename = if ($name | str contains '.d2') { $name } else { $"($name).d2" }
     if not ($filename | path exists) { echo 'x -> y -> z' | save -f $filename  }
-    # wezterm cli split-pane --down --percent 30 -- watchexec -w $filename d2 $filename
-    wezterm cli split-pane --bottom --percent 30 -- d2 --watch $filename ...$rest
+    zellij run --direction down -- d2 --watch $filename ...$rest
     nvim $filename
 }
 

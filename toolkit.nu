@@ -241,32 +241,6 @@ export def "setup python" [] {
     " | save -f ~/.pip/pip.conf
 }
 
-export def "install wezterm" [method: string@["flatpak" "source"] = "source"] {
-    print $"(ansi purple_bold)install wezterm(ansi reset)"
-    if not (which wezterm | is-empty) {
-        print $"(ansi yellow)wezterm already installed(ansi reset)"
-        return
-    }
-    if $method == "source" {
-        if (which ^openssl | is-empty) or (not ('/usr/include/openssl/ssl.h' | path exists)) {
-            print $"(ansi pi)sudo apt install -y libssl-dev pkg-setup libwayland-dev librust-wayland-client-dev libxkbcommon-dev libfontconfig1-dev(ansi reset)"
-            sudo apt install -y libssl-dev pkg-setup libwayland-dev librust-wayland-client-dev libxkbcommon-dev libfontconfig1-dev
-        }
-        cd ~/src/oss
-        if not ('~/src/oss/wezterm' | path exists) {
-            git clone --depth 1 https://github.com/wez/wezterm
-        }
-        cd wezterm
-        cargo build --release
-        print $"(ansi pi)sudo cp target/release/wezterm /usr/local/bin/wezterm(ansi reset)"
-        sudo cp target/release/wezterm /usr/local/bin/wezterm
-    } else {
-        if (which flatpak | is-empty) { sudo apt install -y flatpak }
-        flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-        flatpak install -y flathub org.wezfurlong.wezterm
-    }
-}
-
 export def "setup yt-dlp" [] {
     print $"(ansi purple_bold)setup yt-dlp(ansi reset)"
     let yt_dlp = "~/bin/yt-dlp" | path expand
@@ -301,10 +275,8 @@ def "install keyd-remap" [] {
 }
 
 def "linux setup terminal" [] {
-    # rm -rf ~/.config/wezterm
     # rm -rf ~/.config/zellij
     ln -snf ("./config/alacritty" | path expand) ~/.config/alacritty
-    ln -snf ("./config/wezterm" | path expand) ~/.config/wezterm
     ln -snf ("./config/zellij" | path expand) ~/.config/zellij
 }
 
@@ -315,15 +287,12 @@ def "macos setup wm" [] {
 
 def "macos setup terminal" [] {
     print $"(ansi pi)macos setup terminal(ansi reset)"
-    # rm -rf ~/.config/wezterm
     # rm -rf ~/.config/zellij
     ln -shf ("./config/alacritty" | path expand) ~/.config/alacritty
-    ln -shf ("./config/wezterm" | path expand) ~/.config/wezterm
     ln -shf ("./config/zellij" | path expand) ~/.config/zellij
 }
 
 export def "windows setup terminal" [] {
-    symlink --force ("./config/wezterm" | path expand) ~/.config/wezterm
     symlink --force ("./config/alacritty/" | path expand) ~/AppData/Roaming/alacritty
     symlink --force ("./config/zellij" | path expand) ~/AppData/Roaming/Zellij/config/
 }

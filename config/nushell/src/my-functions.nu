@@ -115,13 +115,6 @@ export def "decompress all" [path: path = "."] {
     | each { ouch decompress $in.name })
 }
 
-export def "my wezterm logs" [] {
-  if $nu.os-info.name == "linux" {
-    br $env.XDG_RUNTIME_DIR/wezterm
-  } else {
-    br ~/.local/share/wezterm/
-  }
-}
 
 export def "my time-today" [] {
     cd ~
@@ -366,7 +359,6 @@ export alias "config ripgrep" = nvim ~/src/dotfiles/config/.ripgreprc
 export alias "config sway" = nvim ~/src/dotfiles/config/sway/config ~/src/dotfiles/config/sway/scripts/*
 export alias "config this-machine" = nvim ~/src/dotfiles/config/nushell/src/os-this-machine.nu
 export alias "config violentmonkey" = nvim ~/src/dotfiles/config/violentmonkey/*.js
-export alias "config wezterm" = nvim ~/src/dotfiles/config/wezterm/wezterm.lua
 export alias "config zellij" = nvim ~/src/dotfiles/config/zellij/*.kdl
 
 export module "my" {
