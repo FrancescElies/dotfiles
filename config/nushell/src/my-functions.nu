@@ -344,50 +344,25 @@ export def "python multi-fix" [] {
     pyright .
 }
 
-export alias "config aerc accounts" = nvim ~/src/dotfiles/config/aerc/accounts.conf
-export alias "config aerc binds" = nvim ~/src/dotfiles/config/aerc/binds.conf
-export alias "config aerc main" = nvim ~/src/dotfiles/config/aerc/aerc.conf
-export alias "config aerospace" = nvim ~/src/dotfiles/config/aerospace/aerospace.toml
-export alias "config alacritty" = nvim ~/src/dotfiles/config/alacritty/alacritty.toml
-export alias "config broot" = nvim ~/src/dotfiles/config/broot/*.hjson
-export alias "config fd" = nvim ~/src/dotfiles/config/fd/*
-export alias "config glazewm" = nvim ~/src/dotfiles/config/glazewm/*.yaml
-export alias "config nvim" = nvim ~/src/kickstart.nvim/*.lua ~/src/kickstart.nvim/lua/custom/**/*.lua
-export alias "config psqlrc" = nvim ~/src/dotfiles/config/.psqlrc
-export alias "config radare" = nvim ~/src/dotfiles/config/.radare2rc
-export alias "config ripgrep" = nvim ~/src/dotfiles/config/.ripgreprc
-export alias "config sway" = nvim ~/src/dotfiles/config/sway/config ~/src/dotfiles/config/sway/scripts/*
-export alias "config this-machine" = nvim ~/src/dotfiles/config/nushell/src/os-this-machine.nu
-export alias "config violentmonkey" = nvim ~/src/dotfiles/config/violentmonkey/*.js
-export alias "config zellij" = nvim ~/src/dotfiles/config/zellij/*.kdl
+export alias "edit config aerc accounts" = nvim ~/src/dotfiles/config/aerc/accounts.conf
+export alias "edit config aerc binds" = nvim ~/src/dotfiles/config/aerc/binds.conf
+export alias "edit config aerc main" = nvim ~/src/dotfiles/config/aerc/aerc.conf
+export alias "edit config aerospace" = nvim ~/src/dotfiles/config/aerospace/aerospace.toml
+export alias "edit config alacritty" = nvim ~/src/dotfiles/config/alacritty/alacritty.toml
+export alias "edit config broot" = nvim ~/src/dotfiles/config/broot/*.hjson
+export alias "edit config fd" = nvim ~/src/dotfiles/config/fd/*
+export alias "edit config glazewm" = nvim ~/src/dotfiles/config/glazewm/*.yaml
+export alias "edit config nvim" = nvim ~/src/kickstart.nvim/init.lua 
+export alias "edit config psqlrc" = nvim ~/src/dotfiles/config/.psqlrc
+export alias "edit config radare" = nvim ~/src/dotfiles/config/.radare2rc
+export alias "edit config ripgrep" = nvim ~/src/dotfiles/config/.ripgreprc
+export alias "edit config sway" = nvim ~/src/dotfiles/config/sway/config ~/src/dotfiles/config/sway/scripts/*
+export alias "edit config this-machine" = nvim ~/src/dotfiles/config/nushell/src/os-this-machine.nu
+export alias "edit config violentmonkey" = nvim ~/src/dotfiles/config/violentmonkey/*.js
+export alias "edit config zellij" = nvim ~/src/dotfiles/config/zellij/*.kdl
 
 export module "my" {
-
-    export alias "config this-machine" = config this-machine
-
-    export def "nvim config" [] { nvim ~/src/kickstart.nvim/init.lua }
-
-    export def "espanso config" [] {
-        if $nu.os-info.name == "windows" {
-            nvim $"($env.APPDATA)/espanso/default.yml"
-        } else {
-            error make {msg: "espanso config missing?"}
-        }
-    }
-
-    export def "broot config" [] {
-        if $nu.os-info.name == "windows" {
-            nvim $"($env.APPDATA)/dystroy/broot/config/conf.hjson" $"($env.APPDATA)/dystroy/broot/config/verbs.hjson"
-        } else {
-            nvim "~/.config/broot/config/conf.hjson" "~/.config/broot/config/verbs.hjson"
-        }
-    }
-
-    const repos = [ ~/src/config.pi
-        ~/src/config.frida
-        ~/src/kickstart.nvim
-        ~/src/dotfiles
-    ]
+    const repos = [ ~/src/config.pi ~/src/config.frida ~/src/kickstart.nvim ~/src/dotfiles ]
 
     export def "repos pull-push" [] {
        $repos | each {
