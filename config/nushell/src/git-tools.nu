@@ -35,5 +35,26 @@ export def gc [] {
     git commit -F $f
 }
 
+# Create a worktree for an ADO ticket: branch cesc/<slug>, folder ../cesc-<slug>
+# Title comes from az boards (falls back to the ticket number); pi derives the short slug
+export def --env wt-ado [
+    ticket: int
+    --base: string = "origin/master"
+] {
+    let title = try { az boards work-item show --id $ticket --query "fields.\"System.Title\"" -o tsv | str trim } catch { "" }
+    let desc = if ($title | is-empty) { $"ADO ticket ($ticket)" } else { $title }
+    let prompt = $"Create a very short git branch slug \(lowercase kebab-case, 2-4 words, max 30 chars, no prefix, no ticket number\) for this work item: ($desc). Output only the slug."
+    let slug = (pi --model gpt-6-luna -p $prompt | lines | last | str trim | str lowercase | str replace -a -r '[^a-z0-9-]+' '-' | str trim -c '-')
+    if ($slug | is-empty) { error make { msg: "pi returned no slug" } }
+    let name = $"cesc-($slug)"
+    git worktree add $"../($name)" -b $"cesc/($slug)" $base
+    let dir = ($env.PWD | path join ".." $name | path expand)
+    if ($env.ZELLIJ? | is-not-empty) {
+        zellij action new-tab --cwd $dir --name $name
+    } else {
+        cd $dir
+    }
+}
+
 # Rewrite commit hours to 6pm-1am, only my commits, skip already-in-ballpark
 export alias rewrite-git-hours = uv run --with git-filter-repo python ~/src/dotfiles/bin/rewrite-git-hours.py
