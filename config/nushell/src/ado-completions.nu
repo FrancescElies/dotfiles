@@ -359,7 +359,8 @@ export module ado {
     # edit pr description
     export def "pr edit" [ pr_id?: number@"nu-complete pr-id" ] {
         let pr_id = if ($pr_id | is-empty) {
-            az repos pr list --source-branch $"(git branch --show-current)" --status active | from json | input list --fuzzy --display title | get pullRequestId
+            let prs = az repos pr list --source-branch $"(git branch --show-current)" --status active | from json
+            if ($prs | length) == 1 { $prs.0.pullRequestId } else { $prs | input list --fuzzy --display title | get pullRequestId }
         } else {
             $pr_id
         }
