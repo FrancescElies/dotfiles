@@ -23,6 +23,7 @@ use ~/src/dotfiles/config/nushell/src/cargo-completions.nu *
 use ~/src/dotfiles/config/nushell/src/clipboard.nu *
 use ~/src/dotfiles/config/nushell/src/docs.nu *  # NOTE: a bit slow
 use ~/src/dotfiles/config/nushell/src/fd-completions.nu *
+use ~/src/dotfiles/config/nushell/src/zellij-status.nu *
 use ~/src/dotfiles/config/nushell/src/zig-completions.nu *
 # use ~/src/dotfiles/config/nushell/src/flamegraph-completions.nu *
 # use ~/src/dotfiles/config/nushell/src/fnm.nu *
@@ -149,12 +150,27 @@ $env.config.hooks.env_change = {
     ]
 }
 
-# OSC 7501 program status (https://www.superlogical.com/rex/docs/build/program-status)
-def osc7501 [state: string] {
-    print -n $"\e]7501;state=($state)\e\\"
+# OSC 133 semantic prompt marks (read by zellij for the inbox: done/failed commands).
+# Emitted by hand because the built-in `shell_integration.osc133` causes autoscroll issues.
+def osc133 [mark: string] {
+    print -n $"\e]133;($mark)\e\\"
 }
 
-$env.config.hooks.pre_execution = ($env.config.hooks.pre_execution? | default [] | append {|| osc7501 "working" })
+$env.config.hooks.pre_execution = ($env.config.hooks.pre_execution? | default [] | append {||
+    osc7501 "working"
+    osc133 "C"
+})
+
+# D (command finished + exit status) must come before A (new prompt)
+$env.config.hooks.pre_prompt = ($env.config.hooks.pre_prompt? | default [] | append {||
+    if ($env.CMD_DURATION_MS? != null) { osc133 $"D;($env.LAST_EXIT_CODE? | default 0)" }
+    osc133 "A"
+})
+
+# pane title = zellij pane id, refreshed at each prompt
+$env.config.hooks.pre_prompt = ($env.config.hooks.pre_prompt? | default [] | append {||
+    print -n $"\e]0;pane ($env.ZELLIJ_PANE_ID? | default '-') ($env.PWD | path basename)\e\\"
+})
 
 $env.config.hooks.pre_prompt = ($env.config.hooks.pre_prompt? | default [] | append {||
     if ($env.CMD_DURATION_MS? != null) {
