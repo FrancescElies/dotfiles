@@ -257,7 +257,7 @@ def "install debian packages" [] {
     sudo apt show ntpsec-ntpdate
 }
 
-def "install keyd-remap" [] {
+export def "install keyd-remap" [] {
     print $"(ansi purple_bold)install keyd-remap(ansi reset)"
     if (not ('~/src/oss/keyd' | path exists)) {
         git clone https://github.com/rvaiya/keyd ~/src/oss/keyd
@@ -318,12 +318,11 @@ export def "linux fix closed-laptop-lid-should-not-suspend" [] {
   sudo cp fixes/ignore-closed-lid.conf /etc/systemd/logind.conf.d/ignore-closed-lid.conf
 }
 
-def "go packages" [] {
-    print 'go packages skiped'
-    # go install ...($packages.packages.go-install)
+export def "install go packages" [] {
+    go install ...($packages.packages.go-install)
 }
 
-def "rust packages" [] {
+def "install rust packages" [] {
     print $"(ansi purple_bold)rust packages(ansi reset)"
     if (which ^cargo-binstall | is-empty ) { cargo install cargo-binstall }
     cargo binstall -y ...($packages.packages.rust-pkgs)
@@ -574,19 +573,17 @@ export def bootstrap [] {
             symlink --force ($repo_dir | path join 'bin/windows-os/admin-term.ps1') ~/Desktop/admin-term.ps1
         },
         "linux" => {
+            linux setup terminal
             if (which sudo | is-empty) { error make {msg: "sudo required on Linux"} }
             if (which ^rustup | is-empty ) {
                 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
                 rustup component add llvm-tools rust-analyzer
             }
-            install sway
-            setup foot
             setup aba
-            install keyd-remap
+            # install keyd-remap
             install fonts
             if not (which nano | is-empty) { sudo apt remove -y nano }
             if (which age | is-empty) { install debian packages }
-            linux setup terminal
             install neovim  # last might take long
         }
         "macos" => {
@@ -604,8 +601,8 @@ export def bootstrap [] {
 
         },
     }
-    rust packages
-    go packages
+    install rust packages
+    install go packages
     if (which zig | is-empty) {
         install zig
     }
