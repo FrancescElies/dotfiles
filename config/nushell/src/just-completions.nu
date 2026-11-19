@@ -68,13 +68,13 @@ def "nu-complete just" [] {
             }
     )
     {
-        options: { sort: false }
+        options: {sort: false}
         completions: $completions
     }
 }
 
-def "nu-complete args" [context:string,offset:int] {
-    let r = ($context | split row ' ')
+def "nu-complete args" [context: string, offset: int] {
+    let r = $context | split row ' '
     let name = $r.1
     # First two are 'just' and name, minus one because `get-just-args` is zero-indexed
     let position = ($r | length) - 3
@@ -83,7 +83,7 @@ def "nu-complete args" [context:string,offset:int] {
 }
 
 # Provides argument of recipe $name at position $positions.
-def get-just-arg [name:string,position:int] {
+def get-just-arg [name: string, position: int] {
     let recipes = (
         get-recipes
             | where {|r| $r.name == $name }
@@ -91,11 +91,11 @@ def get-just-arg [name:string,position:int] {
             | flatten)
     let len = $recipes | length
     if $position > ($recipes | length) {
-        [[value description]; ["" "No more args"]]
+        [[value, description]; ["", "No more args"]]
     } else {
         $recipes
-            | get $position
-            | each {|recipe|
+        | get $position
+        | each {|recipe|
                 let name = $recipe.name
                 if not ($recipe.default | is-empty) {
                     [[value description];
@@ -115,10 +115,10 @@ def get-just-arg [name:string,position:int] {
 # Variables and Assignments are apparently the same thing...
 def "nu-complete just assignments" [] {
     ^just --dump --dump-format json
-        | from json
-        | get assignments
-        | transpose name value
-        | each {|x| {
+    | from json
+    | get assignments
+    | transpose name value
+    | each {|x| {
             value: $x.name,
             description: $"Current value: '($x.value.value)'"
         }}
@@ -183,24 +183,39 @@ export extern "just" [
 ]
 
 def "nu-complete just al-st" [] {
-    [ "left", "right", "separate" ]
+    ["left", "right", "separate"]
 }
 
 def "nu-complete just format" [] {
-    [ "just", "json" ]
+    ["just", "json"]
 }
 
 # Shells as listed in `--completions`
 def "nu-complete just shells" [] {
-    [ "zsh", "bash", "fish", "powershell", "elvish", "nushell" ]
+    [
+        "zsh"
+        "bash"
+        "fish"
+        "powershell"
+        "elvish"
+        "nushell"
+    ]
 }
 
 # Color outputs as listed in `--color`
 def "nu-complete just color-when" [] {
-    [ "auto", "always", "never" ]
+    ["auto", "always", "never"]
 }
 
 # Colors as listed in `--command-color`
 def "nu-complete just color" [] {
-    [ "black", "blue", "cyan", "green", "purple", "red", "yellow" ]
+    [
+        "black"
+        "blue"
+        "cyan"
+        "green"
+        "purple"
+        "red"
+        "yellow"
+    ]
 }

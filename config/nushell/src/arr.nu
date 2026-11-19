@@ -1,19 +1,25 @@
-const ARR_PORTS = { radarr: 7878, lidarr: 8686, prowlarr: 9696, qbittorrent: 8081, jellyfin: 8096 }
-def "nu-complete arr services" [] { $ARR_PORTS | columns | append "all" }
+const ARR_PORTS = {
+    radarr: 7878
+    lidarr: 8686
+    prowlarr: 9696
+    qbittorrent: 8081
+    jellyfin: 8096
+}
+def "nu-complete arr services" [] {
+    $ARR_PORTS | columns | append "all"
+}
 # Open a service's web UI: `arr open radarr`, or `arr open all`
 export def "arr open" [service: string@"nu-complete arr services"] {
-    let known = ($ARR_PORTS | columns)
+    let known = $ARR_PORTS | columns
     let targets = if $service == "all" { $known } else { [$service] }
     for s in $targets {
-        if $s not-in $known { error make { msg: $"unknown service: ($s)" } }
+        if $s not-in $known { error make {msg: $"unknown service: ($s)"} }
         start $"http://127.0.0.1:($ARR_PORTS | get $s)/"
     }
 }
 
-
-const ARR_DIR = ("~/src/dotfiles/bin/containers/arr" | path expand)
-
-const COMPOSE_FILE =  $ARR_DIR | path join "compose.yml"
+const ARR_DIR = "~/src/dotfiles/bin/containers/arr" | path expand
+const COMPOSE_FILE = $ARR_DIR | path join "compose.yml"
 const ENV_FILE = $ARR_DIR | path join ".env"
 const SEED_SCRIPT = $ARR_DIR | path join "seed-arr.py"
 
@@ -26,14 +32,14 @@ def "nu-complete arr profile" [] { ["vpn" "novpn"] }
 # read KEY from .env (inline "# comments" stripped)
 def get-env [key: string, default?: string] {
     if not ($ENV_FILE | path exists) { return $default }
-    let hit = (open --raw $ENV_FILE | lines | where {|l| $l | str starts-with $"($key)=" })
+    let hit = open --raw $ENV_FILE | lines | where {|l| $l | str starts-with $"($key)=" }
     if ($hit | is-empty) { return $default }
     $hit | last | split row "=" | skip 1 | str join "=" | split row " #" | first | str trim
 }
 
 # set KEY=VALUE in .env (replace or append)
 def set-env [key: string, value: string] {
-    let lines = (open --raw ($ENV_FILE) | lines)
+    let lines = open --raw ($ENV_FILE) | lines
     let new = if ($lines | any {|l| $l | str starts-with $"($key)=" }) {
         $lines | each {|l| if ($l | str starts-with $"($key)=") { $"($key)=($value)" } else { $l } }
     } else {
@@ -51,9 +57,13 @@ export def "arr build" [
         ^python3 $SEED_SCRIPT | complete | get stderr | print
     }
 
-    let new = if $profile != null { $profile } else { ["vpn" "novpn"] | input list "VPN profile:" }
+    let new = if $profile != null {
+        $profile
+    } else {
+        ["vpn" "novpn"] | input list "VPN profile:"
+    }
     if $new == null { return }
-    if $new not-in ["vpn" "novpn"] { error make { msg: "profile must be vpn or novpn" } }
+    if $new not-in ["vpn" "novpn"] { error make {msg: "profile must be vpn or novpn"} }
 
     let old = (get-env COMPOSE_PROFILES "vpn")
     if $old != $new {
@@ -68,8 +78,15 @@ export def "arr build" [
 
     let root = (get-env ARR_ROOT "/media/cesc/data/arr")
     for d in [
-        config/lidarr config/radarr config/prowlarr config/qbittorrent config/gluetun
-        data/torrents/radarr data/torrents/lidarr data/media/movies data/media/music
+        config/lidarr
+        config/radarr
+        config/prowlarr
+        config/qbittorrent
+        config/gluetun
+        data/torrents/radarr
+        data/torrents/lidarr
+        data/media/movies
+        data/media/music
     ] { mkdir ($root | path join $d) }
     ^podman unshare chown -R 1000:1000 ($root | path join "data")
 
@@ -78,16 +95,23 @@ export def "arr build" [
 }
 
 # Start the stack (profile comes from .env); --seed also configures the apps via API
-export def "arr up" [--seed (-s)] {
-    if not ($ENV_FILE | path exists) { error make { msg: "no .env: run `arr build` first" } }
+export def "arr up" [--seed(-s)] {
+    if not ($ENV_FILE | path exists) { error make {msg: "no .env: run `arr build` first"} }
     compose --profile (get-env COMPOSE_PROFILES "novpn") up -d
     if $seed { ^python3 $SEED_SCRIPT }
 }
 
-const ARR_CONTAINERS = [gluetun qbittorrent prowlarr radarr lidarr flaresolverr]
+const ARR_CONTAINERS = [
+    gluetun
+    qbittorrent
+    prowlarr
+    radarr
+    lidarr
+    flaresolverr
+]
 
 # Stop everything, whichever profile was running (-f: no grace period, remove leftovers)
-export def "arr down" [--force (-f)] {
+export def "arr down" [--force(-f)] {
     if $force {
         do -i { compose --profile "*" down -t 0 }
         do -i { ^podman rm -f --ignore ...$ARR_CONTAINERS }
@@ -110,14 +134,13 @@ export def "arr ps" [] {
 
 def "nu-complete arr containers" [] { $ARR_CONTAINERS }
 # Tail logs, e.g. `arr logs gluetun -f`
-export def "arr logs" [
-    service?: string@"nu-complete arr containers",
-    --follow (-f),
-    --tail (-n): int = 100,
-] {
-    let base = ["logs" "--tail" ($tail | into string)] | append (if $follow { ["-f"] } else { [] })
+export def "arr logs" [service?: string@"nu-complete arr containers", --follow(-f), --tail(-n): int = 100] {
+    let base = [
+        "logs"
+        "--tail" ($tail | into string)
+    ] | append (if $follow { ["-f"] } else { [] })
     if $service == null {
-        compose ...$base                 # all services of the active profile
+        compose ...$base # all services of the active profile
     } else {
         ^podman ...($base | append $service)
     }

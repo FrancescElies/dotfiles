@@ -7,10 +7,10 @@
 # https://github.com/mltframework/shotcut
 
 export module youtube {
-    export def download-audio [ url: string ] {
+    export def download-audio [url: string] {
         let yt_dlp = "~/bin/yt-dlp" | path expand
         mut args = ['-x' '--audio-format=vorbis']
-        python $yt_dlp  ...$args $url
+        python $yt_dlp ...$args $url
     }
 
     export def download-video [
@@ -19,11 +19,10 @@ export module youtube {
     ] {
         let yt_dlp = "~/bin/yt-dlp" | path expand
         mut args = []
-        if ($sub_lang | is-not-empty) { $args = ($args | append $'--write-sub --sub-lang ($sub_lang)' ) }
+        if ($sub_lang | is-not-empty) { $args = ($args | append $'--write-sub --sub-lang ($sub_lang)') }
 
-        python $yt_dlp  ...$args $url
+        python $yt_dlp ...$args $url
     }
-
 }
 export module video {
     # Reduces video size and converts to mp4
@@ -53,6 +52,7 @@ export module video {
 }
 
 export module image {
+
     # reduces jpg size using mogrify from imagemagick
     export def "shrink quality" [
         infile: path, # an image file supported by imagemagick
@@ -61,7 +61,7 @@ export module image {
     ] {
         mkdir $outdir
         cp -f $infile $outdir
-        let outfile = ($outdir | path join  ($infile | path basename))
+        let outfile = $outdir | path join ($infile | path basename)
         mogrify -quality $quality $outfile
     }
 
@@ -72,7 +72,7 @@ export module image {
     ] {
         mkdir $outdir
         cp -f $infile $outdir
-        let outfile = ($outdir | path join ($infile | path basename))
+        let outfile = $outdir | path join ($infile | path basename)
         pngcrush $infile $outfile
     }
 
@@ -84,10 +84,9 @@ export module image {
     ] {
         mkdir $outdir
         cp -f $infile $outdir
-        let outfile = ($outdir | path join ($infile | path basename))
+        let outfile = $outdir | path join ($infile | path basename)
         jpegoptim --size $size $outfile
     }
-
 }
 
 export alias "pdf gettext" = pymupdf gettext
@@ -106,16 +105,18 @@ export def "pdf shrink" [
     ^gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 $"-dPDFSETTINGS=($pdfsettings)" -dNOPAUSE -dQUIET -dBATCH $"-sOutputFile=($outputpdf)" $infile
 }
 
-
-def "nu-complete list-d2" [] { ls *.d2 | get name }
+def "nu-complete list-d2" [] {
+    ls *.d2 | get name
+}
 # terrastruct/d2 diagram helper
-export def --wrapped "diagram edit-and-watch" [name: path@"nu-complete list-d2" ...rest] {
+export def --wrapped "diagram edit-and-watch" [name: path@"nu-complete list-d2", ...rest] {
     let filename = if ($name | str contains '.d2') { $name } else { $"($name).d2" }
-    if not ($filename | path exists) { echo 'x -> y -> z' | save -f $filename  }
+    if not ($filename | path exists) {
+        echo 'x -> y -> z' | save -f $filename
+    }
     zellij run --direction down -- d2 --watch $filename ...$rest
     nvim $filename
 }
 
 # rsync that works with FAT formatted usbs, (-c) checksum, (-r) recursive, (-t) preserve modification times, (-P) keep partially transferred files and show progress
 export alias rsync-fat = ^rsync -rtcvP --update
-

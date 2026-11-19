@@ -1,7 +1,8 @@
 def "nu-complete jellyfin actions" [] { ["run" "stop" "logs"] }
 export def podman-jellyfin [action: string@'nu-complete jellyfin actions'] {
     match $action {
-        "run" => {(
+        "run" => {
+            (
           ^podman run -d --name jellyfin --label "io.containers.autoupdate=registry"
               --publish 8096:8096/tcp --publish 7359:7359/udp
               --device /dev/dri/ --user $"(id -u):(id -g)" --userns keep-id --replace
@@ -9,7 +10,8 @@ export def podman-jellyfin [action: string@'nu-complete jellyfin actions'] {
               --mount $"type=bind,source=/media/cesc/data/Music/,destination=/media/Music,ro=true,relabel=private"
               --mount $"type=bind,source=/media/cesc/data/Videos/,destination=/media/Videos,ro=true,relabel=private"
               docker.io/jellyfin/jellyfin:latest
-        )}
+        )
+        }
         "stop" => { ^podman stop jellyfin }
         "logs" => { ^podman logs -f jellyfin }
         _ => { error make {msg: "usage: jellyfin [run|stop|logs]"} }
@@ -17,6 +19,7 @@ export def podman-jellyfin [action: string@'nu-complete jellyfin actions'] {
 }
 
 export def --wrapped podman-pi [...args] {
+
     # searxng must be running on searchnet as "searxng"
     if (podman image exists localhost/pi | complete).exit_code != 0 {
         print "building localhost/pi..."
@@ -46,20 +49,23 @@ export def --wrapped podman-searxng [...args] {
 def "nu-complete sandbox rebuild folders" [] {
     (ls ("~/src/dotfiles/bin/containers" | path expand) | where type == "dir"
     | where { ($in.name | path join "Containerfile" | path exists) }
-    | each {$in.name|path basename })  ++ ["all"]
+    | each {$in.name|path basename }) ++ ["all"]
 }
 export def "podman rebuild-sandbox" [folder: string@'nu-complete sandbox rebuild folders'] {
-    let base = ("~/src/dotfiles/bin/containers" | path expand)
+    let base = "~/src/dotfiles/bin/containers" | path expand
     if $folder == "all" {
         let dirs = (ls $base | where type == "dir"
             | where { ($in.name | path join "Containerfile" | path exists) })
         for dir in $dirs {
-            let name = ($dir.name | path basename)
+            let name = $dir.name | path basename
             print $"(ansi pb)building podman localhost/($name)(ansi reset)"
             cd $dir.name
             ^podman build -t $"localhost/($name)" .
         }
     } else {
-        do { cd ($base | path join $folder); podman build -t $"localhost/($folder)" . }
+        do {
+            cd ($base | path join $folder)
+            podman build -t $"localhost/($folder)" .
+        }
     }
 }

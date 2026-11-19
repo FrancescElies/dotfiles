@@ -1,27 +1,43 @@
 module completions {
+    def "nu-complete fd filetype" [] {
+        [
+            "file"
+            "directory"
+            "symlink"
+            "block-device"
+            "char-device"
+            "executable"
+            "empty"
+            "socket"
+            "pipe"
+        ]
+    }
 
-  def "nu-complete fd filetype" [] {
-    [ "file" "directory" "symlink" "block-device" "char-device" "executable" "empty" "socket" "pipe" ]
-  }
+    def "nu-complete fd color" [] {
+        ["auto" "always" "never"]
+    }
 
-  def "nu-complete fd color" [] {
-    [ "auto" "always" "never" ]
-  }
+    def "nu-complete fd hyperlink" [] {
+        ["auto" "always" "never"]
+    }
 
-  def "nu-complete fd hyperlink" [] {
-    [ "auto" "always" "never" ]
-  }
+    def "nu-complete fd strip_cwd_prefix" [] {
+        ["auto" "always" "never"]
+    }
 
-  def "nu-complete fd strip_cwd_prefix" [] {
-    [ "auto" "always" "never" ]
-  }
+    def "nu-complete fd gen_completions" [] {
+        [
+            "bash"
+            "elvish"
+            "fish"
+            "powershell"
+            "zsh"
+            "nushell"
+        ]
+    }
 
-  def "nu-complete fd gen_completions" [] {
-    [ "bash" "elvish" "fish" "powershell" "zsh" "nushell" ]
-  }
-
-  # A program to find entries in your filesystem
-  export extern fd [
+    # A program to find entries in your filesystem
+    export extern fd [
     --hidden(-H)              # Search hidden files and directories
     --no-hidden               # Overrides --hidden
     --no-ignore(-I)           # Do not respect .(git|fd)ignore files
@@ -81,7 +97,6 @@ module completions {
     --help(-h)                # Print help (see more with '--help')
     --version(-V)             # Print version
   ]
-
 }
 
 export use completions *

@@ -1,8 +1,6 @@
 # https://github.com/nushell/nushell/blob/main/crates/nu-config/default_files/default_config.nu
 
-$env.NU_LIB_DIRS = [
-    "~/src/dotfiles/config/nushell/src"
-]
+$env.NU_LIB_DIRS = ["~/src/dotfiles/config/nushell/src"]
 
 # cog -r config.nu
 #
@@ -21,7 +19,7 @@ use ~/src/dotfiles/config/nushell/src/ado-completions.nu *
 use ~/src/dotfiles/config/nushell/src/broot.nu *
 use ~/src/dotfiles/config/nushell/src/cargo-completions.nu *
 use ~/src/dotfiles/config/nushell/src/clipboard.nu *
-use ~/src/dotfiles/config/nushell/src/docs.nu *  # NOTE: a bit slow
+use ~/src/dotfiles/config/nushell/src/docs.nu * # NOTE: a bit slow
 use ~/src/dotfiles/config/nushell/src/fd-completions.nu *
 use ~/src/dotfiles/config/nushell/src/zellij-status.nu *
 use ~/src/dotfiles/config/nushell/src/zig-completions.nu *
@@ -48,9 +46,9 @@ use ~/src/dotfiles/config/nushell/src/rustup-completions.nu *
 use ~/src/dotfiles/config/nushell/src/ssh-completions.nu *
 use ~/src/dotfiles/config/nushell/src/symlinks.nu *
 use ~/src/dotfiles/config/nushell/src/watchexec-completions.nu *
+
 # use ~/src/dotfiles/config/nushell/src/vpn.nu *
 # [[[end]]]
-
 
 # https://www.nushell.sh/blog/2024-12-04-configuration_preview.html
 #
@@ -67,29 +65,29 @@ $env.config.show_banner = false
 # $env.config.buffer_editor = ["nvim" "-u" "~/src/kickstart.nvim/minimal-vimrc.vim"]
 $env.config.buffer_editor = ["nvim"]
 $env.config.shell_integration.osc7 = true
-$env.config.shell_integration.osc133 = false   # causing autoscrolling issues
+$env.config.shell_integration.osc133 = false # causing autoscrolling issues
 # https://www.nushell.sh/book/custom_completions.html
 # $env.config.completions.algorithm = "prefix"
 $env.config.completions.algorithm = "fuzzy"
 $env.config.table.header_on_separator = true
 
 $env.config.history = {
-  file_format: sqlite
-  max_size: 1_000_000
-  sync_on_enter: true
-  isolation: true
+    file_format: sqlite
+    max_size: 1_000_000
+    sync_on_enter: true
+    isolation: true
 }
 
 $env.config.cursor_shape = {
-   # block, underscore, line, blink_block, blink_underscore, blink_line, inherit to skip setting cursor shape
-   emacs: line
-   vi_insert: line
-   vi_normal: underscore
- }
+    # block, underscore, line, blink_block, blink_underscore, blink_line, inherit to skip setting cursor shape
+    emacs: line
+    vi_insert: line
+    vi_normal: underscore
+}
 
 $env.config.edit_mode = "vi"
 
-def "env-change pwd toolkit" [ --directory ] {
+def "env-change pwd toolkit" [--directory] {
     {
         condition: (if $directory {
             {|_, after| $after | path join 'toolkit' 'mod.nu' | path exists }
@@ -104,13 +102,12 @@ def "env-change pwd toolkit" [ --directory ] {
     }
 }
 
-
 $env.config.hooks.env_change = {
     PWD: [
         (env-change pwd toolkit)
         (env-change pwd toolkit --directory)
         {
-            condition: { |_, after| (
+            condition: {|_, after| (
                 ( (pwd | path basename) != "dotfiles/config/nushell" )
                 and ( (pwd | path basename) != "nushell"  )
                 and ( $after | path join env.nu | path exists )
@@ -158,47 +155,47 @@ def osc133 [mark: string] {
 
 # These hooks are owned by this file and assigned (not appended), so re-sourcing
 # config.nu does not stack duplicate emitters.
-$env.config.hooks.pre_execution = [{||
-    osc7501 "working"
-    osc133 "C"
-}]
+$env.config.hooks.pre_execution = [
+    {||
+        osc7501 "working"
+        osc133 "C"
+    }
+]
 
 # Single prompt hook. Order matters: D (command finished + status) before A (new prompt).
-$env.config.hooks.pre_prompt = [{||
-    let ran = ($env.CMD_DURATION_MS? != null)
-    let code = ($env.LAST_EXIT_CODE? | default 0)
-    if $ran { osc133 $"D;($code)" }
-    osc133 "A"
-    # pane title = zellij pane id, refreshed at each prompt
-    print -n $"\e]0;pane ($env.ZELLIJ_PANE_ID? | default '-') ($env.PWD | path basename)\e\\"
-    if $ran {
-        if $code == 0 { osc7501 "done" } else { osc7501 "error" }
-    } else {
-        osc7501 "idle"
+$env.config.hooks.pre_prompt = [
+    {||
+        let ran = ($env.CMD_DURATION_MS? != null)
+        let code = $env.LAST_EXIT_CODE? | default 0
+        if $ran { osc133 $"D;($code)" }
+        osc133 "A"
+        # pane title = zellij pane id, refreshed at each prompt
+        print -n $"\e]0;pane ($env.ZELLIJ_PANE_ID? | default '-') ($env.PWD | path basename)\e\\"
+        if $ran {
+            if $code == 0 { osc7501 "done" } else { osc7501 "error" }
+        } else {
+            osc7501 "idle"
+        }
     }
-}]
+]
 
 $env.config.menus ++= [
     {
-      name: abbr_menu
-      only_buffer_difference: false
-      marker: "👀 "
-      type: {
-        layout: columnar
-        columns: 1
-        col_width: 20
-        col_padding: 2
-      }
-      style: {
-        text: green
-        selected_text: green_reverse
-        description_text: yellow
-      }
-      source: { |buffer, position|
-        scope aliases
-        | where name == $buffer
-        | each { |elt| {value: $elt.expansion }}
-      }
+        name: abbr_menu
+        only_buffer_difference: false
+        marker: "👀 "
+        type: {
+            layout: columnar
+            columns: 1
+            col_width: 20
+            col_padding: 2
+        }
+        style: {text: green, selected_text: green_reverse, description_text: yellow}
+        source: {|buffer, position|
+            scope aliases
+            | where name == $buffer
+            | each {|elt| {value: $elt.expansion }}
+        }
     }
 ]
 
@@ -214,92 +211,76 @@ $env.config.keybindings ++= [
         keycode: space
         mode: [emacs, vi_normal, vi_insert]
         event: [
-            { send: menu name: abbr_menu }
-            { edit: insertchar, value: ' '}
+            {send: menu, name: abbr_menu}
+            {edit: insertchar, value: ' '}
         ]
     }
-
     {
         name: fzf_files
         modifier: control
         keycode: char_t
         mode: [emacs, vi_normal, vi_insert]
         event: [
-          {
-            send: executehostcommand
-            cmd: "
+            {
+                send: executehostcommand
+                cmd: "
                 commandline edit --insert (
                   fd --type file --hidden
                   | fzf --preview 'bat --color=always --style=full --line-range=:500 {}'
                 );
             "
-          }
+            }
         ]
     }
-
     {
-         name: find_file_and_edit
-         modifier: control
-         keycode: char_f
-         mode: [emacs, vi_normal, vi_insert]
-         event: {
-           send: executehostcommand,
-           cmd: "nvim '+FFFFind'"
-         }
+        name: find_file_and_edit
+        modifier: control
+        keycode: char_f
+        mode: [emacs, vi_normal, vi_insert]
+        event: {send: executehostcommand, cmd: "nvim '+FFFFind'"}
     }
-
     {
         name: open_editor
         modifier: control
         keycode: char_g # pi uses same keybind
-         mode: [vi_normal, vi_insert]
-        event: { send: OpenEditor }
+        mode: [vi_normal, vi_insert]
+        event: {send: OpenEditor}
     }
-
     {
-         name: go_Up_to_root_dir
-         modifier: control
-         keycode: char_u
-         mode: [emacs, vi_normal, vi_insert]
-         event: {
-           send: executehostcommand,
-           cmd: "cdroot"
-         }
+        name: go_Up_to_root_dir
+        modifier: control
+        keycode: char_u
+        mode: [emacs, vi_normal, vi_insert]
+        event: {send: executehostcommand, cmd: "cdroot"}
     }
-
     {
         name: jump_to_subdir
         modifier: alt
         keycode: char_c
         mode: [emacs, vi_normal, vi_insert]
         event: [
-          {
-            send: executehostcommand
-            cmd: " cd ( fd --type dir --hidden | lines | input list --fuzzy ) "
-          }
+            {
+                send: executehostcommand
+                cmd: " cd ( fd --type dir --hidden | lines | input list --fuzzy ) "
+            }
         ]
     }
-
     {
         name: jump_to_project
         modifier: alt_shift
         keycode: char_c
         mode: [emacs, vi_normal, vi_insert]
+        event: {send: executehostcommand, cmd: 'goto'}
+    }
+    {
+        # nu_scripts/custom-menus/fuzzy/modules.nu
+        name: fuzzy_module
+        modifier: control
+        keycode: char_u
+        mode: [emacs, vi_normal, vi_insert]
         event: {
-           send: executehostcommand,
-           cmd: 'goto'
-        }
-   }
-
-   {
-       # nu_scripts/custom-menus/fuzzy/modules.nu
-       name: fuzzy_module
-       modifier: control
-       keycode: char_u
-       mode: [emacs, vi_normal, vi_insert]
-       event: {
-           send: executehostcommand
-           cmd: '
+            send: executehostcommand
+            cmd: '
                commandline edit --replace "use "
                commandline edit --insert (
                    $env.NU_LIB_DIRS
@@ -312,28 +293,28 @@ $env.config.keybindings ++= [
                commandline edit --append " *"
                commandline set-cursor --end
            '
-       }
-   }
+        }
+    }
 
-   # NOTE: clunky, doesn't work nicely with multiline
-   # {
-   #     # nu_scripts/custom-menus/fuzzy/history.nu
-   #     name: fuzzy_history
-   #     modifier: control
-   #     keycode: char_h
-   #     mode: [emacs, vi_normal, vi_insert]
-   #     event: {
-   #         send: executehostcommand
-   #         cmd: "commandline edit --insert (
-   #         history
-   #         | each { |it| $it.command }
-   #         | uniq
-   #         | reverse
-   #         | input list --fuzzy
-   #         $'Please choose a (ansi magenta)command from history(ansi reset):'
-   #         )"
-   #     }
-   # }
+    # NOTE: clunky, doesn't work nicely with multiline
+    # {
+    #     # nu_scripts/custom-menus/fuzzy/history.nu
+    #     name: fuzzy_history
+    #     modifier: control
+    #     keycode: char_h
+    #     mode: [emacs, vi_normal, vi_insert]
+    #     event: {
+    #         send: executehostcommand
+    #         cmd: "commandline edit --insert (
+    #         history
+    #         | each { |it| $it.command }
+    #         | uniq
+    #         | reverse
+    #         | input list --fuzzy
+    #         $'Please choose a (ansi magenta)command from history(ansi reset):'
+    #         )"
+    #     }
+    # }
 ]
 
 # cargo binstall starship
@@ -359,6 +340,6 @@ print $"(ansi rb)ctrl(ansi reset): ($ctrl_bindings | str join ', ')"
 
 # right prompt: zellij pane id next to the date
 $env.PROMPT_COMMAND_RIGHT = {||
-    let pane = ($env.ZELLIJ_PANE_ID? | default "-")
+    let pane = $env.ZELLIJ_PANE_ID? | default "-"
     $"(ansi grey)pane ($pane)  (date now | format date '%a %Y-%m-%d %H:%M')(ansi reset)"
 }

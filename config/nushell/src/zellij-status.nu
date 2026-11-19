@@ -6,8 +6,8 @@
 
 export def osc7501 [state: string, --msg: string] {
     let body = [$"state=($state)"]
-        | append (if $msg != null { $"msg=($msg | encode base64)" } else { [] })
-        | str join ":"
+    | append (if $msg != null { $"msg=($msg | encode base64)" } else { [] })
+    | str join ":"
     print -n $"\e]7501;($body)\e\\"
 }
 
@@ -17,9 +17,9 @@ export def with-status [label: string, action: closure] {
     osc7501 "working" --msg $label
     try {
         do $action
-    } catch { |err|
+    } catch {|err|
         osc7501 "error" --msg $"($label) failed: ($err.msg)"
-        error make { msg: $err.msg }
+        error make {msg: $err.msg}
     }
     osc7501 "done" --msg $"($label) finished"
 }

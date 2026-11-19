@@ -1,6 +1,16 @@
 def get_device_arguments [] {
     let tokens = $nu.env.COMMAND_LINE? | split row ' ' | compact
-    let device_argument_flags = ["-D" "--device" "-H" "--host" "--certificate" "--origin" "--token" "--stun-server" "--relay"]
+    let device_argument_flags = [
+        "-D"
+        "--device"
+        "-H"
+        "--host"
+        "--certificate"
+        "--origin"
+        "--token"
+        "--stun-server"
+        "--relay"
+    ]
     let device_flags = ["-U" "--usb" "-R" "--remote" "--p2p"]
 
     $tokens | each --index { |token, idx|
@@ -18,52 +28,52 @@ def get_device_arguments [] {
 }
 
 def get_device_processes [] {
-    let relevant_flags = (get_device_arguments | str join ' ')
+    let relevant_flags = get_device_arguments | str join ' '
 
     (^frida-ps ...($relevant_flags | split row ' ') 2>/dev/null
         | lines
         | skip 2
         | each { |line|
-            let parts = ($line | split column -r '\s+')
+            let parts = $line | split column -r '\s+'
             {pid: ($parts | get 0.column1), name: ($parts | get 0.column2)}
         }
         | sort-by pid)
 }
 
 def get_device_pids [] {
-    let relevant_flags = (get_device_arguments | str join ' ')
+    let relevant_flags = get_device_arguments | str join ' '
 
     (^frida-ps ...($relevant_flags | split row ' ') 2>/dev/null
         | lines
         | skip 2
         | each { |line|
-            let parts = ($line | split column -r '\s+')
+            let parts = $line | split column -r '\s+'
             $parts | get 0.column1
         }
         | sort-by { into int })
 }
 
 def get_device_processes_names [] {
-    let relevant_flags = (get_device_arguments | str join ' ')
+    let relevant_flags = get_device_arguments | str join ' '
 
     (^frida-ps ...($relevant_flags | split row ' ') 2>/dev/null
         | lines
         | skip 2
         | each { |line|
-            let parts = ($line | split column -r '\s+')
+            let parts = $line | split column -r '\s+'
             $parts | get 0.column2
         }
         | sort)
 }
 
 def get_device_identifiers [] {
-    let relevant_flags = (get_device_arguments | str join ' ')
+    let relevant_flags = get_device_arguments | str join ' '
 
     (^frida-ps --applications ...($relevant_flags | split row ' ') 2>/dev/null
         | lines
         | skip 2
         | each { |line|
-            let parts = ($line | split column -r '\s+')
+            let parts = $line | split column -r '\s+'
             $parts | get 0.column3
         }
         | sort)
@@ -74,7 +84,7 @@ def get_frida_devices [] {
         | lines
         | skip 2
         | each { |line|
-            let parts = ($line | split column -r '\s+' -m 2)
+            let parts = $line | split column -r '\s+' -m 2
             {id: ($parts | get 0.column1), info: ($parts | get 0.column2)}
         })
 }
@@ -246,22 +256,23 @@ export extern "frida-compile" [
 
 # Completion providers
 def "nu-complete frida_devices" [] {
-    get_frida_devices | each { |device| {value: $device.id, description: $device.info} }
+    get_frida_devices | each {|device| {value: $device.id, description: $device.info} }
 }
 
 def "nu-complete frida_pids" [] {
-    get_device_pids | each { |pid| {value: $pid, description: $pid} }
+    get_device_pids | each {|pid| {value: $pid, description: $pid} }
 }
 
 def "nu-complete frida_process_names" [] {
-    get_device_processes_names | each { |name| {value: $name, description: $name} }
+    get_device_processes_names | each {|name| {value: $name, description: $name} }
 }
 
 def "nu-complete frida_identifiers" [] {
-    get_device_identifiers | each { |id| {value: $id, description: $id} }
+    get_device_identifiers | each {|id| {value: $id, description: $id} }
 }
 
 def "nu-complete frida_options_file" [] {
+
     # File completion - let the default file completer handle this
     []
 }

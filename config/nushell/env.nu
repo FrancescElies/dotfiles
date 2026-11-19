@@ -10,7 +10,7 @@ match $nu.os-info.name {
             '~/AppData/Local/bob/nvim-bin'
             '~/AppData/Roaming/Python/Python312/Scripts'
             '~/AppData/Roaming/Python/Scripts'
-            '~/AppData/Roaming/npm'  # pi is here
+            '~/AppData/Roaming/npm' # pi is here
             ('/Program Files/WinHTTrack' | path expand)
             ('/Program Files/Neovim/bin' | path expand)
             ('/Program Files/Git/usr/bin' | path expand)
@@ -21,23 +21,22 @@ match $nu.os-info.name {
             ('/Program Files/LLVM/bin' | path expand)
             ("/Program Files/Cycling '74/Max 9" | path expand)
         ]
-    },
+    }
     "macos" => {
-       $env.PATH = ($env.PATH | prepend [
+        $env.PATH = ($env.PATH | prepend [
            /opt/homebrew/opt/findutils/libexec/gnubin
            /opt/homebrew/opt/gnu-getopt/bin
            /opt/homebrew/opt/make/libexec/gnubin
            /opt/homebrew/opt/util-linux/bin
        ])
-       $env.path ++= [
-          '~/.local/share/bob/nvim-bin'
-          '/opt/homebrew/bin'
-          '/opt/podman/bin'
-          '/usr/local/bin'
-          '~/Library/Python/3.12/bin'
-
-       ]
-    },
+        $env.path ++= [
+            '~/.local/share/bob/nvim-bin'
+            '/opt/homebrew/bin'
+            '/opt/podman/bin'
+            '/usr/local/bin'
+            '~/Library/Python/3.12/bin'
+        ]
+    }
     "linux" => {
         $env.path ++= [
             '~/.local/share/bob/nvim-bin'
@@ -48,8 +47,8 @@ match $nu.os-info.name {
             "~/.rye/shims"
             '~/.local/share/flatpak/exports/share'
         ]
-    },
-    _ => { $env.path = $env.path },
+    }
+    _ => { $env.path = $env.path }
 }
 
 # common paths
@@ -57,7 +56,7 @@ $env.path ++= [
     ~/.bun/bin
     '~/.zvm/bin'
     '~/.zvm/self'
-    '~/.local/share/zvm/bin'  # https://github.com/lispking/zvm
+    '~/.local/share/zvm/bin' # https://github.com/lispking/zvm
     '~/src/radare2/prefix/bin'
     '~/go/bin'
     '~/.cargo/bin'
@@ -66,14 +65,16 @@ $env.path ++= [
     '~/bin'
     '~/src/dotfiles/bin/'
 ]
-try { $env.path ++= ( ls ~/bin | where type == dir | get name ) }
-try { $env.path ++= ( ls ~/bin/*/bin | get name ) }
-try { $env.path ++= ( ls /usr/local/*/bin | get name ) }
-
+try { $env.path ++= (ls ~/bin | where type == dir | get name) }
+try { $env.path ++= (ls ~/bin/*/bin | get name) }
+try { $env.path ++= (ls /usr/local/*/bin | get name) }
 
 if (which fnm | is-not-empty) {
     ^fnm env --json | from json | load-env
-    $env.PATH = $env.PATH | prepend ($env.FNM_MULTISHELL_PATH | path join (if $nu.os-info.name == 'windows' {''} else {'bin'}))
+    $env.PATH = $env.PATH | prepend (
+        $env.FNM_MULTISHELL_PATH
+        | path join (if $nu.os-info.name == 'windows' { '' } else { 'bin' })
+    )
     $env.config.hooks.env_change.PWD = (
         $env.config.hooks.env_change.PWD? | append {
             condition: {|| ['.nvmrc' '.node-version', 'package.json'] | any {|el| $el | path exists}}
@@ -82,17 +83,17 @@ if (which fnm | is-not-empty) {
     )
 }
 
-$env.path = ( $env.path | uniq )
+$env.path = ($env.path | uniq)
 
-
-$env.SHELL = "nu"  # makes broot open nu
+$env.SHELL = "nu" # makes broot open nu
 $env.EDITOR = "nvim"
 $env.MANPAGER = "nvim +Man!"
+
 # $env.MANPAGER = "nvim -u NORC --clean +Man!"  # faster man pager
 
 $env.PYTHONUNBUFFERED = 1
 $env.PYTHONBREAKPOINT = "ipdb.set_trace"
-$env.RIPGREP_CONFIG_PATH  = ("~/src/dotfiles/config/nushell/src/.ripgreprc" | path expand)
+$env.RIPGREP_CONFIG_PATH = ("~/src/dotfiles/config/nushell/src/.ripgreprc" | path expand)
 
 $env.BR_INSTALL = "no"
 $env.BROOT_CONFIG_DIR = ("~/src/dotfiles/config/nushell/broot-config" | path expand)

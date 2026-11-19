@@ -1,39 +1,59 @@
 module completions {
+    def "nu-complete watchexec completions" [] {
+        [
+            "bash"
+            "elvish"
+            "fish"
+            "nu"
+            "powershell"
+            "zsh"
+        ]
+    }
 
-  def "nu-complete watchexec completions" [] {
-    [ "bash" "elvish" "fish" "nu" "powershell" "zsh" ]
-  }
+    def "nu-complete watchexec wrap_process" [] {
+        ["group" "session" "none"]
+    }
 
-  def "nu-complete watchexec wrap_process" [] {
-    [ "group" "session" "none" ]
-  }
+    def "nu-complete watchexec on_busy_update" [] {
+        ["queue" "do-nothing" "restart" "signal"]
+    }
 
-  def "nu-complete watchexec on_busy_update" [] {
-    [ "queue" "do-nothing" "restart" "signal" ]
-  }
+    def "nu-complete watchexec emit_events_to" [] {
+        [
+            "environment"
+            "stdio"
+            "file"
+            "json-stdio"
+            "json-file"
+            "none"
+        ]
+    }
 
-  def "nu-complete watchexec emit_events_to" [] {
-    [ "environment" "stdio" "file" "json-stdio" "json-file" "none" ]
-  }
+    def "nu-complete watchexec filter_fs_events" [] {
+        [
+            "access"
+            "create"
+            "remove"
+            "rename"
+            "modify"
+            "metadata"
+        ]
+    }
 
-  def "nu-complete watchexec filter_fs_events" [] {
-    [ "access" "create" "remove" "rename" "modify" "metadata" ]
-  }
+    def "nu-complete watchexec screen_clear" [] {
+        ["clear" "reset"]
+    }
 
-  def "nu-complete watchexec screen_clear" [] {
-    [ "clear" "reset" ]
-  }
+    def "nu-complete watchexec notify" [] {
+        ["both" "start" "end"]
+    }
 
-  def "nu-complete watchexec notify" [] {
-    [ "both" "start" "end" ]
-  }
+    def "nu-complete watchexec color" [] {
+        ["auto" "always" "never"]
+    }
 
-  def "nu-complete watchexec color" [] {
-    [ "auto" "always" "never" ]
-  }
-
-  # Execute commands when watched files change
-  export extern watchexec [
+    # Execute commands when watched files change
+    export extern watchexec [
     --manual                  # Show the manual page
     --completions: string@"nu-complete watchexec completions" # Generate a shell completions script
     --only-emit-events        # Only emit events to stdout, run no commands
@@ -92,7 +112,6 @@ module completions {
     --version(-V)             # Print version
     ...program: string        # Command (program and arguments) to run on changes
   ]
-
 }
 
 export use completions *

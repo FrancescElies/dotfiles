@@ -34,6 +34,7 @@ export extern "ssh" [
 
 module ssh-completion-utils {
     def extract-host []: list<string> -> record<names: list<string>, addr: string> {
+
         # Host is a list of lines, like:
         # ╭───┬──────────────────────────────╮
         # │ 0 │ Host quanweb                 │
@@ -43,7 +44,11 @@ module ssh-completion-utils {
         # │ 4 │                              │
         # ╰───┴──────────────────────────────╯
         let host = $in
-        let first_line = try { $host | first | str trim } catch { null }
+        let first_line = try {
+            $host | first | str trim
+        } catch {
+            null
+        }
         # Don't accept blocks like "Host *"
         if ($first_line | is-empty) or '*' in $first_line {
             null
@@ -51,8 +56,16 @@ module ssh-completion-utils {
             let names = $first_line | split row -r '\s+' | reject 0
             # May not contain hostname
             match ($host | slice 1.. | find -n -ir '^\s*Hostname\s') {
-                [] => null,
-                $addr => { names: $names, addr: ($addr | str trim | split row -n 2 -r '\s+' | get 1) }
+                [] => null
+                $addr => {
+                    names: $names
+                    addr: (
+                        $addr
+                        | str trim
+                        | split row -n 2 -r '\s+'
+                        | get 1
+                    )
+                }
             }
         }
     }
@@ -67,17 +80,15 @@ module ssh-completion-utils {
         let mark_indices = $marks | get index | append ($lines | length)
         let hosts = $mark_indices | window 2 | each {|w| $lines | slice $w.0..<($w.1) }
         {
-            hosts: ($hosts | each { $in | extract-host }),
+            hosts: ($hosts | each { $in | extract-host })
             includes: $include_lines
         }
     }
-
 }
-
 
 def "nu-complete ssh-host" [] {
     let files = [
-        '/etc/ssh/ssh_config',
+        '/etc/ssh/ssh_config'
         '~/.ssh/config'
     ] | where {|file| $file | path exists }
 

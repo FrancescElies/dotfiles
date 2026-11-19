@@ -1,6 +1,5 @@
-
 def "nu-complete languages" [] {
-  ttyper --list-languages | lines
+    ttyper --list-languages | lines
 }
 
 export extern "ttyper" [

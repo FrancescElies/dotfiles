@@ -3,8 +3,8 @@ def wt-list [] {
         let l = $b | lines
         let path = $l.0 | str replace "worktree " ""
         let branch = ($l | where {|x| $x starts-with "branch " }).0? | default "(detached)" | str replace "branch refs/heads/" ""
-        let prunable = ($l | where {|x| $x starts-with "prunable" } | is-not-empty)
-        let ok = ($path | path exists)
+        let prunable = $l | where {|x| $x starts-with "prunable" } | is-not-empty
+        let ok = $path | path exists
         let dirty = if $ok { (git -C $path status --porcelain e> (if $nu.os-info.name == "windows" { "NUL" } else { "/dev/null" }) | lines | length) } else { null }
         let merged = if $ok and $branch != "(detached)" { (git branch --merged master --format '%(refname:short)' | lines) | any {|x| $x == $branch } } else { false }
         { name: ($path | path basename), branch: $branch, dirty: $dirty, merged: $merged, prunable: $prunable, path: $path }
@@ -12,12 +12,17 @@ def wt-list [] {
 }
 
 # Table of worktrees
-export def wt [] { wt-list | reject path }
+export def wt [] {
+    wt-list | reject path
+}
 
 # Remove prunable worktrees and clean (merged, no changes) ones, after confirmation
 export def "wt clean" [] {
     let rows = wt-list | where {|r| $r.name != "main" and ($r.prunable or ($r.merged and $r.dirty == 0)) }
-    if ($rows | is-empty) { print "Nothing to clean"; return }
+    if ($rows | is-empty) {
+        print "Nothing to clean"
+        return
+    }
     print ($rows | select name branch prunable merged)
     if (["no" "yes"] | input list "Remove these?") != "yes" { return }
     for r in ($rows | where not prunable) { git worktree remove $r.path }
@@ -27,28 +32,40 @@ export def "wt clean" [] {
 # Draft a commit message from the staged diff with pi, edit it in nvim, then commit
 export def gc [] {
     let diff = git diff --staged
-    if ($diff | is-empty) { error make { msg: "Nothing staged" } }
-    let f = (git rev-parse --git-path COMMIT_EDITMSG | str trim)
+    if ($diff | is-empty) { error make {msg: "Nothing staged"} }
+    let f = git rev-parse --git-path COMMIT_EDITMSG | str trim
     $diff | pi --model gpt-6-luna -p "Write a concise git commit message (subject line <=72 chars, optional short body) for this staged diff. Output only the message." | save -f $f
     nvim $f
-    if ((open $f | str trim | is-empty)) { print "Empty message, aborted"; return }
+    if (open $f | str trim | is-empty) {
+        print "Empty message, aborted"
+        return
+    }
     git commit -F $f
 }
 
 # Create a worktree for an ADO ticket: branch cesc/<slug>, folder ../cesc-<slug>
 # Title comes from az boards (falls back to the ticket number); pi derives the short slug
-export def --env wt-ado [
-    ticket: int
-    --base: string = "origin/master"
-] {
-    let title = try { az boards work-item show --id $ticket --query "fields.\"System.Title\"" -o tsv | str trim } catch { "" }
+export def --env wt-ado [ticket: int, --base: string = "origin/master"] {
+    let title = try {
+        az boards work-item show --id $ticket --query "fields.\"System.Title\"" -o tsv | str trim
+    } catch {
+        ""
+    }
     let desc = if ($title | is-empty) { $"ADO ticket ($ticket)" } else { $title }
     let prompt = $"Create a very short git branch slug \(lowercase kebab-case, 2-4 words, max 30 chars, no prefix, no ticket number\) for this work item: ($desc). Output only the slug."
-    let slug = (pi --model gpt-6-luna -p $prompt | lines | last | str trim | str lowercase | str replace -a -r '[^a-z0-9-]+' '-' | str trim -c '-')
-    if ($slug | is-empty) { error make { msg: "pi returned no slug" } }
+    let slug = (
+        pi --model gpt-6-luna -p $prompt
+        | lines
+        | last
+        | str trim
+        | str lowercase
+        | str replace -a -r '[^a-z0-9-]+' '-'
+        | str trim -c '-'
+    )
+    if ($slug | is-empty) { error make {msg: "pi returned no slug"} }
     let name = $"cesc-($slug)"
     git worktree add $"../($name)" -b $"cesc/($slug)" $base
-    let dir = ($env.PWD | path join ".." $name | path expand)
+    let dir = $env.PWD | path join ".." $name | path expand
     if ($env.ZELLIJ? | is-not-empty) {
         zellij action new-tab --cwd $dir --name $name
     } else {

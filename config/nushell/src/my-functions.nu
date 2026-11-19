@@ -4,7 +4,7 @@ export alias ex = explore
 export alias ll = ls -l
 
 export def "aptf search" [] {
-    apt-cache search . |fzf --multi | lines | parse "{package} - {description}"
+    apt-cache search . | fzf --multi | lines | parse "{package} - {description}"
 }
 
 export def "aptf install" [] {
@@ -59,19 +59,39 @@ export def grepson [] {
     }
 }
 
-export def --env notes []  {
+export def --env notes [] {
     cd ~/src/notes
     # nvim '+Telescope find_files'
     nvim '+FFFFind'
 }
 
 def "nu-complete projects" [] {
-    let patterns = ['~/src/*' '~/src/oss/*' '/s/*' '/s/my-*/*' '/s/*-worktrees/*' '/s/*-wt/*' '/s/*prj/*']
+    let patterns = [
+        '~/src/*'
+        '~/src/oss/*'
+        '/s/*'
+        '/s/my-*/*'
+        '/s/*-worktrees/*'
+        '/s/*-wt/*'
+        '/s/*prj/*'
+    ]
     # glob --no-file keeps only directories (symlinks to dirs included); missing roots yield nothing
-    let dirs = ($patterns | each {|p| try { glob ($p | path expand) --no-file } catch { [] } } | flatten)
+    let dirs = (
+        $patterns
+        | each {|p| try { glob ($p | path expand) --no-file } catch { [] } }
+        | flatten
+    )
     {
-        options: { completion_algorithm: fuzzy, case_sensitive: false, positional: false, sort: true, },
-        completions: ($dirs | append (['~/Downloads' '~/Desktop'] | each {|p| $p | path expand }))
+        options: {
+            completion_algorithm: fuzzy
+            case_sensitive: false
+            positional: false
+            sort: true
+        }
+        completions: (
+            $dirs
+            | append (['~/Downloads' '~/Desktop'] | each {|p| $p | path expand })
+        )
     }
 }
 
@@ -80,7 +100,7 @@ export def --env "goto" [path?: path@"nu-complete projects"] {
             (nu-complete projects).completions | input list --fuzzy $"Goto (ansi mu)project(ansi reset):"
         } else {
             $path
-    });
+    })
 }
 
 # # create big file
@@ -93,12 +113,14 @@ export alias pipx = python ~/bin/pipx.pyz
 
 # list open listening ports
 export def "my open-ports" [] {
-  match $nu.os-info.name {
-      "windows" => { error make {msg: "netstat -tulnp ???"} },
-      # netstat columns in unix
-      # Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID Program name
-      _ => { netstat -tulnp | str replace -a "/" " " | str replace "Program name" " program-name" | tail -n +2 | detect columns },
-  }
+    match $nu.os-info.name {
+        "windows" => { error make {msg: "netstat -tulnp ???"} }
+        # netstat columns in unix
+        # Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID Program name
+        _ => {
+            netstat -tulnp | str replace -a "/" " " | str replace "Program name" " program-name" | tail -n +2 | detect columns
+        }
+    }
 }
 
 # extracts archives with different extensions
@@ -110,7 +132,6 @@ export def "decompress all" [path: path = "."] {
     | each {|f| ouch decompress $f }
 }
 
-
 export def "my time-today" [] {
     cd ~
     python ~/src/dotfiles/config/nushell/src/time_spent_today.py
@@ -118,27 +139,37 @@ export def "my time-today" [] {
 
 # list services (printers, scanners...) in local network with avahi-browse
 export def "my network services" [] {
- avahi-browse --all --terminate --parsable
-  | from csv --separator ";" --noheaders --flexible
-  | rename "new(+)\ngone(-)\nresolved(=)" net IPvX ip service-type domain
+    avahi-browse --all --terminate --parsable
+    | from csv --separator ";" --noheaders --flexible
+    | rename "new(+)\ngone(-)\nresolved(=)" net IPvX ip service-type domain
 }
 
 # list printers in local network with avahi-browse
 export def "my network printers" [] {
- avahi-browse --terminate --parsable _ipp._tcp
-  | from csv --separator ";" --noheaders --flexible
-  | rename "new(+)\ngone(-)\nresolved(=)" net IPvX ip service-type domain
+    avahi-browse --terminate --parsable _ipp._tcp
+    | from csv --separator ";" --noheaders --flexible
+    | rename "new(+)\ngone(-)\nresolved(=)" net IPvX ip service-type domain
 }
 
-
 # compact ls
-export def lsg [] { try { ls | sort-by type name -r | grid --icons --color | str trim } catch { ls | get name | to text} }
+export def lsg [] {
+    try {
+        ls | sort-by type name -r | grid --icons --color | str trim
+    } catch {
+        ls | get name | to text
+    }
+}
 export alias l = lsg
 
 # cd to the folder where a binary is located
 export def --env "cd where-is" [program] {
-  let dir = (which $program | get path | path dirname | str trim)
-  cd $dir.0
+    let dir = (
+        which $program
+        | get path
+        | path dirname
+        | str trim
+    )
+    cd $dir.0
 }
 
 # date string YYYY-MM-DD
@@ -148,7 +179,10 @@ export def "date format ymd" [] { (date now | format date %Y-%m-%d) }
 export def "date format dmy" [] { (date now | format date %d-%m-%Y) }
 
 # create directory and cd into it (alias mcd)
-export def --env mkdircd [dir: path] { mkdir $dir; cd $dir }
+export def --env mkdircd [dir: path] {
+    mkdir $dir
+    cd $dir
+}
 alias mcd = mkdircd
 
 #compress to 7z using max compression
@@ -160,36 +194,38 @@ export def `7z compress max` [
   # compress all files in current directory and delete them
   # 7zmax * "-sdel"
 ] {
-
-  if ($rest | is-empty) {
-    print "no files to compress specified"
-  } else {
-     7z a -t7z -m0=lzma2 -mx=9 -ms=on -mmt=on $"($outfile).7z" ...$rest
-  }
+    if ($rest | is-empty) {
+        print "no files to compress specified"
+    } else {
+        7z a -t7z -m0=lzma2 -mx=9 -ms=on -mmt=on $"($outfile).7z" ...$rest
+    }
 }
 
 # print worth watching speakers
 export def "my speakers" [] {
-  return {
-    python: "David Beazley, Raymond Hettinger, Hynek Schlawack"
-    rust: "Jon Gjengset"
-  }
+    return {
+        python: "David Beazley, Raymond Hettinger, Hynek Schlawack"
+        rust: "Jon Gjengset"
+    }
 }
 
 # what is my public ip
 export def "my ip" [] {
-  http get https://ipinfo.io/json
-  # http get https://api.ipify.org
-  # http get https://api6.ipify.org
+    http get https://ipinfo.io/json
+    # http get https://api.ipify.org
+    # http get https://api6.ipify.org
 }
 
 # which apps do I have
 export def "my apps" [] {
-  let venv_pkgs = (python -c `from importlib.metadata import entry_points; print('\n'.join(x.name for x in entry_points()['console_scripts']))` | lines)
-  let bin_pkgs = (try {ls ~/bin/**/*} catch {[]} | where type == file | get name)
-  let cargo_bin_pkgs = (try {ls ~/.cargo/bin/*} catch {[]} | where type == file | get name)
-  let go_bin_pkgs = (try {ls ~/go/bin/*} catch {[]} | where type == file | get name)
-  return ($venv_pkgs | append $bin_pkgs | append $cargo_bin_pkgs | append $go_bin_pkgs
+    let venv_pkgs = (
+        python -c `from importlib.metadata import entry_points; print('\n'.join(x.name for x in entry_points()['console_scripts']))`
+        | lines
+    )
+    let bin_pkgs = try { ls ~/bin/**/* } catch { [] } | where type == file | get name
+    let cargo_bin_pkgs = try { ls ~/.cargo/bin/* } catch { [] } | where type == file | get name
+    let go_bin_pkgs = try { ls ~/go/bin/* } catch { [] } | where type == file | get name
+    return ($venv_pkgs | append $bin_pkgs | append $cargo_bin_pkgs | append $go_bin_pkgs
         | path parse | flatten | move stem --first | move extension --after stem
     )
 }
@@ -217,7 +253,12 @@ export alias "nvim emergency" = nvim -u ~/src/kickstart.nvim/minimal-vimrc.vim
 
 # Open files in nvim that match a certain semantic topic
 export def "nvim semantic-search" [topic: string] {
-    nvim -c ((semble search $topic | from json).results | select file_path start_line | each {$"edit +($in.start_line) ($in.file_path)"} | str join " | ")
+    nvim -c (
+        (semble search $topic | from json).results
+        | select file_path start_line
+        | each {$"edit +($in.start_line) ($in.file_path)"}
+        | str join " | "
+    )
 }
 
 export alias v = nvim
@@ -231,15 +272,15 @@ export alias "activate" = overlay use .venv/Scripts/activate.nu
 
 export def "nvim-clean-shada" [] {
     match $nu.os-info.name {
-        "windows" => { rm -rf ~/AppData/Local/nvim-data/shada },
-        _ => { rm -rf ~/.local/state/nvim/shada },
+        "windows" => { rm -rf ~/AppData/Local/nvim-data/shada }
+        _ => { rm -rf ~/.local/state/nvim/shada }
     }
 }
 
 export def "nvim-clean-swap" [] {
     match $nu.os-info.name {
-        "windows" => { rm -rf ~/AppData/Local/nvim-data/swap },
-        _ => { fd swp ~/.local/state/nvim/swap -x rm },
+        "windows" => { rm -rf ~/AppData/Local/nvim-data/swap }
+        _ => { fd swp ~/.local/state/nvim/swap -x rm }
     }
 }
 
@@ -249,21 +290,23 @@ export def "nvim-pr-files" [] { nvim ...(git pr files) }
 # process
 #
 # fuzzy select find process pid
-export def pid [] { ps | sort-by -in name | input list -d name --fuzzy  | get pid }
+export def pid [] {
+    ps | sort-by -in name | input list -d name --fuzzy | get pid
+}
 
 # gets pid of process with name
-export def pidof [name: string ] {
-  let procs = ps --long | where name =~ $name
-  if (($procs | length) > 1) {
-    $procs | sort-by -in name | input list -d name --fuzzy | get pid
-  } else {
-    $procs | get 0.pid
-  }
+export def pidof [name: string] {
+    let procs = ps --long | where name =~ $name
+    if ($procs | length) > 1 {
+        $procs | sort-by -in name | input list -d name --fuzzy | get pid
+    } else {
+        $procs | get 0.pid
+    }
 }
 
 # grep for specific process names
-export def "ps name" [name: string = "" ] {
-  (if ($name | is-empty) {
+export def "ps name" [name: string = ""] {
+    (if ($name | is-empty) {
     ps --long | sort-by -in name | input list -d name --fuzzy
   } else {
     ps --long | find --ignore-case --columns [name] -i $name
@@ -280,7 +323,9 @@ export alias psc = ps count
 # --------------------------------------------------
 # zellij
 
-def "nu-complete zellij-list-sessions" [] { zellij list-sessions --short | lines }
+def "nu-complete zellij-list-sessions" [] {
+    zellij list-sessions --short | lines
+}
 
 def zellij-attach [name: string@"nu-complete zellij-list-sessions"] {
     zellij attach --create $"($name)"
@@ -302,8 +347,9 @@ export alias zkill-all = zellij kill-session-all-sessions
 
 # --------------------------------------------------
 
-
-def "nu-complete list-process-names" [] { ps | get name | sort | uniq }
+def "nu-complete list-process-names" [] {
+    ps | get name | sort | uniq
+}
 
 # kill specified process with substring
 export def "ps kill-name" [...names: string@"nu-complete list-process-names"] {
@@ -321,10 +367,9 @@ export def hey [...words: string] {
     gh copilot -p $"($words | str join ' ')"
 }
 
-
 # ^git cd to root (bare or worktree)
 def --env git-root [] {
-    if ((git worktree bare-path) == null) {
+    if (git worktree bare-path) == null {
         cd (git rev-parse --show-toplevel)
     } else {
         cd (git worktree bare-path)
@@ -347,7 +392,7 @@ export alias "edit config alacritty" = nvim ~/src/dotfiles/config/alacritty/alac
 export alias "edit config broot" = nvim ~/src/dotfiles/config/broot/*.hjson
 export alias "edit config fd" = nvim ~/src/dotfiles/config/fd/*
 export alias "edit config glazewm" = nvim ~/src/dotfiles/config/glazewm/*.yaml
-export alias "edit config nvim" = nvim ~/src/kickstart.nvim/init.lua 
+export alias "edit config nvim" = nvim ~/src/kickstart.nvim/init.lua
 export alias "edit config psqlrc" = nvim ~/src/dotfiles/config/.psqlrc
 export alias "edit config radare" = nvim ~/src/dotfiles/config/.radare2rc
 export alias "edit config ripgrep" = nvim ~/src/dotfiles/config/.ripgreprc
@@ -357,14 +402,14 @@ export alias "edit config violentmonkey" = nvim ~/src/dotfiles/config/violentmon
 export alias "edit config zellij" = nvim ~/src/dotfiles/config/zellij/*.kdl
 
 export module "my" {
-    const repos = [ ~/src/config.pi ~/src/config.frida ~/src/kickstart.nvim ~/src/dotfiles ]
+    const repos = [~/src/config.pi ~/src/config.frida ~/src/kickstart.nvim ~/src/dotfiles]
 
     export def "repos pull-push" [] {
-       $repos | each {
+        $repos | each {
         let repo = $in
         print $"(ansi pb)($repo)(ansi reset)"
         cd $repo
-        let dirty = (git status --porcelain | is-not-empty)
+        let dirty = git status --porcelain | is-not-empty
         if $dirty { git stash | ignore }
         git pull --rebase
         git push --force-with-lease
@@ -391,57 +436,57 @@ export module "my" {
         $repos | each {
             print $"(ansi pb)($in)(ansi reset)"
             cd $in
-            let dirty = (git status --porcelain | is-not-empty)
+            let dirty = git status --porcelain | is-not-empty
             if $dirty { git stash | ignore }
             git pull
             if $dirty { git stash pop | ignore }
         }
     }
-
 }
 
 export def nato-alphabet [] {
     let letters = [
-      [char code-word ];
-      [A    Alpha     ]
-      [B    Bravo     ]
-      [C    Charlie   ]
-      [D    Delta     ]
-      [E    Echo      ]
-      [F    Foxtrot   ]
-      [G    Golf      ]
-      [H    Hotel     ]
-      [I    India     ]
-      [J    Juliet    ]
-      [K    Kilo      ]
-      [L    Lima      ]
-      [M    Mike      ]
-      [N    November  ]
-      [O    Oscar     ]
-      [P    Papa      ]
-      [Q    Quebec    ]
-      [R    Romeo     ]
-      [S    Sierra    ]
-      [T    Tango     ]
-      [U    Uniform   ]
-      [V    Victor    ]
-      [W    Whiskey   ]
-      [X    X-ray     ]
-      [Y    Yankee    ]
-      [Z    Zulu      ]
+        [char, code-word];
+        [A, Alpha]
+        [B, Bravo]
+        [C, Charlie]
+        [D, Delta]
+        [E, Echo]
+        [F, Foxtrot]
+        [G, Golf]
+        [H, Hotel]
+        [I, India]
+        [J, Juliet]
+        [K, Kilo]
+        [L, Lima]
+        [M, Mike]
+        [N, November]
+        [O, Oscar]
+        [P, Papa]
+        [Q, Quebec]
+        [R, Romeo]
+        [S, Sierra]
+        [T, Tango]
+        [U, Uniform]
+        [V, Victor]
+        [W, Whiskey]
+        [X, X-ray]
+        [Y, Yankee]
+        [Z, Zulu]
     ]
     let digits = [
-      [digit code-word ];
-      ["0"   Zero      ]
-      ["1"   One       ]
-      ["2"   Two       ]
-      ["3"   Three     ]
-      ["4"   Four      ]
-      ["5"   Fife      ]
-      ["6"   Six       ]
-      ["7"   Seven     ]
-      ["8"   Eight     ]
-      ["9"   Niner     ] ]
+        [digit, code-word];
+        ["0", Zero]
+        ["1", One]
+        ["2", Two]
+        ["3", Three]
+        ["4", Four]
+        ["5", Fife]
+        ["6", Six]
+        ["7", Seven]
+        ["8", Eight]
+        ["9", Niner]
+    ]
     print $letters
     print $digits
 }

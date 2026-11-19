@@ -2,27 +2,26 @@
 
 # select dir with broot and cd into it (alias d)
 export def --env brd [] {
-  let dir = ^broot --only-folders --conf ~/src/dotfiles/config/nushell/broot-config/selectdir.hjson
-  cd $dir
+    let dir = ^broot --only-folders --conf ~/src/dotfiles/config/nushell/broot-config/selectdir.hjson
+    cd $dir
 }
 
 # select dir with broot and cd into it
 export alias d = brd
 
 # select a file with broot and print to stdout e.g. `bat (bo)`
-export def --wrapped bro [ path: path = "." ...rest ] {
+export def --wrapped bro [path: path = ".", ...rest] {
     ^broot --conf ~/src/dotfiles/config/nushell/broot-config/select.hjson $path ...$rest
 }
 
 # broot + clip: select file path add it's path to clipboard
-export def --wrapped brclip [ path: path = "." ...rest ] {
+export def --wrapped brclip [path: path = ".", ...rest] {
     ^broot --conf ~\src\dotfiles/config/nushell\broot-config\copy_path.hjson $path ...$rest
 }
 export alias brip = brclip
 
 # print tree of folder with broot
-export def bree --wrapped [path: path = . ...rest] { ^broot -c :pt $path ...$rest }
-
+export def bree --wrapped [path: path = ., ...rest] { ^broot -c :pt $path ...$rest }
 
 #----
 
@@ -126,7 +125,7 @@ export def --env br [
     )
 
     touch $cmd_file
-    if ($file == null) {
+    if $file == null {
         ^broot --outcmd $cmd_file ...$args
     } else {
         ^broot --outcmd $cmd_file ...$args $file
@@ -134,8 +133,13 @@ export def --env br [
     let $cmd = (open $cmd_file)
     rm -p -f $cmd_file
 
-    if (not ($cmd | lines | is-empty)) {
-        cd ($cmd | parse -r `^cd\s+(?<quote>"|'|)(?<path>.+)\k<quote>[\s\r\n]*$` | get path | to text)
+    if not ($cmd | lines | is-empty) {
+        cd (
+            $cmd
+            | parse -r `^cd\s+(?<quote>"|'|)(?<path>.+)\k<quote>[\s\r\n]*$`
+            | get path
+            | to text
+        )
     }
 }
 
@@ -182,4 +186,3 @@ export extern main [
     --write-default-conf: path      # Write default conf files in given directory
     file?: path                     # Root Directory
 ]
-

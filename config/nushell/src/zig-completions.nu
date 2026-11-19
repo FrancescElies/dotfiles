@@ -1,7 +1,7 @@
 # zvm
 def "nu-complete zvm versions" [] {
-  ^zvm list
-  | lines
+    ^zvm list
+    | lines
 }
 
 # switch between versions of Zig
@@ -11,7 +11,7 @@ export extern "zvm use" [
   version: string@"nu-complete zvm versions"
 ]
 
- # download and install a version of Zig
+# download and install a version of Zig
 export extern "zvm install" []
 # run a command with the given Zig version
 export extern "zvm run" []
@@ -29,24 +29,24 @@ export extern "zvm mirrorlist" []
 export extern "zvm vmu" []
 # Shows a list of commands or help for one command
 export extern "zvm help" []
+
 # =======
 
 # zig
 # =======
 
 def "nu-complete zig build" [] {
-  ^zig build -l
-  | lines
-  | parse --regex '^\s+(\S+)(?:\s+\(default\))?\s{2,}(.+)'
-  | rename value description
-  | update description { str trim }
+    ^zig build -l
+    | lines
+    | parse --regex '^\s+(\S+)(?:\s+\(default\))?\s{2,}(.+)'
+    | rename value description
+    | update description { str trim }
 }
 
 # Build project from build.zig
 export extern "zig build" [
   step?: string@"nu-complete zig build"
 ]
-
 
 # Copy a package into global cache and print its hash
 export extern "zig fetch" []

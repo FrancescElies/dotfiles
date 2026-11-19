@@ -4,19 +4,31 @@ use reverse-eng.nu *
 use utils.nu *
 use symlinks.nu *
 
-
-def "nu-complete max-version" [] { {
-    options: { completion_algorithm: fuzzy, case_sensitive: false, positional: false, sort: true, },
-    completions: ([912 914 921])
-} }
-export def --env "Max use" [ version?: string@"nu-complete max-version" ] {
+def "nu-complete max-version" [] {
+    {
+        options: {
+            completion_algorithm: fuzzy
+            case_sensitive: false
+            positional: false
+            sort: true
+        }
+        completions: ([912 914 921])
+    }
+}
+export def --env "Max use" [version?: string@"nu-complete max-version"] {
     if $nu.os-info.name == "windows" {
         let install_dir = "C:/Program Files/Cycling '74"
         let link = $"($install_dir)/Max 9"
         let target = $"($install_dir)/Max ($version)"
-        let norm = {|p| $p | str replace --all "/" "\\" | str lowercase }
+        let norm = {|p|
+            $p | str replace --all "/" "\\" | str lowercase
+        }
         if ($link | path type) == "symlink" {
-            let current = (ls -l $install_dir | where name == ($link | str replace --all "/" "\\") | get 0.target)
+            let current = (
+                ls -l $install_dir
+                | where name == ($link | str replace --all "/" "\\")
+                | get 0.target
+            )
             if (do $norm $current) == (do $norm $target) {
                 print $"($link) already points to ($target)"
                 $env.MAX_BIN = $"($link)/Max.exe"
@@ -29,7 +41,7 @@ export def --env "Max use" [ version?: string@"nu-complete max-version" ] {
     } else if $nu.os-info.name == "macos" {
         "/Applications/Max.app/Contents/MacOS/Max"
     } else {
-         'not implemented'
+        'not implemented'
     }
 }
 
@@ -59,10 +71,17 @@ const max_searchpaths = if $nu.os-info.name == "windows" {
     "missing"
 }
 
-def "nu-complete maxpats" [] { {
-    options: { completion_algorithm: fuzzy, case_sensitive: false, positional: false, sort: true, },
-    completions: (fd maxpat | lines)
-} }
+def "nu-complete maxpats" [] {
+    {
+        options: {
+            completion_algorithm: fuzzy
+            case_sensitive: false
+            positional: false
+            sort: true
+        }
+        completions: (fd maxpat | lines)
+    }
+}
 
 # Run cdb (x64) on a .dmp
 #   • default  : stream output to the screen only
@@ -76,13 +95,13 @@ def "Max dump" [
         error make {msg: 'cdb.exe not found – run  winget install "windows driver kit"'}
     }
 
-    let dump_path = ($dmpfile | path expand)
+    let dump_path = $dmpfile | path expand
     if not ($dump_path | path exists) {
         error make {msg: $"dump file ($dump_path) does not exist"}
     }
 
     if $log {
-        let parsed   = ($dump_path | path parse)
+        let parsed = $dump_path | path parse
         let log_file = ($parsed.parent) | path join $"($parsed.stem).log"
 
         run-external $cdb "-z" $dump_path "-c" '!analyze -v; !pe; q' "-logo" $log_file
@@ -92,17 +111,20 @@ def "Max dump" [
     }
 }
 
-def "nu-complete maxloglevel" [] { {
-    options: { completion_algorithm: fuzzy, case_sensitive: false, positional: false, sort: true, },
-    completions: ([info debug trace])
-} }
-
+def "nu-complete maxloglevel" [] {
+    {
+        options: {
+            completion_algorithm: fuzzy
+            case_sensitive: false
+            positional: false
+            sort: true
+        }
+        completions: ([info debug trace])
+    }
+}
 
 # Cycling '74 Max cli wrap
-export def "Max start" [
-    maxpat?: path@"nu-complete maxpats"
-    --log(-l): string@"nu-complete maxloglevel"
-] {
+export def "Max start" [maxpat?: path@"nu-complete maxpats", --log(-l): string@"nu-complete maxloglevel"] {
     mut args = []
     if $log != null { $args = ($args | append $'--log=($log)') }
     Max preferences set no-crashrecovery
@@ -117,10 +139,17 @@ export def "Max start" [
     }
 }
 
-def "nu-complete my-maxpats" [] { {
-    options: { completion_algorithm: fuzzy, case_sensitive: false, positional: false, sort: true, },
-    completions: (fd --follow maxpat /s/my-maxpats | lines)
-} }
+def "nu-complete my-maxpats" [] {
+    {
+        options: {
+            completion_algorithm: fuzzy
+            case_sensitive: false
+            positional: false
+            sort: true
+        }
+        completions: (fd --follow maxpat /s/my-maxpats | lines)
+    }
+}
 
 # Cycling '74 Max cli wrap
 export def "Max start my" [maxpat: path@"nu-complete my-maxpats"] {
@@ -129,7 +158,7 @@ export def "Max start my" [maxpat: path@"nu-complete my-maxpats"] {
     Max preferences set node-logging
     Max preferences set logtosystemconsole
     print $"(ansi pb)> ($env.MAX_BIN) ($maxpat | path expand)(ansi reset)"
-    run-external $env.MAX_BIN ( $maxpat | path expand )
+    run-external $env.MAX_BIN ($maxpat | path expand)
 }
 
 export def "Max fzf-examples" [] {
@@ -137,17 +166,19 @@ export def "Max fzf-examples" [] {
     Max start (fd . | fzf)
 }
 
-def "nu-complete maxhelp" [] { cd $max_resources_pkgs; ls | get name}
+def "nu-complete maxhelp" [] {
+    cd $max_resources_pkgs
+    ls | get name
+}
 export def "Max help" [folder: path@"nu-complete maxhelp"] {
-    let dir = ($max_resources_pkgs | path join $folder)
+    let dir = $max_resources_pkgs | path join $folder
     cd $dir
     Max start (fd maxhelp | fzf)
 }
 
-
 # sets Max Audio Status
 export def "Max set audio-status" [] {
-    let path = ("~/AppData/Roaming/Cycling '74/Max 9/Settings/admme@.txt" | path expand)
+    let path = "~/AppData/Roaming/Cycling '74/Max 9/Settings/admme@.txt" | path expand
     print "Before"
     bat --paging never $path
 
@@ -170,33 +201,62 @@ export def "Max set audio-status" [] {
     bat --paging never $path
 }
 
-const maxpreferences = ("~/AppData/Roaming/Cycling '74/Max 9/Settings/maxpreferences.maxpref" | path expand)
+const maxpreferences = (
+    (
+        "~/AppData/Roaming/Cycling '74/Max 9/Settings/maxpreferences.maxpref"
+        | path expand
+    )
+)
 
 # opens maxinterface.json
 export def "Max edit interface" [] { nvim "C:/Program Files/Cycling '74/Max 9/resources/interfaces/maxinterface.json" }
 export def "Max edit maxpreferences" [] { nvim $maxpreferences }
 export def "Max edit maxsearchpaths" [] { nvim "~/AppData/Roaming/Cycling '74/Max 9/Settings/maxsearchpaths.txt" }
 
-export def --env "goto-max settings" [] { cd "~/AppData/Roaming/Cycling '74/Max 9/Settings"; lsg }
-export def --env "goto-max installation-dir" [] { cd "C:/Program Files/Cycling '74/Max 9"; lsg }
-export def --env "goto-max resources" [] { cd "C:/Program Files/Cycling '74/Max 9/resources"; lsg }
-export def --env "goto-max appdata-roaming" [] { cd "~/AppData/Roaming/Cycling '74"; lsg }
-export def --env "goto-max packages" [] { cd "~/Documents/Max 9/Packages"; lsg }
-export def --env "goto-max sdk-examples" [] { cd "~/src/oss/max-sdk/source"; lsg }
+export def --env "goto-max settings" [] {
+    cd "~/AppData/Roaming/Cycling '74/Max 9/Settings"
+    lsg
+}
+export def --env "goto-max installation-dir" [] {
+    cd "C:/Program Files/Cycling '74/Max 9"
+    lsg
+}
+export def --env "goto-max resources" [] {
+    cd "C:/Program Files/Cycling '74/Max 9/resources"
+    lsg
+}
+export def --env "goto-max appdata-roaming" [] {
+    cd "~/AppData/Roaming/Cycling '74"
+    lsg
+}
+export def --env "goto-max packages" [] {
+    cd "~/Documents/Max 9/Packages"
+    lsg
+}
+export def --env "goto-max sdk-examples" [] {
+    cd "~/src/oss/max-sdk/source"
+    lsg
+}
 
 # goto  crash dumps are stored
-export def --env "Max ls dumps" [] { ls `~/AppData/Roaming/Cycling '74/Logs/` | sort-by modified | get name }
+export def --env "Max ls dumps" [] {
+    ls `~/AppData/Roaming/Cycling '74/Logs/` | sort-by modified | get name
+}
 # goto where logsk are stored
-export def --env "Max ls logs" [] { ls `~/AppData/Roaming/Cycling '74/Max 9/Logs/` | sort-by modified | get name }
+export def --env "Max ls logs" [] {
+    ls `~/AppData/Roaming/Cycling '74/Max 9/Logs/` | sort-by modified | get name
+}
 
 # opens Max's api
 export def "Max goto header-files" [] {
     let sdk_base = "~/src/oss/max-sdk/source/max-sdk-base"
-    if not ($sdk_base | path exists) { mkdircd ~/src/oss; git clone https://github.com/Cycling74/max-sdk }
-    cd ( $sdk_base | path join "c74support/max-includes" )
+    if not ($sdk_base | path exists) {
+        mkdircd ~/src/oss
+        git clone https://github.com/Cycling74/max-sdk
+    }
+    cd ($sdk_base | path join "c74support/max-includes")
     lsg
 }
-
 
 export def "Max download-installers" [] {
     let dir = '/s/installers-exe'
@@ -204,39 +264,44 @@ export def "Max download-installers" [] {
     cd $dir
     if not ("Max862_240319.zip" | path exists) { wget https://downloads.cdn.cycling74.com/max8/Max862_240319.zip }
     if not ("Max833_221006.zip" | path exists) { wget https://downloads.cdn.cycling74.com/max8/Max833_221006.zip }
-
 }
 
 export def "Max preferences set no-crashrecovery" [] {
-    open $maxpreferences | from json
+    open $maxpreferences
+    | from json
     | upsert preferences.crashrecovery Never
-    | to json | save -f $maxpreferences
+    | to json
+    | save -f $maxpreferences
 }
 
 export def "Max preferences set logtosystemconsole" [] {
-    open $maxpreferences | from json
+    open $maxpreferences
+    | from json
     | upsert preferences.logtosystemconsole 1
-    | to json | save -f $maxpreferences
+    | to json
+    | save -f $maxpreferences
 }
 
 export def "Max preferences set node-logging" [] {
     const logname = "node-for-max-log.txt"
     let logfolder = pwd
     print $"(ansi pb)> tspin ($logname)(ansi reset)"
-    open $maxpreferences | from json
+    open $maxpreferences
+    | from json
     | upsert preferences.n4m_debug_log_name $logname
     | upsert preferences.n4m_debug_log_enabled 1
     | upsert preferences.n4m_debug_log_folder $logfolder
-    | to json | save -f $maxpreferences
+    | to json
+    | save -f $maxpreferences
     return ($logfolder | path join $logname)
 }
 
 # greps for something max related in all known locations where something interesting might be found
 export def "Max rg" [pattern: string] {
     let locations = [
-        ("~/src/oss/max-sdk" | path expand),
-        ("C:/Program Files/Cycling '74" | path expand),
-        ("~/AppData/Roaming/Cycling '74"| path expand),
+        ("~/src/oss/max-sdk" | path expand)
+        ("C:/Program Files/Cycling '74" | path expand)
+        ("~/AppData/Roaming/Cycling '74" | path expand)
     ]
     rg $pattern ...$locations
 }

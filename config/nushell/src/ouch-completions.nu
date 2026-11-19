@@ -1,7 +1,7 @@
 module completions {
 
-  # A command-line utility for easily compressing and decompressing files and directories.
-  export extern ouch [
+    # A command-line utility for easily compressing and decompressing files and directories.
+    export extern ouch [
     --yes(-y)                 # Skip [Y/n] questions, default to yes
     --no(-n)                  # Skip [Y/n] questions, default to no
     --accessible(-A)          # Activate accessibility mode, reducing visual noise
@@ -15,8 +15,8 @@ module completions {
     --version(-V)             # Print version
   ]
 
-  # Compress one or more files into one output file
-  export extern "ouch compress" [
+    # Compress one or more files into one output file
+    export extern "ouch compress" [
     ...files: path            # Files to be compressed
     output: path              # The resulting file. Its extensions can be used to specify the compression formats
     --level(-l): string       # Compression level, applied to all formats
@@ -35,8 +35,8 @@ module completions {
     --help(-h)                # Print help
   ]
 
-  # Decompresses one or more files, optionally into another folder
-  export extern "ouch decompress" [
+    # Decompresses one or more files, optionally into another folder
+    export extern "ouch decompress" [
     ...files: path            # Files to be decompressed, or "-" for stdin
     --dir(-d): path           # Place results in a directory other than the current one
     --remove(-r)              # Remove the source file after successful decompression
@@ -53,8 +53,8 @@ module completions {
     --help(-h)                # Print help
   ]
 
-  # List contents of an archive
-  export extern "ouch list" [
+    # List contents of an archive
+    export extern "ouch list" [
     ...archives: path         # Archives whose contents should be listed
     --tree(-t)                # Show archive contents as a tree
     --yes(-y)                 # Skip [Y/n] questions, default to yes
@@ -69,26 +69,25 @@ module completions {
     --help(-h)                # Print help
   ]
 
-  # Print this message or the help of the given subcommand(s)
-  export extern "ouch help" [
+    # Print this message or the help of the given subcommand(s)
+    export extern "ouch help" [
   ]
 
-  # Compress one or more files into one output file
-  export extern "ouch help compress" [
+    # Compress one or more files into one output file
+    export extern "ouch help compress" [
   ]
 
-  # Decompresses one or more files, optionally into another folder
-  export extern "ouch help decompress" [
+    # Decompresses one or more files, optionally into another folder
+    export extern "ouch help decompress" [
   ]
 
-  # List contents of an archive
-  export extern "ouch help list" [
+    # List contents of an archive
+    export extern "ouch help list" [
   ]
 
-  # Print this message or the help of the given subcommand(s)
-  export extern "ouch help help" [
+    # Print this message or the help of the given subcommand(s)
+    export extern "ouch help help" [
   ]
-
 }
 
 export use completions *

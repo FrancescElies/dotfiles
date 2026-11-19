@@ -19,19 +19,40 @@ def flatten_fields [args] {
             }
         }
         | str join $outer
-        | do { (if ($prefix | is-empty) {[$in]} else {[$prefix $in]})}
+        | do { (if ($prefix | is-empty) { [$in] } else { [$prefix $in] }) }
     } else { [] }
 }
 
 def sql [q] {
     [
-        [$q.select   ['select',   ' as ', ', ']]
-        [$q.from     ['from',     ' as ', ' join ']]
-        [$q.where?   ['where',    ' ',    ' and ']]
-        [$q.whereOr? ['or',       ' ',    ' or ']]
-        [$q.groupBy? ['group by', null,   ', ']]
-        [$q.orderBy? ['order by', ' ',    ', ']]
-        [$q.limit?   ['limit',    null,   ' offset ']]
+        [
+            $q.select
+            ['select', ' as ', ', ']
+        ]
+        [
+            $q.from
+            ['from', ' as ', ' join ']
+        ]
+        [
+            $q.where?
+            ['where', ' ', ' and ']
+        ]
+        [
+            $q.whereOr?
+            ['or', ' ', ' or ']
+        ]
+        [
+            $q.groupBy?
+            ['group by', null, ', ']
+        ]
+        [
+            $q.orderBy?
+            ['order by', ' ', ', ']
+        ]
+        [
+            $q.limit?
+            ['limit', null, ' offset ']
+        ]
     ]
     | each {|x| $x.0 | flatten_fields $x.1 }
     | flatten
@@ -41,10 +62,11 @@ def sql [q] {
 export def 'history timing' [
     pattern?
     --exclude(-x): string
-    --num(-n)=10
+    --num(-n): int = 10
     --all(-a)
 ] {
-    open $nu.history-path | query db (sql {
+    open $nu.history-path
+    | query db (sql {
         from: history
         where: [
             "cmd not like 'history timing%'"
@@ -67,7 +89,8 @@ export def 'history timing' [
 }
 
 def "nu-complete history dir" [] {
-    open $nu.history-path | query db (sql {
+    open $nu.history-path
+    | query db (sql {
         select: [cwd ['count(1)' count]]
         from: history
         groupBy: [cwd]
@@ -79,10 +102,10 @@ def "nu-complete history dir" [] {
 }
 
 export def 'history top' [
-    num=10
-    --before (-b): duration
-    --dir (-d)
-    --path(-p): list<string@"nu-complete history dir">
+    num: int = 10
+    --before(-b): duration
+    --dir(-d)
+    --path(-p): any@"nu-complete history dir">
 ] {
     open $nu.history-path | query db (sql {
         from: history

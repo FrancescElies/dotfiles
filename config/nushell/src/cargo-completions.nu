@@ -2,45 +2,45 @@
 ## Written by lukexor, Improved by @Dan-Gamin
 
 def "nu-complete cargo targets" [type: string] {
-  ^cargo metadata --format-version=1 --offline --no-deps | from json | get packages.targets | flatten | where ($type in $it.kind) | get name
+    ^cargo metadata --format-version=1 --offline --no-deps | from json | get packages.targets | flatten | where ($type in $it.kind) | get name
 }
 def "nu-complete cargo bins" [] { nu-complete cargo targets bin }
 def "nu-complete cargo examples" [] { nu-complete cargo targets example }
 
 def "nu-complete cargo packages" [] {
-  let metadata = (^cargo metadata --format-version=1 --offline --no-deps)
-  if $metadata == '' {
-    []
-  } else {
-    $metadata | from json | get workspace_members | split column ' ' | get column1
-  }
+    let metadata = (^cargo metadata --format-version=1 --offline --no-deps)
+    if $metadata == '' {
+        []
+    } else {
+        $metadata | from json | get workspace_members | split column ' ' | get column1
+    }
 }
 
 def "nu-complete cargo color" [] {
-  ['auto', 'always', 'never']
+    ['auto', 'always', 'never']
 }
 
 def "nu-complete cargo profiles" [] {
-  open Cargo.toml | get profile | transpose | get column0
+    open Cargo.toml | get profile | transpose | get column0
 }
 
 def "nu-complete cargo features" [] {
-  open Cargo.toml | get features | transpose | get column0
+    open Cargo.toml | get features | transpose | get column0
 }
 
 # `cargo --list` is slow, `open` is faster.
 # TODO: Add caching.
 def "nu-complete cargo subcommands" [] {
-  ^cargo --list | lines | skip 1 | str join "\n" | from ssv --noheaders | get column0
+    ^cargo --list | lines | skip 1 | str join "\n" | from ssv --noheaders | get column0
 }
 def "nu-complete cargo vcs" [] {
-  [
-    'git',
-    'hg',
-    'pijul',
-    'fossil',
-    'none'
-  ]
+    [
+        'git'
+        'hg'
+        'pijul'
+        'fossil'
+        'none'
+    ]
 }
 
 #*> Core <*#
@@ -462,7 +462,7 @@ export extern "cargo uninstall" [
 #*> Other Commands <*#
 
 # Output the resolved dependencies of a package in machine-readable format
-export extern "cargo metadata"  [
+export extern "cargo metadata" [
   --no-deps # Output information only about the workspace members and don't fetch dependencies
   --format-version: number # Specify the version of the output format to use. Currently 1 is the only possible value
   --filter-platform: string  # This filters the resolve output to only include dependencies for the iven target triple
@@ -587,9 +587,9 @@ export extern "cargo add" [
 ]
 
 # Cargo aliases
-export alias "cargo b"  = cargo build
-export alias "cargo c"  = cargo check
-export alias "cargo d"  = cargo doc
-export alias "cargo r"  = cargo run
+export alias "cargo b" = cargo build
+export alias "cargo c" = cargo check
+export alias "cargo d" = cargo doc
+export alias "cargo r" = cargo run
 export alias "cargo rm" = cargo remove
-export alias "cargo t"  = cargo test
+export alias "cargo t" = cargo test

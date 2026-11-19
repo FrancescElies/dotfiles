@@ -80,22 +80,22 @@ export def clip [
                 check-clipboard wl-copy --system $"('wayland' | pretty-command) on linux"
                 $input | wl-copy
             }
-        },
+        }
         "windows" => {
             if $codepage != null {
                 chcp $codepage
             }
             check-clipboard clip.exe --system "Windows"
             $input | clip.exe
-        },
+        }
         "macos" => {
             check-clipboard pbcopy --system "MacOS"
             $input | pbcopy
-        },
+        }
         "android" => {
             check-clipboard termux-clipboard-set --system "Termux"
             $input | termux-clipboard-set
-        },
+        }
         _ => {
             error make --unspanned {
                 msg: $"(ansi red)unknown_operating_system(ansi reset):
@@ -103,7 +103,7 @@ export def clip [
 
     please open a feature request in the [issue tracker](char lparen)https://github.com/nushell/nushell/issues/new/choose(char rparen) to add your operating system to the standard library."
             }
-        },
+        }
     }
 
     if not $silent {
@@ -115,4 +115,3 @@ export def clip [
         notify-send "std clip" "saved to clipboard"
     }
 }
-

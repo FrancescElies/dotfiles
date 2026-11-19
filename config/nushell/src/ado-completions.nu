@@ -7,43 +7,42 @@
 
 use git-completions.nu "nu-complete git checkout"
 
-
-
 export def "nu-complete semmantic-message" [] {
+
     # https://gist.github.com/joshbuchea/6f47e86d2510bce28f8e7f42ae84c716
     [
-        [value    description];
-        [build    "new feature for the user, not a new feature for build script"]
-        [chore    "updating grunt tasks etc; no production code change"]
-        [ci       "ci"]
-        [docs     "changes to the documentation"]
-        [feat     "new feature for the user, not a new feature for build script"]
-        [fix      "bug fix for the user, not a fix to a build script"]
-        [perf     "performance"]
-        [refactor "refactoring production code, eg. renaming a variable"]
-        [style    "formatting, missing semi colons, etc; no production code change"]
-        [test     "adding missing tests, refactoring tests; no production code change"]
+        [value, description];
+        [build, "new feature for the user, not a new feature for build script"]
+        [chore, "updating grunt tasks etc; no production code change"]
+        [ci, "ci"]
+        [docs, "changes to the documentation"]
+        [feat, "new feature for the user, not a new feature for build script"]
+        [fix, "bug fix for the user, not a fix to a build script"]
+        [perf, "performance"]
+        [refactor, "refactoring production code, eg. renaming a variable"]
+        [style, "formatting, missing semi colons, etc; no production code change"]
+        [test, "adding missing tests, refactoring tests; no production code change"]
     ]
 }
 
 export module ado {
-
     export alias "pr reply" = python ~/src/dotfiles/bin/pr-reply.py --platform ado
 
     export alias "workitem edit" = python ~/src/dotfiles/bin/ado-workitem-edit.py
 
     def "nu-complete my-tasks" [] {
         (ls my tasks)
-        | rename -c {id: value,  title: description} | select value description
+        | rename -c {id: value,  title: description}
+        | select value description
     }
 
     def "nu-complete my-stories" [] {
         (ls my stories)
-        | rename -c {id: value,  title: description} | select value description
+        | rename -c {id: value,  title: description}
+        | select value description
     }
 
-
-    const dbfile = ('~/.git-ado.json' | path expand )
+    const dbfile = '~/.git-ado.json' | path expand
 
     # open PRs: value = source branch, description = id + title
     def "nu-complete open-pr-branches" [] {
@@ -53,7 +52,7 @@ export module ado {
     }
 
     # review a pr on a separate folder
-    export def "pr review" [ branch: string@"nu-complete open-pr-branches" ] {
+    export def "pr review" [branch: string@"nu-complete open-pr-branches"] {
         git fetch --all | ignore
         let startingat = $"origin/($branch)"
         let path = $branch | str replace "/" "--" | str replace " " "-"
@@ -74,7 +73,7 @@ export module ado {
         # make sure path has no weird stuff, spaces, slashes ...
         let branch_norm = $desc | str lowercase | str replace -a --regex `[\\/ ]` "-"
         let new_branch = $"cesc/($branch_norm)"
-        let new_dir = (".." | path join $branch_norm)
+        let new_dir = ".." | path join $branch_norm
 
         git fetch --all
         if ($startingat | is-empty) {
@@ -93,36 +92,34 @@ export module ado {
         --breaking-changes(-b)
         ...rest
     ] {
-
-    let scope = if ($scope | is-empty) { "" } else { $"\(($scope)\)" }
+        let scope = if ($scope | is-empty) { "" } else { $"\(($scope)\)" }
         let breaking_change = if $breaking_changes { "!" } else { "" }
         let current_branch = (git rev-parse --abbrev-ref HEAD)
         let db = read_git_ado_db
 
         mut links = []
-        let story = ( $db | where name == $current_branch | get story.0 )
-        let task = ( $db | where name == $current_branch | get task.0 )
+        let story = $db | where name == $current_branch | get story.0
+        let task = $db | where name == $current_branch | get task.0
         if $story != 0 { $links = ($links | append [-m $"story #($story)"]) }
         if $task != 0 { $links = ($links | append [-m $"task #($task)"]) }
 
-        let pr = ( $db | where name == $current_branch | get pr.0 )
-        let title = [ -m $"($type)($scope)($breaking_change): ($title) - PR ($pr)" ]
+        let pr = $db | where name == $current_branch | get pr.0
+        let title = [-m $"($type)($scope)($breaking_change): ($title) - PR ($pr)"]
 
         ^git commit ...$title ...$links ...$rest
     }
 
-
-    export def "pr new" [
-        title?: string
-        --target-branch (-t): string = 'master'
-        --draft
-    ] {
+    export def "pr new" [title?: string, --target-branch(-t): string = 'master', --draft] {
         git push
         let main_or_master = git rev-parse --abbrev-ref origin/HEAD
 
         let description = "ADO-PR-DESCRIPTION.md"
         (git log --format=%B $"(git merge-base HEAD $main_or_master)..HEAD") | save -f $description
-        let title = if ($title | is-empty) { ( git log --format=%B -n 1 HEAD ) | lines | first } else { $title }
+        let title = if ($title | is-empty) {
+            (git log --format=%B -n 1 HEAD) | lines | first
+        } else {
+            $title
+        }
 
         nvim $description
 
@@ -130,7 +127,12 @@ export module ado {
         let work_items = (open $description --raw) | parse --regex '#(?<num>\d+)' | get num | uniq
 
         mut args = []
-        if ($work_items | is-not-empty) { $args = ($args | append [--work-items ...($work_items)]) }
+        if ($work_items | is-not-empty) {
+            $args = ($args | append [
+                --work-items
+                ...($work_items)
+            ])
+        }
         if $draft { $args = ($args | append '--draft') }
         ( ^az repos pr create --open --delete-source-branch
             --description ...(open $description --raw | lines)
@@ -151,12 +153,20 @@ export module ado {
             | rename status expired            title                               type                           policy-id
             | sort-by status expired
         )
-        let status = if $with_policy_id { $status } else { $status | reject policy-id }
-        if $pending { $status | where status != approved } else { $status }
+        let status = if $with_policy_id {
+            $status
+        } else {
+            $status | reject policy-id
+        }
+        if $pending {
+            $status | where status != approved
+        } else {
+            $status
+        }
     }
 
     # Get azure devops machines having a certain capability
-    export def "ls machines-usercapabilities" [ has_capability: string = 'Python311' ] {
+    export def "ls machines-usercapabilities" [has_capability: string = 'Python311'] {
         (  az pipelines agent list
             --pool-id 1 --include-capabilities -o json
             --query $"[?userCapabilities.($has_capability)!=null].{capabilities: userCapabilities, name: name}"
@@ -164,7 +174,7 @@ export module ado {
     }
 
     # Get azure devops machines
-    export def "ls machines" [ ] {
+    export def "ls machines" [] {
         (  az pipelines agent list
             --pool-id 1 --include-capabilities -o json
             --query "[*]"
@@ -173,11 +183,11 @@ export module ado {
 
     # Yield remote branches like `origin/main`, `upstream/feature-a`
     def "nu-complete git remote branches" [] {
-      ^git branch --no-color -r | lines | parse -r '^\*?(\s*|\s*\S* -> )(?P<branch>\S*$)' | get branch | uniq | parse "{remote}/{branch_name}" | get branch_name
+        ^git branch --no-color -r | lines | parse -r '^\*?(\s*|\s*\S* -> )(?P<branch>\S*$)' | get branch | uniq | parse "{remote}/{branch_name}" | get branch_name
     }
 
-    export def "ls pipelines" [ ] {
-       ( az pipelines list | from json
+    export def "ls pipelines" [] {
+        ( az pipelines list | from json
             | select id name path
             | insert description { $'($in.path) :: ($in.name)'}
             | rename -c { id: value }
@@ -185,23 +195,30 @@ export module ado {
             | sort-by description)
     }
 
+    def "nu-complete pipeline-definitions" [] {
+        [
+            [value, description];
+            [42, pr]
+            [80, installer]
+        ]
+    }
 
-    def "nu-complete pipeline-definitions" [] { [
-        [value description];
-        [42    pr]
-        [80    installer]
-    ] }
+    export def "queue build" [definition_id: int@"nu-complete pipeline-definitions", --branch(-b): string@"nu-complete git remote branches"] {
+        let branch = $branch | default (git rev-parse --abbrev-ref HEAD | str trim)
+        let build = (
+            az pipelines build queue --branch $branch --definition-id $definition_id --output json
+            | from json
+        )
+        let url = (
+            $build.url
+            | str replace "/_apis/build/Builds/" "/_build/results?buildId="
+        )
 
-
-    export def "queue build" [
-       definition_id: int@"nu-complete pipeline-definitions"
-       --branch (-b): string@"nu-complete git remote branches"
-    ] {
-        let branch = ($branch | default (git rev-parse --abbrev-ref HEAD | str trim))
-        let build = (az pipelines build queue --branch $branch --definition-id $definition_id --output json | from json)
-        let url = ($build.url | str replace "/_apis/build/Builds/" "/_build/results?buildId=")
-
-        let pr = (az repos pr list --source-branch $branch --status active --output json | from json | get 0?)
+        let pr = (
+            az repos pr list --source-branch $branch --status active --output json
+            | from json
+            | get 0?
+        )
         if $pr == null {
             print $"No open PR for ($branch)"
             print ($url | ansi link --text $"🔗 Build ($build.buildNumber)")
@@ -209,7 +226,13 @@ export module ado {
         }
 
         let body = {
-            comments: [{ parentCommentId: 0, content: $"Build queued: ($build.definition.name) [($build.buildNumber)]\(($url)\)", commentType: 1 }]
+            comments: [
+                {
+                    parentCommentId: 0
+                    content: $"Build queued: ($build.definition.name) [($build.buildNumber)]\(($url)\)"
+                    commentType: 1
+                }
+            ]
             status: 1
         }
         let file = (mktemp --suffix .json)
@@ -221,10 +244,9 @@ export module ado {
         print ($url | ansi link --text $"🔗 Build ($build.buildNumber)")
     }
 
-    export def "download artifact" [ build_id: int ] {
+    export def "download artifact" [build_id: int] {
         az pipelines runs artifact download --artifact-name Installer --path ~/Downloads --run-id $build_id
     }
-
 
     # NOTE: https://learn.microsoft.com/en-us/azure/devops/boards/queries/wiql-syntax?view=azure-devops#where-clause
     # active items ['Closed' 'Obsolete' Review 'Info Needed' Implemented] }
@@ -241,7 +263,8 @@ export module ado {
         }
         $table
         | from json
-        | select fields | flatten
+        | select fields
+        | flatten
         | rename --column { System.State: state,
                             System.Id: id,
                             System.WorkItemType: type,
@@ -254,50 +277,61 @@ export module ado {
         | move state --after id
         | move type --after state
         | move title --after type
-
     }
 
     const select_from_workitems = "SELECT [System.Id], [System.WorkItemType], [System.Title], [System.State], [System.IterationPath], [System.CreatedDate], [system.ChangedDate] FROM workitems"
 
     export def "ls bugs" [] {
-        let wiql = [ $select_from_workitems
+        let wiql = [
+            $select_from_workitems
             "WHERE [System.WorkItemType] = 'Bug' AND [system.state] NOT IN ('Closed', 'Obsolete')"
-            "ORDER BY [Microsoft.VSTS.Common.Priority], [System.ChangedDate] ASC" ] | str join ' '
+            "ORDER BY [Microsoft.VSTS.Common.Priority], [System.ChangedDate] ASC"
+        ] | str join ' '
         board query $wiql
     }
 
     export def "ls my stories" [] {
-        let wiql = [ $select_from_workitems
+        let wiql = [
+            $select_from_workitems
             "WHERE [system.assignedto] = @me AND [System.WorkItemType] <> 'Task' AND [system.state] NOT IN ('Closed', 'Obsolete')"
-            "ORDER BY [Microsoft.VSTS.Common.Priority], [System.ChangedDate] ASC" ] | str join ' '
+            "ORDER BY [Microsoft.VSTS.Common.Priority], [System.ChangedDate] ASC"
+        ] | str join ' '
         board query $wiql
     }
 
     export def "ls my tasks" [] {
-        let wiql = [ $select_from_workitems
+        let wiql = [
+            $select_from_workitems
             "WHERE [system.assignedto] = @me AND [System.WorkItemType] = 'Task' AND [system.state] NOT IN ('Closed', 'Obsolete')"
-            " ORDER BY [Microsoft.VSTS.Common.Priority], [System.ChangedDate] ASC" ] | str join ' '
+            " ORDER BY [Microsoft.VSTS.Common.Priority], [System.ChangedDate] ASC"
+        ] | str join ' '
         board query $wiql
     }
 
     export def "ls assigned-to-me" [] {
-        let wiql = [ $select_from_workitems
+        let wiql = [
+            $select_from_workitems
             "WHERE [system.assignedto] = @me AND [system.state] NOT IN ('Closed', 'Obsolete')"
-            "ORDER BY [Microsoft.VSTS.Common.Priority], [System.ChangedDate] ASC"] | str join " "
+            "ORDER BY [Microsoft.VSTS.Common.Priority], [System.ChangedDate] ASC"
+        ] | str join " "
         board query $wiql
     }
 
     export def "ls created-by-me" [] {
-        let wiql = [ $select_from_workitems
+        let wiql = [
+            $select_from_workitems
             "WHERE [System.CreatedBy] = @me AND [system.state]  NOT IN ('Closed', 'Obsolete')"
-            "ORDER BY [System.ChangedDate] ASC" ] | str join ' '
+            "ORDER BY [System.ChangedDate] ASC"
+        ] | str join ' '
         board query $wiql
     }
 
     export def "ls following" [] {
-        let wiql = [ $select_from_workitems
+        let wiql = [
+            $select_from_workitems
             "WHERE [System.ID] IN (@Follows) AND [system.state]  NOT IN ('Closed', 'Obsolete')"
-            "ORDER BY [System.ChangedDate] ASC" ] | str join ' '
+            "ORDER BY [System.ChangedDate] ASC"
+        ] | str join ' '
         board query $wiql
     }
 
@@ -335,7 +369,11 @@ export module ado {
     export def "ls prs mine" [--draft] {
         let my_query = "[].{title: title, createdby: createdBy.displayName, reviewers: reviewers, status: status, repo: repository.name, id: pullRequestId, draft: isDraft, source: sourceRefName, target: targetRefName }"
         let prs = az repos pr list -ojson --query $my_query | from json | where createdby =~ "Francesc" | select id status title draft
-        let prs = if $draft { $prs | where draft } else { $prs | where not draft }
+        let prs = if $draft {
+            $prs | where draft
+        } else {
+            $prs | where not draft
+        }
         $prs | insert ci-status {
             pr status $in.id
             | select status title type | sort-by type status
@@ -343,24 +381,34 @@ export module ado {
         }
     }
 
-    def "nu-complete pr-id" [] { (ls prs mine) | rename -c {id: value,  title: description} }
+    def "nu-complete pr-id" [] {
+        (ls prs mine) | rename -c {id: value,  title: description}
+    }
 
-    export def "pr open" [ pr_id?: number@"nu-complete pr-id" ] {
+    export def "pr open" [pr_id?: number@"nu-complete pr-id"] {
         let pr_id = if ($pr_id | is-empty) {
             let prs = az repos pr list --source-branch $"(git branch --show-current)" --status active | from json
-            if ($prs | length) == 1 { $prs.0.pullRequestId } else { $prs | input list --fuzzy --display title | get pullRequestId }
+            if ($prs | length) == 1 {
+                $prs.0.pullRequestId
+            } else {
+                $prs | input list --fuzzy --display title | get pullRequestId
+            }
         } else {
             $pr_id
         }
         print $"(ansi pb)Opening tab in browser(ansi reset)"
-        az repos pr show --id $pr_id --open  | ignore
+        az repos pr show --id $pr_id --open | ignore
     }
 
     # edit pr description
-    export def "pr edit" [ pr_id?: number@"nu-complete pr-id" ] {
+    export def "pr edit" [pr_id?: number@"nu-complete pr-id"] {
         let pr_id = if ($pr_id | is-empty) {
             let prs = az repos pr list --source-branch $"(git branch --show-current)" --status active | from json
-            if ($prs | length) == 1 { $prs.0.pullRequestId } else { $prs | input list --fuzzy --display title | get pullRequestId }
+            if ($prs | length) == 1 {
+                $prs.0.pullRequestId
+            } else {
+                $prs | input list --fuzzy --display title | get pullRequestId
+            }
         } else {
             $pr_id
         }
@@ -373,7 +421,7 @@ export module ado {
         print $"PR: (ansi pb)($pr_url)(ansi reset) 👈"
     }
 
-    export def "pr rejected-or-expired-policies" [ pr_id: number@"nu-complete pr-id" ] {
+    export def "pr rejected-or-expired-policies" [pr_id: number@"nu-complete pr-id"] {
         ( az repos pr policy list --id $pr_id -ojson | from json
             | where {$in.configuration.isBlocking and $in.configuration.isEnabled}
             | select evaluationId configuration.type.displayName configuration.settings.displayName? status context.isExpired? context.buildId?
@@ -384,7 +432,7 @@ export module ado {
     }
 
     # trigger ci for PR
-    export def "pr ci re-queue" [ pr_id: number@"nu-complete pr-id" ] {
+    export def "pr ci re-queue" [pr_id: number@"nu-complete pr-id"] {
         ( pr rejected-or-expired-policies $pr_id | par-each {
             print $"(ansi pb)\tRe-queueing: ($in.title), previous build ($in.build-id) status=($in.status) expired=($in.expired)(ansi reset)"
             ( az repos pr policy queue --id $pr_id -e $in.id -ojson | from json
@@ -393,21 +441,21 @@ export module ado {
         })
     }
 
-    export def "pr ci watch" [ pr_id: number@"nu-complete pr-id" ] {
-        let pr = (az repos pr show --id  $pr_id | from json )
+    export def "pr ci watch" [pr_id: number@"nu-complete pr-id"] {
+        let pr = az repos pr show --id $pr_id | from json
         let pr_title = $"PR ($pr_id) - ($pr | get title)"
         print $"(ansi pb)Watching(ansi reset) ($pr_title)"
         loop {
-            if (((az repos pr show --id  $pr_id | from json ) | get status) == completed) {
+            if ((az repos pr show --id $pr_id | from json) | get status) == completed {
                 return $"($pr_title) (ansi lgi)completed(ansi reset)"
             }
             let result = pr ci re-queue $pr_id
-            if (not ($result | is-empty)) { print $result }
+            if not ($result | is-empty) { print $result }
             sleep 60sec
         }
     }
 
-    export def "pr show-commits" [ pr_id: number@"nu-complete pr-id" ] {
+    export def "pr show-commits" [pr_id: number@"nu-complete pr-id"] {
         ( az devops invoke
             --area git
             --resource pullRequestCommits
@@ -427,17 +475,20 @@ export module ado {
     }
 
     def "nu-complete workitem open-mine" [] {
-        [ | | { ls my stories }
-          | | { ls my tasks }
-          | | { ls assigned-to-me }
-          | | { ls created-by-me }
-          | | { ls following } ]
-          | par-each { do $in }
-          | flatten
-          | rename -c {id: value,  title: description} | select value description
+        [
+            { ls my stories }
+            { ls my tasks }
+            { ls assigned-to-me }
+            { ls created-by-me }
+            { ls following }
+        ]
+        | par-each { do $in }
+        | flatten
+        | rename -c {id: value,  title: description}
+        | select value description
     }
 
-    export def "workitem open" [ ...workitems: int@"nu-complete workitem open-mine" ] {
+    export def "workitem open" [...workitems: int@"nu-complete workitem open-mine"] {
         if ($in | is-empty) {
             $workitems | each {start $"https://($env.ADO_ORGANIZATION).visualstudio.com/($env.ADO_PROJECT)/_workitems/edit/($in)" }
         } else {
@@ -480,6 +531,4 @@ export module ado {
         ] | str join ' '
         board query $wiql
     }
-
 }
-

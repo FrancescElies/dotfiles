@@ -222,6 +222,7 @@ export def main [--no-restart] {
     ###############################################################################
 
     if is-admin {
+
         # Disable Spotlight indexing for any volume that gets mounted and has not yet
         # been indexed before.
         # Use `sudo mdutil -i off "/Volumes/foo"` to stop indexing any volume.
@@ -264,12 +265,17 @@ export def main [--no-restart] {
 
     # Restart affected applications if `--no-restart` flag is not present.
     if $no_restart {
-        for app in [cfprefsd Dock Finder Mail SystemUIServer Terminal] {
+        for app in [
+            cfprefsd
+            Dock
+            Finder
+            Mail
+            SystemUIServer
+            Terminal
+        ] {
             killall $app
         }
     }
 
     print $"(ansi pb)Please log out and log back in to make all settings take effect(ansi reset)"
-
 }
-
