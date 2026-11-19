@@ -1,5 +1,11 @@
 const repo_dir = path self .
 
+# create directory and cd into it (alias mcd)
+export def --env mkdircd [dir: path] {
+    mkdir $dir
+    cd $dir
+}
+
 # Create a symlink
 def symlink [
     existing: path   # The existing file
@@ -272,19 +278,22 @@ def "install debian packages" [] {
 
 export def "install keyd-remap" [] {
     print $"(ansi purple_bold)install keyd-remap(ansi reset)"
+    mkdircd ~/src/oss
     if not ('~/src/oss/keyd' | path exists) {
-        git clone https://github.com/rvaiya/keyd ~/src/oss/keyd
+        git clone https://github.com/rvaiya/keyd
     }
-    if not ('/usr/local/bin/keyd' | path exists) {
-        cd ~/src/oss/keyd
-        make
-        print $"(ansi pi)sudo make install(ansi reset)"
-        sudo make install
-        print $"(ansi pi)sudo cp ($repo_dir | path join 'config/keyd/default.conf') /etc/keyd/default.conf(ansi reset)"
-        sudo cp ($repo_dir | path join 'config/keyd/default.conf') /etc/keyd/default.conf
-        print $"(ansi pi)sudo systemctl enable --now keyd(ansi reset)"
-        sudo systemctl enable --now keyd
+    if not ('/etc/keyd/default.conf' | path exists) {
+        print $"(ansi pi)keyd already installed(ansi reset)"
+        return
     }
+    cd keyd
+    make
+    print $"(ansi pi)sudo make install(ansi reset)"
+    sudo make install
+    print $"(ansi pi)sudo cp ($repo_dir | path join 'config/keyd/default.conf') /etc/keyd/default.conf(ansi reset)"
+    sudo cp ($repo_dir | path join 'config/keyd/default.conf') /etc/keyd/default.conf
+    print $"(ansi pi)sudo systemctl enable --now keyd(ansi reset)"
+    sudo systemctl enable --now keyd
 }
 
 def "linux setup terminal" [] {
