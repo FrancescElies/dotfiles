@@ -156,29 +156,27 @@ def osc133 [mark: string] {
     print -n $"\e]133;($mark)\e\\"
 }
 
-$env.config.hooks.pre_execution = ($env.config.hooks.pre_execution? | default [] | append {||
+# These hooks are owned by this file and assigned (not appended), so re-sourcing
+# config.nu does not stack duplicate emitters.
+$env.config.hooks.pre_execution = [{||
     osc7501 "working"
     osc133 "C"
-})
+}]
 
-# D (command finished + exit status) must come before A (new prompt)
-$env.config.hooks.pre_prompt = ($env.config.hooks.pre_prompt? | default [] | append {||
-    if ($env.CMD_DURATION_MS? != null) { osc133 $"D;($env.LAST_EXIT_CODE? | default 0)" }
+# Single prompt hook. Order matters: D (command finished + status) before A (new prompt).
+$env.config.hooks.pre_prompt = [{||
+    let ran = ($env.CMD_DURATION_MS? != null)
+    let code = ($env.LAST_EXIT_CODE? | default 0)
+    if $ran { osc133 $"D;($code)" }
     osc133 "A"
-})
-
-# pane title = zellij pane id, refreshed at each prompt
-$env.config.hooks.pre_prompt = ($env.config.hooks.pre_prompt? | default [] | append {||
+    # pane title = zellij pane id, refreshed at each prompt
     print -n $"\e]0;pane ($env.ZELLIJ_PANE_ID? | default '-') ($env.PWD | path basename)\e\\"
-})
-
-$env.config.hooks.pre_prompt = ($env.config.hooks.pre_prompt? | default [] | append {||
-    if ($env.CMD_DURATION_MS? != null) {
-        if ($env.LAST_EXIT_CODE? | default 0) == 0 { osc7501 "done" } else { osc7501 "error" }
+    if $ran {
+        if $code == 0 { osc7501 "done" } else { osc7501 "error" }
     } else {
         osc7501 "idle"
     }
-})
+}]
 
 $env.config.menus ++= [
     {

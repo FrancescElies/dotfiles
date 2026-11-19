@@ -17,7 +17,7 @@ export def excalidraw [] {
 }
 
 # ripgrep->fzf->vim [QUERY]
-export def rg-fzf-vim [] {
+export def rg-fzf-vim [...query: string] {
     let RELOAD = 'rg --column --color=always --smart-case {q}'
     let OPENER = '
         if $env.FZF_SELECT_COUNT == 0 {
@@ -41,7 +41,7 @@ export def rg-fzf-vim [] {
         --delimiter ':'
         --preview 'bat --style=full --color=always --highlight-line {2} {1}'
         --preview-window '~4,+{2}+4/3,<80(up)'
-        --query "$*" )
+        --query ($query | str join ' ') )
 }
 # ripgrep->vim [QUERY]
 export alias rgv = rg-fzf-vim
@@ -65,20 +65,15 @@ export def --env notes []  {
     nvim '+FFFFind'
 }
 
-def "nu-complete projects" [] { {
-    options: { completion_algorithm: fuzzy, case_sensitive: false, positional: false, sort: true, },
-    completions: ( ls ~/src
-                    | append (try {ls --full-paths ~/src/oss})
-                    | append (try {ls --full-paths /s})
-                    | append (try {ls --full-paths /s/my-*/*})
-                    | append (try {ls --full-paths /s/*-worktrees/*})
-                    | append (try {ls --full-paths /s/*-wt/*})
-                    | append (try {ls --full-paths /s/*prj/*})
-                    | where type in [dir, symlink] | get name
-                    | append ~/Downloads
-                    | append ~/Desktop
- )
-}}
+def "nu-complete projects" [] {
+    let patterns = ['~/src/*' '~/src/oss/*' '/s/*' '/s/my-*/*' '/s/*-worktrees/*' '/s/*-wt/*' '/s/*prj/*']
+    # glob --no-file keeps only directories (symlinks to dirs included); missing roots yield nothing
+    let dirs = ($patterns | each {|p| try { glob ($p | path expand) --no-file } catch { [] } } | flatten)
+    {
+        options: { completion_algorithm: fuzzy, case_sensitive: false, positional: false, sort: true, },
+        completions: ($dirs | append (['~/Downloads' '~/Desktop'] | each {|p| $p | path expand }))
+    }
+}
 
 export def --env "goto" [path?: path@"nu-complete projects"] {
     cd (if ($path | is-empty) {
@@ -111,8 +106,8 @@ export alias decompress = ouch decompress
 # extracts archives
 export def "decompress all" [path: path = "."] {
     cd $path
-    ( ls *[tar, zip, bz, bz2, gz, lz4, xz, lzma, tgz, tbz, tlz4, txz, tzlma, tsz, tzst sz, zst, rar]
-    | each { ouch decompress $in.name })
+    glob '*.{tar,zip,bz,bz2,gz,lz4,xz,lzma,tgz,tbz,tlz4,txz,tzlma,tsz,tzst,zst,rar}'
+    | each {|f| ouch decompress $f }
 }
 
 
