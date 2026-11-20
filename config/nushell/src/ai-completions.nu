@@ -1,20 +1,34 @@
-module completions {
+export module ai {
+
+    # Fail early with a clear message if an external tool is missing.
+    def need [cmd: string] {
+        if (which $cmd | is-empty) {
+            error make {msg: $"required command not found: ($cmd)"}
+        }
+    }
+
     export def --wrapped pi [--sandboxed, --share: list<string>, ...args] {
         if $sandboxed {
-            mut mounts = [
-                -v
-                $"(pwd):/workspace"
-                -v
-                $"(($env.HOME)/.pi/agent | path expand):/root/.pi/agent"
-                -v
-                $"(($env.HOME)/.gitconfig | path expand):/root/.gitconfig:ro"
-            ]
+            mut mounts = [-v $"(pwd):/workspace"]
+
+            let agent_dir = $env.HOME | path join ".pi" "agent"
+            if ($agent_dir | path exists) {
+                $mounts = ($mounts | append [-v $"($agent_dir):/root/.pi/agent"])
+            }
+
+            let gitconfig = $env.HOME | path join ".gitconfig"
+            if ($gitconfig | path exists) {
+                $mounts = ($mounts | append [-v $"($gitconfig):/root/.gitconfig:ro"])
+            }
+
             for p in ($share | default []) {
                 let hp = $p | path expand
                 let name = $hp | path basename
                 $mounts = ($mounts | append [-v $"($hp):/shared/($name)"])
             }
-            podman run --rm -it ...$mounts localhost/pi ...$args
+
+            # keep files created in the workspace owned by the host user
+            podman run --rm -it --user $"(id -u):(id -g)" ...$mounts localhost/pi ...$args
             return
         }
         match $nu.os-info.name {
@@ -28,8 +42,9 @@ module completions {
                     print '  fnm default v26'
                     print '  fnm use --install-if-missing --silent-if-unchanged v26'
                     print '  npm install -g --ignore-scripts @earendil-works/pi-coding-agent'
+                    return
                 }
-                print $'running `node ($cli_js)'
+                print $"running node ($cli_js)"
                 fnm exec --using default -- node $cli_js ...$args
             }
             _ => {
@@ -52,7 +67,7 @@ module completions {
     const ai_slop = [
         '- Avoid ai slop'
         `- Avoid Filler openers: "In today's fast-paced world," "It's important to note that"`
-        `- Avoid Hedging boilerplate: "While X, it's worth considering Y"`
+        '- Avoid Hedging boilerplate: "While X, it is worth considering Y"'
         '- Avoid Rule of three everywhere: "robust, scalable, and efficient"'
         '- Avoid Empty summaries: "In conclusion," restating with no new info'
         '- Avoid Overused words: delve, leverage, seamless, tapestry, testament, underscore, elevate'
@@ -65,19 +80,11 @@ module completions {
 
     export alias pi-reviewer = fnm exec --using default -- node --experimental-strip-types ~/src/config.pi/durable/reviewer.ts
 
-    export def pi-polite [] {
-        let header = $ai_slop ++ [
-            '- Remove repetition'
-            '- Keep meaning'
-            '- Keep meaning'
-            '- Be concise'
-            '- Be polite'
-            ''
-            'Given instructions above, fix grammar and rephrase the following text:'
-            ''
-        ]
+    # one companion runs: open editor with instructions, pipe file to pi, cleanup
+    def pi-edit-run [header: list<string>] {
+        need "pi"
         let tmp = (mktemp --suffix .md)
-        $header | to text | save --append $tmp
+        $header | to text | save $tmp
         nvim '+' $tmp
         (pi
             --no-session
@@ -88,6 +95,18 @@ module completions {
             $"@($tmp)"
         )
         rm $tmp
+    }
+
+    export def pi-polite [] {
+        pi-edit-run ($ai_slop ++ [
+            '- Remove repetition'
+            '- Keep meaning'
+            '- Be concise'
+            '- Be polite'
+            ''
+            'Given instructions above, fix grammar and rephrase the following text:'
+            ''
+        ])
     }
 
     export def pi-research [] {
@@ -95,50 +114,32 @@ module completions {
     }
 
     export def pi-translate [] {
-        let header = [
+        pi-edit-run [
             '- Translate to english, and make a very concise summary at the end'
             ''
             'Given instructions above, keep intent and translate to english the following text:'
             ''
         ]
-        let tmp = (mktemp --suffix .md)
-        $header | to text | save --append $tmp
-        nvim '+' $tmp
-        (pi
-            --no-session
-            --model
-            gpt-6-luna
-            --tools
-            read,grep,find,ls
-            $"@($tmp)"
-        )
-        rm $tmp
     }
 
     export def pi-audit [] {
-        let header = [
-            "- Be concise"
+        pi-edit-run [
+            '- Be concise'
             "- Output format: 'Risky: ...' lines"
-            "- Flag overconfident or unverifiable claims"
-            "- Do not rewrite unless asked" ""
-            "Audit the following text for risky/confident-but-sourceless claims. List the risky snippets:"
-            ""
+            '- Flag overconfident or unverifiable claims'
+            '- Do not rewrite unless asked'
+            ''
+            'Audit the following text for risky/confident-but-sourceless claims. List the risky snippets:'
+            ''
         ]
-        let tmp = (mktemp --suffix .md)
-        $header | to text | save --append $tmp
-        nvim '+' $tmp
-        (pi
-            --no-session
-            --model
-            gpt-6-luna
-            --tools
-            read,grep,find,ls
-            $"@($tmp)"
-        )
-        rm $tmp
     }
 
     export def pi-commit-staged [--push(-p)] {
+        let staged = git diff --staged --name-only | str trim
+        if ($staged | is-empty) {
+            print "nothing staged, aborting"
+            return
+        }
         let prompt = "commit staged files"
         let sys = [
             "You just commit staged files"
@@ -157,18 +158,18 @@ module completions {
 
     export def magic-exec [...prompt: string] {
         if ($prompt | is-empty) { error make {msg: "<prompt> missing"} }
+        need "pi"
         let sys = [
             "You translate requests into nushell."
             "Output ONLY a raw JSON object, no markdown, no code fences, no explanation, with two string fields:"
             "1. cmd: a single nu command that does the request with the concrete values given."
-            "2. def: a reusable `export def <kebab-name> [<typed params with sensible defaults>] { ... }` that generalizes the request, turning the concrete values into parameters. Pretty formated"
+            "2. def: a reusable `export def <kebab-name> [<typed params with sensible defaults>] { ... }` that generalizes the request, turning the concrete values into parameters. Pretty formatted."
         ]
         # Only --system-prompt shapes the output: no tools, extensions, skills, templates or context files.
         let raw = (
-           pi --system-prompt ($sys | str join " ") --no-tools --no-extensions --no-skills
+            pi --system-prompt ($sys | str join " ") --no-tools --no-extensions --no-skills
             --no-prompt-templates --no-context-files --no-session -p ($prompt | str join " ")
-           | str trim
-           | str replace -r '^```\w*\s*' '' | str replace -r '\s*```$' '' | str trim)
+            | str trim)
         let out = try {
             $raw | from json
         } catch {
@@ -183,6 +184,7 @@ module completions {
             print ""
         }
         print $"(ansi cyan)($cmd)(ansi reset)"
+        # runs in a child process: $env and cd changes do NOT reach the current shell
         if (input "Run it? [y/N] " | str lowercase) in [y yes] {
             ^nu -c $cmd
         } else {
@@ -190,16 +192,7 @@ module completions {
         }
     }
 
-    export def --env pidocs [] {
-        let root = match $nu.os-info.name {
-            "windows" => (fnm exec --using default -- npm.cmd root -g)
-            _ => (fnm exec --using default -- npm root -g)
-        }
-        let docs = $root | str trim | path join "@earendil-works/pi-coding-agent/docs"
-        nvim -c $'cd ($docs)' -c 'e index.md'
-    }
-
-    export def "download ai-models 32gb" [] {
+    export def "llm download" [] {
 
         # Quantizers:         unsloth, lmstudio-community, bartowski, mradermacher
         # Uncensored makers:  huihui-ai, LuffyTheFox, HauhauCS
@@ -207,15 +200,17 @@ module completions {
         # Alternate 27B quants (swap into the table if wanted):
         #   "*UD-Q4_K_M*"   |  "*UD-IQ4_XS*"
 
+        need "hf"
+
         let base = "~/models" | path expand
 
         let models = [
             [repo, include, dir];
-            [unsloth/Qwen3.6-35B-A3B-GGUF, "*UD-Q4_K_M*", qwen3.6-35b-a3b]
-            [unsloth/Qwen3.8-27B-GGUF, "Qwen3.8-27B-UD-IQ4_XS.gguf", qwen3.8-27b]
-            [huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF, "*abliterated-Q4_K.gguf", qwen3.8-27b-abl]
-            [google/gemma-4-26B-A4B-it-qat-q4_0-gguf, null, gemma-4-26b-a4b]
-            [unsloth/gemma-4-12B-it-qat-GGUF, "*UD-Q4_K_XL*", gemma-4-12b]
+            [unsloth/Qwen3.6-35B-A3B-GGUF, ["*UD-Q4_K_M*" "*mmproj*"], qwen3.6-35b-a3b]
+            [unsloth/Qwen3.8-27B-GGUF, ["Qwen3.8-27B-UD-IQ4_XS.gguf"], qwen3.8-27b]
+            [huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF, ["*abliterated-Q4_K.gguf"], qwen3.8-27b-abl]
+            [google/gemma-4-26B-A4B-it-qat-q4_0-gguf, [], gemma-4-26b-a4b]
+            [unsloth/gemma-4-12B-it-qat-GGUF, ["*UD-Q4_K_XL*"], gemma-4-12b]
         ]
 
         mkdir $base
@@ -227,9 +222,7 @@ module completions {
                 --local-dir
                 ($base | path join $m.dir)
             ]
-            if $m.include != null {
-                $args = ($args | append [--include $m.include])
-            }
+            for i in ($m.include | default []) { $args = ($args | append [--include $i]) }
             print $"==> ($m.repo)"
             ^hf ...$args
         }
@@ -243,9 +236,9 @@ module completions {
     # Pick the main GGUF in a folder: skip mmproj files, prefer shard 00001, else the shallowest file
     def find-gguf [dir: string] {
         let files = (
-        glob $"($dir)/**/*.gguf"
-        | where {|f| not ($f | str lowercase | str contains "mmproj") }
-    )
+            glob $"($dir)/**/*.gguf"
+            | where {|f| not ($f | str lowercase | str contains "mmproj") }
+        )
         if ($files | is-empty) { error make {msg: $"no .gguf found in ($dir)"} }
 
         let shard1 = $files | where {|f| $f =~ '-00001-of-\d+\.gguf$' }
@@ -259,40 +252,33 @@ module completions {
     export def "llm list" [] {
         let base = "~/models" | path expand
         model-names | each {|n|
-        let f = find-gguf ($base | path join $n)
-        { model: $n, file: ($f | path basename), size: (ls $f | first | get size) }
-    }
+            let f = find-gguf ($base | path join $n)
+            { model: $n, file: ($f | path basename), size: (ls $f | first | get size) }
+        }
     }
 
-    # ---- profile defaults -------------------------------------------------------
-    # ctx = context window (tokens), b = logical batch, ub = physical batch (prefill
-    # chunk), kv = KV-cache type.
+    # profile defaults
+    # (prefill chunk), kv = KV-cache type.
+
     const DEFAULTS = {
-        ctx: 16384
-        b: 2048
-        ub: 512
+        ctx: 16384 # ctx = context window (tokens)
+        b: 2048 # b = logical batch
+        ub: 512 # ub = physical batch
         kv: "f16"
     }
 
-    # Memory budget on 32 GB shared RAM: ~4-6 GB for the OS and apps, the rest for
-    # model weights + KV cache + scratch buffers.
+    # Note: Values are starting points, not measured optima.
     def builtin-profiles [] {
-        [[model             ctx   ub    kv      why];
-     # ~21 GB weights leaves only ~5-6 GB for everything else, so KV is quantized
-     # to q8_0 as a precaution (halves KV memory). MoE with 3B active -> a larger
-     # ubatch (1024) feeds the GPU bigger chunks during prefill. Both are guesses.
-     ["qwen3.6-35b-a3b" 32768 1024 "q8_0"  "tight RAM: q8 KV; MoE: bigger ubatch"]
-     # ~13 GB (UD-IQ4_XS), so plenty of headroom: keep f16 KV for quality.
-     # Dense models do far more compute per token, so the default ubatch (512)
-     # is a safe start; larger batches use more scratch memory for little gain (guess).
-     ["qwen3.8-27b"     32768 512  "f16"    "dense: default ubatch, ample RAM"]
-     # ~16 GB (Q4_K): same reasoning as the dense 27B.
-     ["qwen3.8-27b-abl" 32768 512  "f16"    "dense, ~16 GB: default ubatch"]
-     # 14.4 GB QAT, 3.8B active MoE: bigger ubatch like the other MoE. f16 KV fits
-     # easily. KV size for Gemma 4 not verified, so lower ctx if it swaps.
-     ["gemma-4-26b-a4b" 32768 1024 "f16"    "MoE, 14.4 GB: bigger ubatch, f16 KV"]
-     # ~8 GB, tiny footprint: bigger ubatch costs little memory, f16 KV is fine.
-     ["gemma-4-12b"     32768 1024 "f16"    "small: bigger ubatch is cheap"]]
+        let small_ctx = 32768
+        let big_ctx = 65536
+        [
+            [model, ctx, ub, kv, why];
+            ["qwen3.6-35b-a3b", $small_ctx, 512, "q8_0", "MoE ~21 GB, 3B active: fastest decode"]
+            ["gemma-4-26b-a4b", $big_ctx, 512, "f16", "MoE ~14 GB, 3.8B active"]
+            ["qwen3.8-27b", $small_ctx, 512, "q8_0", "dense ~13 GB: slow decode"]
+            ["gemma-4-12b", $big_ctx, 512, "f16", "small ~8 GB"]
+            ["qwen3.5-9b", $big_ctx, 512, "f16", "fast helper"]
+        ]
     }
 
     def tuned-path [] {
@@ -301,31 +287,108 @@ module completions {
 
     # Precedence: CLI flag > tuned file > built-in table > DEFAULTS
     def profile-for [name: string] {
-        let tuned = if (tuned-path | path exists) { open (tuned-path) } else { [] }
+        let tuned = if (tuned-path | path exists) {
+            open (tuned-path)
+        } else {
+            []
+        }
+
         let b = (
             builtin-profiles
             | where model == $name
             | get -o 0
             | default {}
         )
+
         let t = (
             $tuned
             | where model == $name
             | get -o 0
             | default {}
         )
+
         $DEFAULTS | merge $b | merge $t
     }
 
-    # Show the built-in profiles with their reasoning, plus any tuned overrides
+    # Reports devices exposed by the llama.cpp executable.
+    def llama-device-info [] {
+        let r = (try {
+            ^llama server --list-devices | complete
+        } catch {
+            null
+        })
+
+        if $r == null {
+            return {
+                backend: "unknown"
+                output: "Could not execute llama server --list-devices"
+            }
+        }
+
+        let output = $"($r.stdout)\n($r.stderr)"
+
+        let backend = if ($output | str contains "SYCL") {
+            "SYCL"
+        } else if ($output | str contains "Vulkan") {
+            "Vulkan"
+        } else if ($output | str contains "CUDA") {
+            "CUDA"
+        } else if ($output | str contains "CPU") {
+            "CPU / GPU not detected"
+        } else {
+            "unknown"
+        }
+
+        {backend: $backend, output: $output}
+    }
+
+    # Show available compute devices.
+    export def "llm devices" [] {
+        let info = (llama-device-info)
+
+        print $"llama.cpp backend: ($info.backend)"
+        print $info.output
+
+        print "\nIntel SYCL runtime:"
+        try {
+            ^sycl-ls
+        } catch {
+            print "sycl-ls unavailable."
+        }
+
+        print "\nGPU device nodes:"
+        ls -l /dev/dri/
+    }
+
+    # memory diagnostics
+    export def "llm memory" [] {
+        print "System memory:"
+        ^free -h
+
+        print "\nLargest memory consumers:"
+        ^ps -eo pid,comm,rss,%mem --sort=-rss
+        | head -n 16
+
+        print "\nSwap:"
+        ^swapon --show
+    }
+
+    # list profiles
     export def "llm profiles" [] {
-        let tuned = if (tuned-path | path exists) { open (tuned-path) } else { [] }
+        let tuned = if (tuned-path | path exists) {
+            open (tuned-path)
+        } else {
+            []
+        }
+
         print "Built-in:"
         print (builtin-profiles | select model ctx ub kv why)
-        print "Tuned (override ub):"
+
+        print "Tuned overrides:"
         print $tuned
     }
 
+    # run model
     export def "llm run" [
         name?: string@model-names
         --ctx(-c): int
@@ -337,33 +400,43 @@ module completions {
         --cli
         ...extra: string
     ] {
+        need "llama"
+
         let base = "~/models" | path expand
+
         let model = if $name == null {
             model-names | input list "Model"
         } else {
             $name
         }
+
         if $model == null { return }
 
         let dir = $base | path join $model
         let gguf = (find-gguf $dir)
         let p = (profile-for $model)
+
         let c = $ctx | default $p.ctx
         let u = $ub | default $p.ub
-        let b = ([$p.b $u] | math max) # logical batch must be >= physical batch
+        # logical batch: at least ubatch, never larger than ctx
+        let b = [
+            ([$p.b $u] | math max)
+            $c
+        ] | math min
+
+        let device = (llama-device-info)
 
         # Flags:
-        #  -m        model file
-        #  -c        context window; Pi's prompt is ~16K tokens in your log, so 16384
-        #            leaves no room and 32768 is the next step up (KV memory scales with it)
-        #  -ngl 99   offload all layers to the iGPU
-        #  -fa on    flash attention; also required for quantized KV (-ctk/-ctv)
-        #  -np 1     one slot: all context goes to one conversation and one prompt cache
-        #            (more slots split the context and cache)
-        #  -b / -ub  logical/physical batch; prefill speed depends mainly on -ub
-        #  -ctk/-ctv KV-cache type (f16 = full quality, q8_0 = half the memory)
-        #  --alias   model name the API reports, so Pi's models.json id matches
-        #  --jinja   use the model's chat template, needed for tool calls
+        # -m          model file
+        # -c          context window
+        # -ngl        number of layers to offload
+        # -fa on      flash attention
+        # -np 1       single inference slot
+        # -b / -ub    logical / physical batch
+        # -ctk / -ctv  KV-cache type
+        # --alias     API model name
+        # --jinja     use model chat template
+
         mut args = [
             -m
             $gguf
@@ -390,7 +463,10 @@ module completions {
 
         if $vision {
             let mm = (glob $"($dir)/**/*mmproj*.gguf")
-            if ($mm | is-empty) { print "No mmproj found, text-only." } else {
+
+            if ($mm | is-empty) {
+                print "No mmproj found, text-only."
+            } else {
                 $args = ($args | append [
                     --mmproj
                     ($mm | first)
@@ -398,7 +474,9 @@ module completions {
             }
         }
 
-        print $"==> ($gguf | path basename)  ctx=($c) ub=($u) kv=($p.kv)"
+        print $"Compute backend: ($device.backend)"
+        print $"==> ($gguf | path basename) ctx=($c) ub=($u) kv=($p.kv) ngl=($ngl)"
+
         if $cli {
             ^llama cli ...$args ...$extra
         } else {
@@ -407,52 +485,134 @@ module completions {
         }
     }
 
-    # Benchmark ubatch sizes and save the fastest as this model's profile
-    export def "llm tune" [
-    name?: string@model-names
-    --ubs: string = "256,512,1024,2048"   # candidates to try
-    --prompt (-p): int = 2048             # prompt length for the test
-] {
+    # Benchmark physical batch sizes and save the fastest for this model.
+    export def "llm tune" [name?: string@model-names, --ubs: string = "256,512,1024,2048", --prompt(-p): int = 2048] {
+        need "llama"
+
         let base = "~/models" | path expand
+
         let model = if $name == null {
             model-names | input list "Model"
         } else {
             $name
         }
+
         if $model == null { return }
+
         let gguf = find-gguf ($base | path join $model)
+        let p = (profile-for $model)
 
         print $"==> benchmarking ($model), ubatch: ($ubs)"
+
         let rows = (
-        ^llama bench -m $gguf -ngl 99 -fa 1 -p $prompt -n 128 -b 2048 -ub $ubs -r 2 -o json
-        | from json
-    )
+            ^llama bench -m $gguf -ngl 99 -fa on -p $prompt -n 128 -b $p.b -ub $ubs -r 2 -o json | from json
+        )
 
         let pp = $rows | where n_prompt > 0 | sort-by avg_ts --reverse
+        let best = $pp | first
+
+        # decode speed of the best ubatch, not a mean across all ubatches
         let tg = (
             $rows
-            | where n_gen > 0
+            | where n_gen > 0 and n_ubatch == $best.n_ubatch
             | get avg_ts
             | math avg
             | math round
         )
-        let best = $pp | first
 
         print ($pp | select n_ubatch avg_ts)
-        print $"best ubatch: ($best.n_ubatch) \(prompt ~($best.avg_ts | math round) tok/s, decode ~($tg) tok/s\)"
+        print $"best ubatch: ($best.n_ubatch) [prompt ~($best.avg_ts | math round) tok/s, decode ~($tg) tok/s]"
 
         let path = (tuned-path)
+
         let old = if ($path | path exists) {
             open $path | where model != $model
         } else {
             []
         }
+
         $old
-        | append { model: $model, ub: $best.n_ubatch, pp: ($best.avg_ts | math round), tg: $tg }
+        | append {
+            model: $model
+            ub: $best.n_ubatch
+            pp: ($best.avg_ts | math round)
+            tg: $tg
+            ctx: $p.ctx
+        }
         | save -f $path
     }
 
-    # Write/refresh the llama-cpp provider in Pi's models.json (keeps other providers, backs up the old file)
+    # Compare different GPU layer offload levels.
+    export def "llm compare" [
+        name?: string@model-names
+        --ngls: string = "0,8,16,24,99"
+        --prompt(-p): int = 2048
+        --gen(-n): int = 128
+    ] {
+        need "llama"
+
+        let base = "~/models" | path expand
+
+        let model = if $name == null {
+            model-names | input list "Model"
+        } else {
+            $name
+        }
+
+        if $model == null { return }
+
+        let dir = $base | path join $model
+        let gguf = (find-gguf $dir)
+        let p = (profile-for $model)
+
+        let candidates = (
+            $ngls
+            | split row ","
+            | each {|n| $n | str trim | into int }
+        )
+
+        let device = (llama-device-info)
+
+        print $"==> Comparing ($model)"
+        print $"Backend: ($device.backend)"
+        print $"Prompt: ($prompt), generation: ($gen)"
+        print $"Ubatch: ($p.ub), logical batch: ($p.b)"
+
+        for n in $candidates {
+            print $"\n--- GPU layers: ($n) ---"
+
+            let result = (try {
+                ^llama bench -m $gguf -ngl $n -fa on -p $prompt -n $gen -b $p.b -ub $p.ub -r 2 -o json | complete
+            } catch {
+                null
+            })
+
+            if $result == null {
+                print "Benchmark failed."
+            } else if $result.exit_code == 0 {
+                # compact table when parseable, raw output otherwise
+                let parsed = (
+                    try {
+                        $result.stdout | from json
+                    } catch {
+                        null
+                    }
+                )
+                if $parsed == null {
+                    print $result.stdout
+                } else {
+                    let table = ($parsed
+                        | try { select n_ubatch n_prompt n_gen avg_ts } catch { null })
+                    if $table == null { print $result.stdout } else { print $table }
+                }
+            } else {
+                print $result.stderr
+                print ("Failed (exit code: " + ($result.exit_code | into string) + ").")
+            }
+        }
+    }
+
+    # Write/refresh llama.cpp provider in Pi's models.json.
     export def "llm pi-setup" [--port(-p): int = 8080, --host: string = "localhost"] {
         let cfg = "~/.pi/agent/models.json" | path expand
         mkdir ($cfg | path dirname)
@@ -460,9 +620,12 @@ module completions {
         let existing = if ($cfg | path exists) {
             cp $cfg $"($cfg).bak"
             open $cfg
-        } else { {} }
+        } else {
+            {}
+        }
 
         let providers = $existing | get -o providers | default {}
+
         let llama = {
             baseUrl: $"http://($host):($port)/v1"
             api: "openai-completions"
@@ -477,19 +640,19 @@ module completions {
         print $"Wrote ($cfg)"
     }
 
-    # Launch Pi against a model (the server must already be running via `llm run`)
-    export def "llm pi" [name?: string@model-names] {
+    # Launch Pi against a model (server must already be running).
+    export def --wrapped "llm pi" [name?: string@model-names, ...rest] {
         let model = if $name == null {
             model-names | input list "Model"
         } else {
             $name
         }
+
         if $model == null { return }
-        ^pi --provider llama-cpp --model $model
+
+        ^pi --provider llama-cpp --model $model ...$rest
     }
 }
-
-export use completions *
 
 # # See what's installed and the reasoning for each profile
 # llm list
