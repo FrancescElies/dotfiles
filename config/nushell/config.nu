@@ -241,7 +241,7 @@ $env.config.keybindings ++= [
     }
     {
         name: open_editor
-        modifier: control
+        modifier: alt
         keycode: char_g # pi uses same keybind
         mode: [vi_normal, vi_insert]
         event: {send: OpenEditor}
