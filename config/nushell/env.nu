@@ -2,11 +2,17 @@
 
 # Nushell Environment Config File
 #
+# Windows may inherit both PATH and Path. Remove alternate spellings at the
+# top level before changing PATH, so child processes cannot pick a stale value.
+let initial_path = $env.PATH
+let path_aliases = $env | columns | where {|name| ($name | str lowercase) == path and $name != PATH }
+for name in $path_aliases { hide-env $name }
+$env.PATH = $initial_path
 
 match $nu.os-info.name {
     "windows" => {
         $env.HOME = ('~' | path expand)
-        $env.path ++= [
+        $env.PATH ++= [
             '~/AppData/Local/bob/nvim-bin'
             '~/AppData/Roaming/Python/Python312/Scripts'
             '~/AppData/Roaming/Python/Scripts'
@@ -29,7 +35,7 @@ match $nu.os-info.name {
            /opt/homebrew/opt/make/libexec/gnubin
            /opt/homebrew/opt/util-linux/bin
        ])
-        $env.path ++= [
+        $env.PATH ++= [
             '~/.local/share/bob/nvim-bin'
             '/opt/homebrew/bin'
             '/opt/podman/bin'
@@ -38,7 +44,7 @@ match $nu.os-info.name {
         ]
     }
     "linux" => {
-        $env.path ++= [
+        $env.PATH ++= [
             '~/.local/share/bob/nvim-bin'
             '/home/linuxbrew/.linuxbrew/bin'
             '/usr/local/bin'
@@ -48,11 +54,11 @@ match $nu.os-info.name {
             '~/.local/share/flatpak/exports/share'
         ]
     }
-    _ => { $env.path = $env.path }
+    _ => { }
 }
 
 # common paths
-$env.path ++= [
+$env.PATH ++= [
     ~/.bun/bin
     '~/.zvm/bin'
     '~/.zvm/self'
@@ -65,9 +71,12 @@ $env.path ++= [
     '~/bin'
     '~/src/dotfiles/bin/'
 ]
-try { $env.path ++= (ls ~/bin | where type == dir | get name) }
-try { $env.path ++= (ls ~/bin/*/bin | get name) }
-try { $env.path ++= (ls /usr/local/*/bin | get name) }
+try { $env.PATH ++= (ls ~/bin | where type == dir | get name) }
+try { $env.PATH ++= (ls ~/bin/*/bin | get name) }
+try { $env.PATH ++= (ls /usr/local/*/bin | get name) }
+
+# Expand our additions before resolving fnm (which may itself live in ~/bin).
+$env.PATH = ($env.PATH | each {|entry| $entry | path expand } | uniq)
 
 if (which fnm | is-not-empty) {
     ^fnm env --json | from json | load-env
@@ -75,15 +84,11 @@ if (which fnm | is-not-empty) {
         $env.FNM_MULTISHELL_PATH
         | path join (if $nu.os-info.name == 'windows' { '' } else { 'bin' })
     )
-    $env.config.hooks.env_change.PWD = (
-        $env.config.hooks.env_change.PWD? | append {
-            condition: {|| ['.nvmrc' '.node-version', 'package.json'] | any {|el| $el | path exists}}
-            code: {|| ^fnm use --install-if-missing --silent-if-unchanged}
-        }
-    )
+    # The PWD hook is registered in config.nu alongside the other project hooks.
 }
 
-$env.path = ($env.path | uniq)
+# Normalize fnm's additions too, keeping PATH stable when env.nu is re-sourced.
+$env.PATH = ($env.PATH | each {|entry| $entry | path expand } | uniq)
 
 $env.SHELL = "nu" # makes broot open nu
 $env.EDITOR = "nvim"

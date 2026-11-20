@@ -96,11 +96,12 @@ def "nu-complete projects" [] {
 }
 
 export def --env "goto" [path?: path@"nu-complete projects"] {
-    cd (if ($path | is-empty) {
+    let selection = if ($path | is-empty) {
+        try {
             (nu-complete projects).completions | input list --fuzzy $"Goto (ansi mu)project(ansi reset):"
-        } else {
-            $path
-    })
+        } catch { null }
+    } else { $path }
+    if ($selection | is-not-empty) { cd $selection }
 }
 
 # # create big file

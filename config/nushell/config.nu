@@ -19,6 +19,7 @@ use ~/src/dotfiles/config/nushell/src/ado-completions.nu *
 use ~/src/dotfiles/config/nushell/src/broot.nu *
 use ~/src/dotfiles/config/nushell/src/cargo-completions.nu *
 use ~/src/dotfiles/config/nushell/src/clipboard.nu *
+use ~/src/dotfiles/config/nushell/src/config-runtime.nu *
 use ~/src/dotfiles/config/nushell/src/docs.nu * # NOTE: a bit slow
 use ~/src/dotfiles/config/nushell/src/fd-completions.nu *
 use ~/src/dotfiles/config/nushell/src/zellij-status.nu *
@@ -87,12 +88,14 @@ $env.config.cursor_shape = {
 
 $env.config.edit_mode = "vi"
 
+# Project hooks have one owner; env.nu only initializes fnm's environment.
+# Trust is exact-directory and defaults to an empty persistent allowlist.
 def "env-change pwd toolkit" [--directory] {
     {
         condition: (if $directory {
-            {|_, after| $after | path join 'toolkit' 'mod.nu' | path exists }
+            {|_, after| (project is-trusted $after) and ($after | path join 'toolkit' 'mod.nu' | path exists) }
         } else {
-            {|_, after| $after | path join 'toolkit.nu' | path exists }
+            {|_, after| (project is-trusted $after) and ($after | path join 'toolkit.nu' | path exists) }
         })
         code: ([
             "print -n $'(ansi defu)(ansi defb)toolkit(ansi reset) module (ansi yi)detected(ansi reset)... '"
@@ -102,50 +105,36 @@ def "env-change pwd toolkit" [--directory] {
     }
 }
 
-$env.config.hooks.env_change = {
-    PWD: [
+# Preserve third-party hooks; replace only entries tagged as ours on re-source.
+$env.config.hooks.env_change.PWD = (
+    $env.config.hooks.env_change.PWD? | default []
+    | where {|hook| not ($hook.__dotfiles_hook? | default false) }
+    | append ([
+        # Drop the previous project's env overlay before loading another one.
+        {
+            condition: {|| 'project-env' in (overlay list | get name) }
+            code: 'overlay hide project-env'
+        }
         (env-change pwd toolkit)
         (env-change pwd toolkit --directory)
         {
-            condition: {|_, after| (
-                ( (pwd | path basename) != "dotfiles/config/nushell" )
-                and ( (pwd | path basename) != "nushell"  )
-                and ( $after | path join env.nu | path exists )
-            ) }
-            code: "overlay use env.nu"
+            condition: {|_, after| (project is-trusted $after) and ($after | path join env.nu | path exists) }
+            code: "overlay use env.nu as project-env"
         }
-        # # windows activate venv
-        # {
-        #     condition: {|before, after|
-        #         (not ('activate' in (overlay list))) and ($after | path join ".venv/Scripts/activate.nu" | path exists)
-        #     }
-        #     code: 'overlay use .venv/Scripts/activate.nu'
-        # }
-        # # unix like activate venv
-        # {
-        #     condition: {|before, after|
-        #         (not ('activate' in (overlay list))) and ($after | path join ".venv/bin/activate.nu" | path exists)
-        #     }
-        #     code: 'overlay use .venv/bin/activate.nu'
-        # }
-        # {
-        #     condition: {|before, after| [.nvmrc .node-version] | path exists | any { |it| $it }}
-        #     code: {|before, after| if ('FNM_DIR' in $env) { fnm use } }
-        # }
-        # https://github.com/nushell/nu_scripts/blob/main/nu-hooks/nu-hooks/rusty-paths/rusty-paths.nu
         {
-            condition: {|_, after| ($after | path join 'Cargo.lock' | path exists) }
-            code: {
-                $env.path ++= [
-                    ($env.PWD | path join 'target/debug')
-                    ($env.PWD | path join 'target/debug/examples')
-                    ($env.PWD | path join 'target/release')
-                    ($env.PWD | path join 'target/release/examples')
-                ]
-            }
+            condition: {|_, after| (
+                ($env.FNM_MULTISHELL_PATH? != null)
+                and (project is-trusted $after)
+                and (['.nvmrc' '.node-version' 'package.json'] | any {|file| $after | path join $file | path exists })
+            ) }
+            code: {|| ^fnm use --install-if-missing --silent-if-unchanged }
         }
-    ]
-}
+        { code: {|_, after| project sync-path $after } }
+    ] | each {|hook| $hook | insert __dotfiles_hook true })
+)
+
+# Also clear stale Rust paths after re-sourcing or restarting in another directory.
+project sync-path $env.PWD
 
 # OSC 133 semantic prompt marks (read by zellij for the inbox: done/failed commands).
 # Emitted by hand because the built-in `shell_integration.osc133` causes autoscroll issues.
@@ -179,6 +168,8 @@ $env.config.hooks.pre_prompt = [
     }
 ]
 
+# Remove our own entries before appending, without replacing Nu's default menus.
+$env.config.menus = ($env.config.menus | where {|menu| $menu.name != abbr_menu })
 $env.config.menus ++= [
     {
         name: abbr_menu
@@ -191,9 +182,9 @@ $env.config.menus ++= [
             col_padding: 2
         }
         style: {text: green, selected_text: green_reverse, description_text: yellow}
-        source: {|buffer, position|
+        source: {|token|
             scope aliases
-            | where name == $buffer
+            | where name == $token.text
             | each {|elt| {value: $elt.expansion }}
         }
     }
@@ -203,6 +194,13 @@ $env.config.menus ++= [
 #
 # https://www.nushell.sh/book/line_editor.html#vi-normal-actions
 # keycodes: none control alt shift shift_alt alt_shift control_alt alt_control control_shift shift_control control_alt_shift control_shift_alt
+const dotfiles_binding_names = [
+    abbr fzf_files find_file_and_edit open_editor go_Up_to_root_dir
+    jump_to_subdir jump_to_project fuzzy_module
+]
+$env.config.keybindings = (
+    $env.config.keybindings | where {|binding| $binding.name not-in $dotfiles_binding_names }
+)
 $env.config.keybindings ++= [
     # https://www.nushell.sh/blog/2024-05-15-top-nushell-hacks.html
     {
@@ -223,12 +221,7 @@ $env.config.keybindings ++= [
         event: [
             {
                 send: executehostcommand
-                cmd: "
-                commandline edit --insert (
-                  fd --type file --hidden
-                  | fzf --preview 'bat --color=always --style=full --line-range=:500 {}'
-                );
-            "
+                cmd: "pick file insert"
             }
         ]
     }
@@ -248,7 +241,7 @@ $env.config.keybindings ++= [
     }
     {
         name: go_Up_to_root_dir
-        modifier: control
+        modifier: alt
         keycode: char_u
         mode: [emacs, vi_normal, vi_insert]
         event: {send: executehostcommand, cmd: "cdroot"}
@@ -261,7 +254,7 @@ $env.config.keybindings ++= [
         event: [
             {
                 send: executehostcommand
-                cmd: " cd ( fd --type dir --hidden | lines | input list --fuzzy ) "
+                cmd: "pick directory"
             }
         ]
     }
@@ -280,19 +273,7 @@ $env.config.keybindings ++= [
         mode: [emacs, vi_normal, vi_insert]
         event: {
             send: executehostcommand
-            cmd: '
-               commandline edit --replace "use "
-               commandline edit --insert (
-                   $env.NU_LIB_DIRS
-                   | each { |dir| cd $dir; ls *.nu }
-                   | flatten
-                   | get name
-                   | input list --fuzzy
-                       $"Please choose a (ansi magenta)module(ansi reset) to (ansi cyan_underline)load(ansi reset):"
-               )
-               commandline edit --append " *"
-               commandline set-cursor --end
-           '
+            cmd: 'pick module'
         }
     }
 
