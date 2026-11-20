@@ -1,4 +1,5 @@
 # https://github.com/nushell/nu_scripts/blob/main/custom-completions/just/just-completions.nu
+use config-runtime.nu "nu completion-word"
 
 # official completion from `just --completion nushell`
 def get-recipes [] {
@@ -73,12 +74,14 @@ def "nu-complete just" [] {
     }
 }
 
-def "nu-complete args" [context: string, offset: int] {
-    let r = $context | split row ' '
-    let name = $r.1
-    # First two are 'just' and name, minus one because `get-just-args` is zero-indexed
-    let position = ($r | length) - 3
-
+def "nu-complete args" [place: record] {
+    # Let Nu handle quoted arguments, aliases, and command boundaries.
+    let words = $place.command | skip 1 | each {|word| nu completion-word $word }
+    let names = get-recipes | get recipe
+    let recipe_index = $words | enumerate | where {|word| $word.item in $names } | get -o 0.index
+    if $recipe_index == null { return [] }
+    let name = $words | get $recipe_index
+    let position = ($words | length) - $recipe_index - 2
     get-just-arg $name $position
 }
 
@@ -86,29 +89,22 @@ def "nu-complete args" [context: string, offset: int] {
 def get-just-arg [name: string, position: int] {
     let recipes = (
         get-recipes
-            | where {|r| $r.name == $name }
+            | where {|r| $r.recipe == $name }
             | get parameters
             | flatten)
-    let len = $recipes | length
-    if $position > ($recipes | length) {
-        [[value, description]; ["", "No more args"]]
+    if $position < 0 or $position >= ($recipes | length) {
+        []
     } else {
-        $recipes
-        | get $position
-        | each {|recipe|
-                let name = $recipe.name
-                if not ($recipe.default | is-empty) {
-                    [[value description];
-                        [$recipe.default $"'($name)' (ansi green)\(default\)(ansi reset)"]
-                        ["" $name]]
-                } else {
-                    # Need two empty different values
-                    # Otherwise they get filtered and empty value gets inserted automatically
-                    [[value description];
-                        [null $"'($name)'"]
-                        [' '  $"'($name)'"]]
-                }
-          }
+        let parameter = $recipes | get $position
+        if ($parameter.default | is-empty) {
+            # Decline rather than emitting invalid placeholder suggestions.
+            null
+        } else {
+            [{
+                value: $parameter.default
+                description: $"'($parameter.name)' (ansi green)\(default\)(ansi reset)"
+            }]
+        }
     }
 }
 
@@ -127,6 +123,7 @@ def "nu-complete just assignments" [] {
 # Just: A Command Runner. A handy way to save and run project-specific commands.
 export extern "just" [
     recipe?:string@"nu-complete just"               # Recipe to execute
+    ...args: string@"nu-complete args"              # Recipe arguments
     --changelog                                     # Print changelog
     --check                                         # Run `--fmt` in 'check' mode. Exits with 0 if justfile is formatted correctly. Exits with 1 and prints a diff if formatting is required.
     --choose                                        # Select one or more recipes to run using a binary chooser. If `--chooser` is not passed the chooser defaults to the value of $JUST_CHOOSER, falling back to `fzf`

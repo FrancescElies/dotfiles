@@ -16,7 +16,6 @@ def "nu-complete git remote branches with prefix" [] {
         options: {
             completion_algorithm: fuzzy
             case_sensitive: false
-            positional: false
             sort: true
         }
         completions: (

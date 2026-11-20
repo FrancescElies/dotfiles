@@ -24,7 +24,6 @@ def "nu-complete pages" [] {
         options: {
             case_sensitive: false
             completion_algorithm: fuzzy # fuzzy or prefix
-            positional: false
             sort: true
         }
         completions: (apropos . | parse --regex '^(?P<value>.*?)\s+.*?- (?P<description>.*?)$')

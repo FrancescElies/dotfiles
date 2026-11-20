@@ -1,4 +1,5 @@
 # https://github.com/nushell/nu_scripts/blob/main/custom-completions/git/git-completions.nu
+use config-runtime.nu "nu completion-word"
 
 module git-completion-utils {
     export const GIT_SKIPABLE_FLAGS = [
@@ -164,13 +165,15 @@ def "nu-complete git switch" [] {
     }
 }
 
-export def "nu-complete git checkout" [context: string, position?: int] {
+export def "nu-complete git checkout" [place: record] {
     use git-completion-utils *
-    let preceding = $context | str substring ..$position
     # See what user typed before, like 'git checkout a-branch a-path'.
     # We exclude some flags from previous tokens, to detect if  a branch name has been used as the first argument.
     # FIXME: This method is still naive, though.
-    let prev_tokens = $preceding | str trim | args-split | where ($it not-in $GIT_SKIPABLE_FLAGS)
+    # Known multi-word externs may have a combined head ("git checkout").
+    let prev_tokens = ($place.command | first | split row ' ')
+        | append ($place.command | skip 1 | each {|word| nu completion-word $word })
+        | where {|word| $word not-in $GIT_SKIPABLE_FLAGS }
     # In these scenarios, we suggest only file paths, not branch:
     # - After '--'
     # - First arg is a branch
@@ -182,7 +185,7 @@ export def "nu-complete git checkout" [context: string, position?: int] {
         return (get-checkoutable-files)
     }
     # Already typed first argument.
-    if ($prev_tokens | length) > 2 and $preceding ends-with ' ' {
+    if ($place.index? | default 0) > 0 {
         # If we are creating a new branch, we may want to specify a start point
         if ("-b" not-in $prev_tokens) and ("-B" not-in $prev_tokens) and ("--orphan" not-in $prev_tokens) {
             return (get-checkoutable-files)
@@ -417,16 +420,13 @@ export extern "git fetch" [
 ]
 
 # Yield local branches and (if remote is specified) remote branches with colon prefix
-def "nu-complete git push" [context: string, position: int] {
+def "nu-complete git push" [place: record] {
     use git-completion-utils *
-    let preceding = $context | str substring ..$position
-    let tokens = $preceding | str trim | args-split | where ($it not-in $GIT_SKIPABLE_FLAGS)
+    let tokens = ($place.command | first | split row ' ')
+        | append ($place.command | skip 1 | each {|word| nu completion-word $word })
+        | where {|word| $word not-in $GIT_SKIPABLE_FLAGS }
 
-    # Check if we have a remote argument (2nd token, 1st is 'git', 2nd is 'push', 3rd is remote)
-    # BUT, args-split might be different depending on how it's called.
-    # "git push origin" -> ["git", "push", "origin"]
-    # If we have at least 3 tokens, the 3rd one IS likely the remote.
-    # We should double check if the 3rd token is actually a remote.
+    # Arguments are already tokenized and alias-expanded by Nushell.
 
     mut remote = ""
     if ($tokens | length) >= 3 {

@@ -9,10 +9,9 @@ def "nu-complete max-version" [] {
         options: {
             completion_algorithm: fuzzy
             case_sensitive: false
-            positional: false
             sort: true
         }
-        completions: ([912 914 921])
+        completions: (['912' '914' '921'])
     }
 }
 export def --env "Max use" [version?: string@"nu-complete max-version"] {
@@ -76,7 +75,6 @@ def "nu-complete maxpats" [] {
         options: {
             completion_algorithm: fuzzy
             case_sensitive: false
-            positional: false
             sort: true
         }
         completions: (fd maxpat | lines)
@@ -116,7 +114,6 @@ def "nu-complete maxloglevel" [] {
         options: {
             completion_algorithm: fuzzy
             case_sensitive: false
-            positional: false
             sort: true
         }
         completions: ([info debug trace])
@@ -144,7 +141,6 @@ def "nu-complete my-maxpats" [] {
         options: {
             completion_algorithm: fuzzy
             case_sensitive: false
-            positional: false
             sort: true
         }
         completions: (fd --follow maxpat /s/my-maxpats | lines)
