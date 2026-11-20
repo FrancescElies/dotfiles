@@ -67,18 +67,21 @@ export def --env notes [] {
 
 def "nu-complete projects" [] {
     let patterns = [
-        '~/src/*'
-        '~/src/oss/*'
-        '/s/*'
-        '/s/my-*/*'
-        '/s/*-worktrees/*'
-        '/s/*-wt/*'
-        '/s/*prj/*'
+        {glob: '~/src/*', depth: 1}
+        {glob: '~/src/oss/*', depth: 1}
+        {glob: '/s/*', depth: 1}
+        {glob: '/s/my-*/*', depth: 2}
+        {glob: '/s/*-worktrees/*', depth: 2}
+        {glob: '/s/*-wt/*', depth: 2}
+        {glob: '/s/*prj/*', depth: 2}
     ]
-    # glob --no-file keeps only directories (symlinks to dirs included); missing roots yield nothing
+    # Bound traversal: glob otherwise walks inside matched project directories.
+    # --no-file retains directories/symlinks; missing roots yield nothing.
     let dirs = (
         $patterns
-        | each {|p| try { glob ($p | path expand | str replace -a '\' '/') --no-file } catch { [] } }
+        | each {|p| try {
+            glob ($p.glob | path expand | str replace -a '\' '/') --no-file --depth $p.depth
+        } catch { [] } }
         | flatten
     )
     {
@@ -95,7 +98,7 @@ def "nu-complete projects" [] {
     }
 }
 
-export def --env "goto" [path?: path@"nu-complete projects"] {
+export def --env goto [path?: path@"nu-complete projects"] {
     let selection = if ($path | is-empty) {
         try {
             (nu-complete projects).completions | input list --fuzzy $"Goto (ansi mu)project(ansi reset):"
