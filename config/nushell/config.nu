@@ -112,7 +112,7 @@ $env.config.hooks.env_change.PWD = (
     | append ([
         # Drop the previous project's env overlay before loading another one.
         {
-            condition: {|| 'project-env' in (overlay list | get name) }
+            condition: {|| (overlay list | where active and name == 'project-env' | is-not-empty) }
             code: 'overlay hide project-env'
         }
         (env-change pwd toolkit)
