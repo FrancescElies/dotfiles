@@ -78,19 +78,19 @@ def "nu-complete projects" [] {
     # glob --no-file keeps only directories (symlinks to dirs included); missing roots yield nothing
     let dirs = (
         $patterns
-        | each {|p| try { glob ($p | path expand) --no-file } catch { [] } }
+        | each {|p| try { glob ($p | path expand | str replace -a '\' '/') --no-file } catch { [] } }
         | flatten
     )
     {
         options: {
             completion_algorithm: fuzzy
             case_sensitive: false
-            positional: false
             sort: true
         }
         completions: (
             $dirs
             | append (['~/Downloads' '~/Desktop'] | each {|p| $p | path expand })
+            | uniq
         )
     }
 }
