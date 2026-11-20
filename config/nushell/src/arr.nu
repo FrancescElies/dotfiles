@@ -1,6 +1,4 @@
 const ARR_PORTS = {
-    radarr: 7878
-    lidarr: 8686
     prowlarr: 9696
     qbittorrent: 8081
     jellyfin: 8096
@@ -8,7 +6,7 @@ const ARR_PORTS = {
 def "nu-complete arr services" [] {
     $ARR_PORTS | columns | append "all"
 }
-# Open a service's web UI: `arr open radarr`, or `arr open all`
+# Open a service's web UI: `arr open prowlarr`, or `arr open all`
 export def "arr open" [service: string@"nu-complete arr services"] {
     let known = $ARR_PORTS | columns
     let targets = if $service == "all" { $known } else { [$service] }
@@ -78,13 +76,10 @@ export def "arr build" [
 
     let root = (get-env ARR_ROOT "/media/cesc/data/arr")
     for d in [
-        config/lidarr
-        config/radarr
         config/prowlarr
         config/qbittorrent
         config/gluetun
-        data/torrents/radarr
-        data/torrents/lidarr
+        data/torrents
         data/media/movies
         data/media/music
     ] { mkdir ($root | path join $d) }
@@ -105,8 +100,6 @@ const ARR_CONTAINERS = [
     gluetun
     qbittorrent
     prowlarr
-    radarr
-    lidarr
     flaresolverr
 ]
 
@@ -122,7 +115,7 @@ export def "arr down" [--force(-f)] {
     }
 }
 
-# Configure Radarr/Lidarr/Prowlarr/qBittorrent via API (idempotent)
+# Configure Prowlarr/qBittorrent via API (idempotent)
 export def "arr seed" [] {
     ^python3 $SEED_SCRIPT
 }

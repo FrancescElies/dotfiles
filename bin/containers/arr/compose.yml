@@ -1,6 +1,6 @@
 # No-UI setup: after `podman compose up -d`, run python3 bootstrap.py (stdlib only).
 #   It creates root folders, qBittorrent categories/credentials, download clients and Prowlarr apps.
-#   Add to .env: RADARR_API_KEY / LIDARR_API_KEY / PROWLARR_API_KEY (each: openssl rand -hex 16), QBT_PASSWORD.
+#   Add to .env: PROWLARR_API_KEY (each: openssl rand -hex 16), QBT_PASSWORD.
 #
 # VPN switch: set ONE profile in .env (compose reads COMPOSE_PROFILES automatically)
 #   COMPOSE_PROFILES=vpn      # gluetun + qBittorrent inside the tunnel
@@ -20,15 +20,12 @@
 #   Mullvad no longer offers port forwarding, so expect fewer incoming peers.
 #
 # Setup:
-#   mkdir -p /media/cesc/data/arr/{config/{lidarr,radarr,prowlarr,qbittorrent,gluetun},data/{torrents/{radarr,lidarr},media/{movies,music}}}
 #   cp .env.example .env   # fill in VPN vars, see bottom
 #   podman compose up -d
 #
 # Layout (TRaSH): ONE /data mount in every container => hardlinks/atomic moves work
 #   https://trash-guides.info/File-and-Folder-Structure/How-to-set-up/Docker/
 # In apps use: root folders /data/media/movies, /data/media/music;
-#   qBittorrent save path /data/torrents, categories radarr -> /data/torrents/radarr, lidarr -> /data/torrents/lidarr
-# Prowlarr -> Apps: http://radarr:7878, http://lidarr:8686 | qBittorrent client host: qbittorrent, port 8081
 # FlareSolverr proxy in Prowlarr: http://flaresolverr:8191
 
 x-env: &env
@@ -126,53 +123,6 @@ services:
       <<: *hc
       test: ["CMD-SHELL", "curl -fsS http://localhost:9696/ping"]
 
-  radarr:  # https://github.com/linuxserver/docker-radarr
-    <<: *arr
-    image: lscr.io/linuxserver/radarr:5.26.2
-    container_name: radarr
-    environment:
-      <<: *env
-      RADARR__AUTH__APIKEY: ${RADARR_API_KEY}   # fixed key so bootstrap.py can call the API
-      RADARR__AUTH__METHOD: External          # no login prompt; ports are bound to 127.0.0.1 only
-    ports: ["127.0.0.1:7878:7878"]
-    volumes:
-      - ${ARR_ROOT:-/media/cesc/data/arr}/config/radarr:/config
-      - ${ARR_ROOT:-/media/cesc/data/arr}/data:/data
-      - /media/cesc/data/Videos:/media/Videos
-    healthcheck:
-      <<: *hc
-      test: ["CMD-SHELL", "curl -fsS http://localhost:7878/ping"]
-
-  lidarr:  # https://github.com/linuxserver/docker-lidarr
-    <<: *arr
-    image: lscr.io/linuxserver/lidarr:2.12.4
-    container_name: lidarr
-    environment:
-      <<: *env
-      LIDARR__AUTH__APIKEY: ${LIDARR_API_KEY}   # fixed key so bootstrap.py can call the API
-      LIDARR__AUTH__METHOD: External          # no login prompt; ports are bound to 127.0.0.1 only
-    ports: ["127.0.0.1:8686:8686"]
-    volumes:
-      - ${ARR_ROOT:-/media/cesc/data/arr}/config/lidarr:/config
-      - ${ARR_ROOT:-/media/cesc/data/arr}/data:/data
-      - /media/cesc/data/Music:/media/Music
-    healthcheck:
-      <<: *hc
-      test: ["CMD-SHELL", "curl -fsS http://localhost:8686/ping"]
-
-  flaresolverr:  # https://github.com/FlareSolverr/FlareSolverr
-    <<: *arr
-    image: ghcr.io/flaresolverr/flaresolverr:v3.3.21
-    container_name: flaresolverr
-    environment:
-      LOG_LEVEL: info
-      TZ: ${TZ:-UTC}
-    # no published port: only Prowlarr needs it, via the arr network
-    healthcheck:
-      <<: *hc
-      test: ["CMD-SHELL", "curl -fsS http://localhost:8191/health"]
-
-networks:
   arr:
     driver: bridge
     ipam:
@@ -185,8 +135,6 @@ networks:
 #   PUID=1000
 #   PGID=1000
 #   TZ=UTC
-#   RADARR_API_KEY=<openssl rand -hex 16>
-#   LIDARR_API_KEY=<openssl rand -hex 16>
 #   PROWLARR_API_KEY=<openssl rand -hex 16>
 #   QBT_PASSWORD=<choose a password>
 #   WIREGUARD_PRIVATE_KEY=<PrivateKey from Mullvad .conf>   # vpn profile only
