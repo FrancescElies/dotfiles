@@ -12,6 +12,7 @@ $env.PATH = $initial_path
 match $nu.os-info.name {
     "windows" => {
         $env.HOME = ('~' | path expand)
+        $env.MSBuildSDKsPath = "C:/Program Files/dotnet/sdk/10.0.404/Sdks"
         $env.PATH ++= [
             '~/AppData/Local/bob/nvim-bin'
             '~/AppData/Roaming/Python/Python312/Scripts'
