@@ -336,19 +336,33 @@ print(json.dumps(segs))
         }
     }
 
-    # Record from the mic, transcribe on the NPU, copy text to the clipboard
     export def dictate [--secs: int = 10, --lang: string = "auto"] {
+        let t0 = (date now)
+        let lap = {|msg| print -e $"[(((date now) - $t0) | format duration sec)] ($msg)" }
+
         let wav = (mktemp --suffix .wav)
-        ^ffmpeg -nostdin -loglevel error -y -f pulse -i default -t $secs -ac 1 -ar 16000 -c:a pcm_s16le $wav
+        do $lap $"recording ($secs)s -> ($wav) [speak now]"
+        let rec = (
+            ^ffmpeg -nostdin -loglevel error -y -f pulse -i default -t $secs -ac 1 -ar 16000 -c:a pcm_s16le $wav
+            | complete
+        )
+        if $rec.exit_code != 0 { error make {msg: $"ffmpeg: ($rec.stderr)"} }
+        do $lap $"recorded: (ls $wav | get size.0)"
+
+        do $lap "transcribing (first NPU run compiles the model; may take minutes, cached afterwards)"
         let segs = (run-whisper $wav (default-model) "NPU" $lang "transcribe")
+        do $lap $"got ($segs | length) segments"
         rm -f $wav
+
         let text = (
-        $segs
-        | get text
-        | str join " "
-        | str trim
-    )
-        $text | ^wl-copy
+            $segs
+            | get text
+            | str join " "
+            | str trim
+        )
+        do $lap "copying to clipboard"
+        $text | ^wl-copy out+err> /dev/null # detach forked wl-copy from our pipes
+        do $lap "done"
         $text
     }
 }
