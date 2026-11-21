@@ -1,6 +1,8 @@
 # speech recognition + subtitles on the Intel NPU (OpenVINO GenAI)
 # First run: ov-setup
 
+const here = path self .
+
 export module ai-ov {
     def root [] { $"($env.HOME)/.local/share/ov-tools" }
     def vpy [] { $"(root)/venv/bin/python" }
@@ -9,7 +11,7 @@ export module ai-ov {
         ["hdmv_pgs_subtitle" "dvd_subtitle" "dvb_subtitle" "xsub"]
     }
 
-    export def --env ov-env [] {
+    export def --env ov-env [] {G
         let lib = "/opt/intel/openvino_2026/runtime/lib/intel64"
         $env.LD_LIBRARY_PATH = (
             [
@@ -364,5 +366,23 @@ print(json.dumps(segs))
         $text | ^wl-copy out+err> /dev/null # detach forked wl-copy from our pipes
         do $lap "done"
         $text
+    }
+
+    export def dictate-live [--lang: string = "auto", --partial, --clip] {
+        let cache = $"($env.HOME)/.cache/ov-npu"
+        mkdir $cache
+        let py = (vpy)
+        let args = [
+            (default-model)
+            NPU
+            $lang
+            $cache
+        ] ++ (if $partial { ["--partial"] } else { [] })
+        with-env {LD_LIBRARY_PATH: ""} {
+        ^ffmpeg -nostdin -loglevel error -f pulse -i default -ac 1 -ar 16000 -f s16le -
+        | ^$py ($here | path join "ai-stt-live.py") ...$args
+        | lines
+        | each {|t| if $clip { $t | ^wl-copy out+err> /dev/null }; print $t }
+    }
     }
 }
