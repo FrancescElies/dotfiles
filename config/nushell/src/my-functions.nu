@@ -85,11 +85,7 @@ def "nu-complete projects" [] {
         | flatten
     )
     {
-        options: {
-            completion_algorithm: fuzzy
-            case_sensitive: false
-            sort: true
-        }
+        options: {completion_algorithm: fuzzy, case_sensitive: false, sort: true}
         completions: (
             $dirs
             | append (['~/Downloads' '~/Desktop'] | each {|p| $p | path expand })

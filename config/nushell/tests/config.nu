@@ -3,21 +3,48 @@
 use std/assert
 
 $env.config.hooks.env_change.TEST_SENTINEL = []
-$env.config.hooks.env_change.PWD ++= [{__test_hook: true, code: {|| null }}]
+$env.config.hooks.env_change.PWD ++= [
+    {
+        __test_hook: true
+        code: {|| null }
+    }
+]
 source ../config.nu
 source ../config.nu
 
-let names = [abbr fzf_files find_file_and_edit open_editor go_Up_to_root_dir jump_to_subdir jump_to_project fuzzy_module]
+let names = [
+    abbr
+    fzf_files
+    find_file_and_edit
+    open_editor
+    go_Up_to_root_dir
+    jump_to_subdir
+    jump_to_project
+    fuzzy_module
+]
 let bindings = $env.config.keybindings | where {|binding| $binding.name in $names }
 assert equal ($bindings | length) 8
 assert equal ($bindings | uniq-by name | length) 8
 assert equal ($bindings | where name == go_Up_to_root_dir | get 0.modifier) alt
 assert equal ($bindings | where name == fuzzy_module | get 0.modifier) control
 assert equal ($env.config.menus | where name == abbr_menu | length) 1
-assert equal ($env.config.hooks.env_change.PWD | where {|hook| $hook.__dotfiles_hook? | default false } | length) 6
-assert equal ($env.config.hooks.env_change.PWD | where {|hook| $hook.__test_hook? | default false } | length) 1
+assert equal (
+    $env.config.hooks.env_change.PWD
+    | where {|hook| $hook.__dotfiles_hook? | default false }
+    | length
+) 6
+assert equal (
+    $env.config.hooks.env_change.PWD
+    | where {|hook| $hook.__test_hook? | default false }
+    | length
+) 1
 assert equal $env.config.hooks.env_change.TEST_SENTINEL []
-assert equal ($env | columns | where {|name| ($name | str lowercase) == path } | length) 1
+assert equal (
+    $env
+    | columns
+    | where {|name| ($name | str lowercase) == path }
+    | length
+) 1
 assert equal ($env.PATH | where {|entry| $entry starts-with '~' } | length) 0
 assert equal ($env.PATH | length) ($env.PATH | uniq | length)
 # Nu's Tab and Shift+Tab defaults have not been removed.

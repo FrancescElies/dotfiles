@@ -6,11 +6,7 @@ use symlinks.nu *
 
 def "nu-complete max-version" [] {
     {
-        options: {
-            completion_algorithm: fuzzy
-            case_sensitive: false
-            sort: true
-        }
+        options: {completion_algorithm: fuzzy, case_sensitive: false, sort: true}
         completions: (['912' '914' '921'])
     }
 }
@@ -72,11 +68,7 @@ const max_searchpaths = if $nu.os-info.name == "windows" {
 
 def "nu-complete maxpats" [] {
     {
-        options: {
-            completion_algorithm: fuzzy
-            case_sensitive: false
-            sort: true
-        }
+        options: {completion_algorithm: fuzzy, case_sensitive: false, sort: true}
         completions: (fd maxpat | lines)
     }
 }
@@ -111,11 +103,7 @@ def "Max dump" [
 
 def "nu-complete maxloglevel" [] {
     {
-        options: {
-            completion_algorithm: fuzzy
-            case_sensitive: false
-            sort: true
-        }
+        options: {completion_algorithm: fuzzy, case_sensitive: false, sort: true}
         completions: ([info debug trace])
     }
 }
@@ -138,11 +126,7 @@ export def "Max start" [maxpat?: path@"nu-complete maxpats", --log(-l): string@"
 
 def "nu-complete my-maxpats" [] {
     {
-        options: {
-            completion_algorithm: fuzzy
-            case_sensitive: false
-            sort: true
-        }
+        options: {completion_algorithm: fuzzy, case_sensitive: false, sort: true}
         completions: (fd --follow maxpat /s/my-maxpats | lines)
     }
 }

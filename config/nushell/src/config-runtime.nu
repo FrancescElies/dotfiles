@@ -46,6 +46,7 @@ export def "project untrust" [directory: path = '.'] {
 export def "project trusted" [] { trusted-directories }
 
 export def "project is-trusted" [directory: path] {
+
     # Malformed/unreadable trust files and missing directories must fail closed.
     try { (canonical-project $directory) in (trusted-directories) } catch { false }
 }
@@ -58,7 +59,12 @@ export def --env "project sync-path" [directory: path] {
     } catch { [] }
     let base = $env.PATH | where {|entry| $entry not-in $previous }
     let candidates = if (project is-trusted $directory) and ($directory | path join Cargo.lock | path exists) {
-        ['target/debug' 'target/debug/examples' 'target/release' 'target/release/examples']
+        [
+            'target/debug'
+            'target/debug/examples'
+            'target/release'
+            'target/release/examples'
+        ]
         | each {|suffix| $directory | path join $suffix | path expand }
         | uniq
     } else { [] }
@@ -85,7 +91,7 @@ export def "nu completion-word" [word: string]: nothing -> string {
 }
 
 # Empty selections and cancellation leave the working directory untouched.
-export def --env "cd selected" [selection: any] {
+export def --env "cd selected" [selection] {
     if ($selection | is-not-empty) { cd $selection }
 }
 
@@ -111,11 +117,15 @@ export def --env "pick directory" [] {
 
 export def "pick module" [] {
     let modules = $env.NU_LIB_DIRS
-        | each {|directory| try { glob ($directory | path expand | path join '*.nu') --no-dir } catch { [] } }
-        | flatten
-        | uniq
+    | each {|directory| try { glob ($directory | path expand | path join '*.nu') --no-dir } catch { [] } }
+    | flatten
+    | uniq
     if ($modules | is-empty) { return }
-    let selection = try { $modules | input list --fuzzy 'Choose a module to load:' } catch { null }
+    let selection = try {
+        $modules | input list --fuzzy 'Choose a module to load:'
+    } catch {
+        null
+    }
     if ($selection | is-not-empty) {
         commandline edit --replace $"use (nu quote-path $selection) *"
         commandline set-cursor --end

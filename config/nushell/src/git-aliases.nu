@@ -13,11 +13,7 @@ export alias gds = ^git difft --staged
 # Yield remote branches like `origin/main`, `upstream/feature-a`
 def "nu-complete git remote branches with prefix" [] {
     {
-        options: {
-            completion_algorithm: fuzzy
-            case_sensitive: false
-            sort: true
-        }
+        options: {completion_algorithm: fuzzy, case_sensitive: false, sort: true}
         completions: (
             ^git branch --no-color -r
             | lines

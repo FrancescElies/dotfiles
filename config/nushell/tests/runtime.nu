@@ -3,6 +3,7 @@ use std/assert
 use ../src/config-runtime.nu *
 
 const runtime_module = path self | path dirname | path join ../src/config-runtime.nu | path expand
+
 let original_directory = pwd
 let temp = mktemp --directory
 $env.DOTFILES_PROJECT_TRUST_FILE = $temp | path join trusted-projects.nuon
@@ -26,7 +27,10 @@ try {
 
     # Repeated visits do not duplicate additions; pre-existing paths survive.
     let preexisting = $project | path join target/debug | path expand
-    let baseline = [$preexisting ($temp | path join bin)]
+    let baseline = [
+        $preexisting
+        ($temp | path join bin)
+    ]
     # Match env.nu's top-level cleanup for mixed-case Windows PATH keys.
     let aliases = $env | columns | where {|name| ($name | str lowercase) == path and $name != PATH }
     for name in $aliases { hide-env $name }

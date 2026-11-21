@@ -171,9 +171,9 @@ export def "nu-complete git checkout" [place: record] {
     # We exclude some flags from previous tokens, to detect if  a branch name has been used as the first argument.
     # FIXME: This method is still naive, though.
     # Known multi-word externs may have a combined head ("git checkout").
-    let prev_tokens = ($place.command | first | split row ' ')
-        | append ($place.command | skip 1 | each {|word| nu completion-word $word })
-        | where {|word| $word not-in $GIT_SKIPABLE_FLAGS }
+    let prev_tokens = $place.command | first | split row ' '
+    | append ($place.command | skip 1 | each {|word| nu completion-word $word })
+    | where {|word| $word not-in $GIT_SKIPABLE_FLAGS }
     # In these scenarios, we suggest only file paths, not branch:
     # - After '--'
     # - First arg is a branch
@@ -422,9 +422,9 @@ export extern "git fetch" [
 # Yield local branches and (if remote is specified) remote branches with colon prefix
 def "nu-complete git push" [place: record] {
     use git-completion-utils *
-    let tokens = ($place.command | first | split row ' ')
-        | append ($place.command | skip 1 | each {|word| nu completion-word $word })
-        | where {|word| $word not-in $GIT_SKIPABLE_FLAGS }
+    let tokens = $place.command | first | split row ' '
+    | append ($place.command | skip 1 | each {|word| nu completion-word $word })
+    | where {|word| $word not-in $GIT_SKIPABLE_FLAGS }
 
     # Arguments are already tokenized and alias-expanded by Nushell.
 

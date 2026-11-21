@@ -75,6 +75,7 @@ def "nu-complete just" [] {
 }
 
 def "nu-complete args" [place: record] {
+
     # Let Nu handle quoted arguments, aliases, and command boundaries.
     let words = $place.command | skip 1 | each {|word| nu completion-word $word }
     let names = get-recipes | get recipe
@@ -100,10 +101,12 @@ def get-just-arg [name: string, position: int] {
             # Decline rather than emitting invalid placeholder suggestions.
             null
         } else {
-            [{
-                value: $parameter.default
-                description: $"'($parameter.name)' (ansi green)\(default\)(ansi reset)"
-            }]
+            [
+                {
+                    value: $parameter.default
+                    description: $"'($parameter.name)' (ansi green)\(default\)(ansi reset)"
+                }
+            ]
         }
     }
 }

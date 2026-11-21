@@ -196,8 +196,14 @@ $env.config.menus ++= [
 # https://www.nushell.sh/book/line_editor.html#vi-normal-actions
 # keycodes: none control alt shift shift_alt alt_shift control_alt alt_control control_shift shift_control control_alt_shift control_shift_alt
 const dotfiles_binding_names = [
-    abbr fzf_files find_file_and_edit open_editor go_Up_to_root_dir
-    jump_to_subdir jump_to_project fuzzy_module
+    abbr
+    fzf_files
+    find_file_and_edit
+    open_editor
+    go_Up_to_root_dir
+    jump_to_subdir
+    jump_to_project
+    fuzzy_module
 ]
 $env.config.keybindings = (
     $env.config.keybindings | where {|binding| $binding.name not-in $dotfiles_binding_names }
@@ -220,10 +226,7 @@ $env.config.keybindings ++= [
         keycode: char_t
         mode: [emacs, vi_normal, vi_insert]
         event: [
-            {
-                send: executehostcommand
-                cmd: "pick file insert"
-            }
+            {send: executehostcommand, cmd: "pick file insert"}
         ]
     }
     {
@@ -253,10 +256,7 @@ $env.config.keybindings ++= [
         keycode: char_c
         mode: [emacs, vi_normal, vi_insert]
         event: [
-            {
-                send: executehostcommand
-                cmd: "pick directory"
-            }
+            {send: executehostcommand, cmd: "pick directory"}
         ]
     }
     {
@@ -272,10 +272,7 @@ $env.config.keybindings ++= [
         modifier: control
         keycode: char_u
         mode: [emacs, vi_normal, vi_insert]
-        event: {
-            send: executehostcommand
-            cmd: 'pick module'
-        }
+        event: {send: executehostcommand, cmd: 'pick module'}
     }
 
     # NOTE: clunky, doesn't work nicely with multiline
