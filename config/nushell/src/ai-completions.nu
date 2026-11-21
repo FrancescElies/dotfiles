@@ -195,22 +195,29 @@ export module ai {
     export def "llm download" [] {
 
         # Quantizers:         unsloth, lmstudio-community, bartowski, mradermacher
-        # Uncensored makers:  huihui-ai, LuffyTheFox, HauhauCS
+        # Uncensored makers:  huihui-ai, LuffyTheFox, HauhauCS, Youssofal (heretic), SC117 (heretic)
         #
         # Alternate 27B quants (swap into the table if wanted):
         #   "*UD-Q4_K_M*"   |  "*UD-IQ4_XS*"
+        #
+        # NOTE: include patterns for the abliterated repos below are unverified.
+        # Check file names first: hf download <repo> --dry-run --local-dir /tmp/x
 
         need "hf"
 
         let base = "~/models" | path expand
 
         let models = [
-            [repo, include, dir];
-            [unsloth/Qwen3.6-35B-A3B-GGUF, ["*UD-Q4_K_M*" "*mmproj*"], qwen3.6-35b-a3b]
-            [unsloth/Qwen3.8-27B-GGUF, ["Qwen3.8-27B-UD-IQ4_XS.gguf"], qwen3.8-27b]
-            [huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF, ["*abliterated-Q4_K.gguf"], qwen3.8-27b-abl]
-            [google/gemma-4-26B-A4B-it-qat-q4_0-gguf, [], gemma-4-26b-a4b]
-            [unsloth/gemma-4-12B-it-qat-GGUF, ["*UD-Q4_K_XL*"], gemma-4-12b]
+            [repo,                                                                      include,                        dir];
+            [SC117/gemma-4-26B-A4B-it-qat-heretic-GGUF,                                 ["*UD-Q4_K_XL*"],               gemma-4-26b-a4b-heretic]
+            [Youssofal/Qwen3.6-35B-A3B-Abliterated-Heretic-GGUF,                        ["*Q4_K_M*" "*mmproj*"],        qwen3.6-35b-a3b-heretic]
+            [google/gemma-4-26B-A4B-it-qat-q4_0-gguf,                                   [],                             gemma-4-26b-a4b]
+            [huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF,                             ["*abliterated-Q4_K.gguf"],     qwen3.8-27b-abl]
+            [huihui-ai/Huihui-gemma-4-26B-A4B-it-qat-q4_0-unquantized-abliterated-GGUF, ["*Q4_0*"],                     gemma-4-26b-a4b-abl]
+            [unsloth/Qwen3.5-9B-GGUF,                                                   ["*UD-Q4_K_XL*"],               qwen3.5-9b]
+            [unsloth/Qwen3.6-35B-A3B-GGUF,                                              ["*UD-Q4_K_M*" "*mmproj*"],     qwen3.6-35b-a3b]
+            [unsloth/Qwen3.8-27B-GGUF,                                                  ["Qwen3.8-27B-UD-IQ4_XS.gguf"], qwen3.8-27b]
+            [unsloth/gemma-4-12B-it-qat-GGUF,                                           ["*UD-Q4_K_XL*"],               gemma-4-12b]
         ]
 
         mkdir $base
@@ -272,12 +279,17 @@ export module ai {
         let small_ctx = 32768
         let big_ctx = 65536
         [
-            [model, ctx, ub, kv, why];
-            ["qwen3.6-35b-a3b", $small_ctx, 512, "q8_0", "MoE ~21 GB, 3B active: fastest decode"]
-            ["gemma-4-26b-a4b", $big_ctx, 512, "f16", "MoE ~14 GB, 3.8B active"]
-            ["qwen3.8-27b", $small_ctx, 512, "q8_0", "dense ~13 GB: slow decode"]
-            ["gemma-4-12b", $big_ctx, 512, "f16", "small ~8 GB"]
-            ["qwen3.5-9b", $big_ctx, 512, "f16", "fast helper"]
+            [model,                     ctx,        ub,  kv,     why];
+            ["gemma-4-12b",             $big_ctx,   512, "f16",  "small ~8 GB"]
+            ["gemma-4-26b-a4b",         $big_ctx,   512, "f16",  "MoE ~14 GB,            3.8B active"]
+            ["gemma-4-26b-a4b-abl",     $big_ctx,   512, "f16",  "abliterated (huihui),  experts not ablated"]
+            ["gemma-4-26b-a4b-heretic", $big_ctx,   512, "f16",  "abliterated (heretic), UD-Q4_K_XL"]
+            ["qwen3.5-9b",              $big_ctx,   512, "f16",  "fast helper"]
+            ["qwen3.6-35b-a3b",         $small_ctx, 512, "q8_0", "MoE ~21 GB,            3B active: fastest decode"]
+            ["qwen3.6-35b-a3b-heretic", 16384,      512, "q8_0", "abliterated MoE 21 GB: tight on 32 GB RAM"]
+            ["qwen3.8-27b",             $small_ctx, 512, "q8_0", "dense ~13 GB: slow decode"]
+            ["qwen3.8-27b-abl",         $small_ctx, 512, "q8_0", "abliterated dense ~13 GB: slow decode"]
+
         ]
     }
 
@@ -704,6 +716,15 @@ export module ai {
 # llm run qwen3.8-27b --cli                               # terminal chat, no server
 # llm run gemma-4-26b-a4b --port 9000 --host 0.0.0.0      # reachable from the LAN
 # llm run qwen3.8-27b -- --temp 0.6 --top-p 0.95          # extra llama.cpp flags
+#
+# # Stop gracefully (SIGTERM, wait, SIGKILL only with --force)
+# llm stop
+# llm stop -t 60sec
+# llm stop --force
+#
+# # Abliterated models: tight on 32 GB, lower ctx if memory is short
+# llm run qwen3.6-35b-a3b-heretic --ctx 16384
+# llm run gemma-4-26b-a4b-heretic
 #
 # # Use with Pi
 # llm pi-setup
