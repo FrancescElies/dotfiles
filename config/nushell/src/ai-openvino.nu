@@ -11,7 +11,8 @@ export module ai-ov {
         ["hdmv_pgs_subtitle" "dvd_subtitle" "dvb_subtitle" "xsub"]
     }
 
-    export def --env ov-env [] {G
+    export def --env ov-env [] {
+        G
         let lib = "/opt/intel/openvino_2026/runtime/lib/intel64"
         $env.LD_LIBRARY_PATH = (
             [

@@ -388,6 +388,37 @@ export module ai {
         print $tuned
     }
 
+    # Gracefully stop llama.cpp: SIGTERM, wait, SIGKILL only with --force.
+    export def "llm stop" [--timeout(-t): duration = 30sec, --force(-f)] {
+        let pids = ps | where name =~ '^llama' | get pid
+        if ($pids | is-empty) {
+            print "no llama process running"
+            return
+        }
+
+        print $"SIGTERM -> ($pids | str join ', ')"
+        for p in $pids { kill --signal 15 $p }
+
+        let deadline = (date now) + $timeout
+        mut left = $pids
+        while ($left | is-not-empty) and ((date now) < $deadline) {
+            sleep 500ms
+            let alive = ps | get pid
+            $left = ($left | where {|p| $p in $alive })
+        }
+
+        if ($left | is-empty) {
+            print "stopped cleanly"
+            return
+        }
+        if $force {
+            print $"still alive, SIGKILL -> ($left | str join ', ')"
+            for p in $left { kill --force $p }
+        } else {
+            print $"still running after ($timeout): ($left | str join ', '). Retry with --force"
+        }
+    }
+
     # run model
     export def "llm run" [
         name?: string@model-names
